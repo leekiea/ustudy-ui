@@ -6,20 +6,33 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angu
   styleUrls: ['./answer-filter.component.css']
 })
 export class AnswerFilterComponent implements OnChanges {
-  @Input() answer: any;
+  @Input() selectedExam: any;
   @Output() selectResult = new EventEmitter();
+  selectedGrade: any;
+  selectedSubject: any;
 
   constructor() { }
 
-  ngOnChanges() {
-    this.reload();
+  ngOnChanges(changes) {
   }
 
   returnResult() {
-    this.selectResult.emit('')
+    const mockData = {
+      total: 600,
+      highest: 709,
+      lowest: 250,
+      average: 444,
+      median: 451,
+      passNum: 501,
+      hardness: 0.45,
+      discrimination: 0.6,
+      sd: 3.7,
+      scores: [650, 651, 450, 250]
+    };
+    this.selectResult.emit(mockData)
   }
 
-  reload() {
+  reload(exam: any) {
   }
 
 }
