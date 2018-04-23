@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { DataService } from "../data.service";
+import { DataService } from '../data.service';
 import * as _ from 'lodash';
-import {ExamService} from "../../exam/exam.service";
+import {ExamService} from '../../exam/exam.service';
 
 @Component({
   selector: 'app-questions-analysis',
@@ -23,11 +23,13 @@ export class QuestionsAnalysisComponent implements OnInit {
         display: true,
         ticks: {
           beginAtZero: true,
-          stepSize: 1
         }
       }]
     },
   };
+  filterResult: any;
+  subjectResult: any;
+  objectResult: any;
 
   constructor(private _dataService: DataService, private _examService: ExamService) { }
 
@@ -35,6 +37,7 @@ export class QuestionsAnalysisComponent implements OnInit {
     const params = Object.create({});
     params.finished = false;
     this.exams = this._examService.filterExams({finished: false});
+    this.exams = this._examService.anaExams({finished: false});
     this.exams.then((data) => {
       this.selectedExam = _.first(data);
       if (!this.selectedExam) {
@@ -47,15 +50,41 @@ export class QuestionsAnalysisComponent implements OnInit {
   }
 
   selectResult(result) {
-    this.result = result;
-    const counts = _.countBy(result.scores, Number);
-    setTimeout(() => {
-      this.scores = _.keys(counts);
-      this.scoreDatas = [{data: _.values(counts), label: '分数统计'}];
-    }, 500);
-    // this._dataService.getAnswers().then((data) => {
-    //   this.result = data
-    // })
+    // XXX: mock
+    // this.result = result;
+    // const counts = _.countBy(result.scores, Number);
+    // setTimeout(() => {
+    //   this.scores = _.keys(counts);
+    //   this.scoreDatas = [{data: _.values(counts), label: '分数统计'}];
+    // }, 500);
+
+    this.filterResult = result;
+    this.loadResult()
+  }
+
+  loadResult() {
+    if (!this.filterResult) {
+      return
+    }
+    if (this.tab === 'summary') {
+      this._dataService.getAnaResults('', this.filterResult.subject.id, this.filterResult.class).then((data) => {
+        this.result = data[0];
+        setTimeout(() => {
+          this.scores = _.keys(this.result.scoreplacement);
+          this.scoreDatas = [{data: _.values(this.result.scoreplacement), label: '分数统计'}];
+        }, 500);
+      })
+    }
+    if (this.tab === 'subjective') {
+      this._dataService.getAnaResults('subject', this.filterResult.subject.id, this.filterResult.class).then((data) => {
+        this.subjectResult = data
+      })
+    }
+    if (this.tab === 'objective') {
+      this._dataService.getAnaResults('object', this.filterResult.subject.id, this.filterResult.class).then((data) => {
+        this.objectResult = data
+      })
+    }
   }
 
   getHighestScore() {
@@ -69,5 +98,23 @@ export class QuestionsAnalysisComponent implements OnInit {
   getAvg() {
     const scores = _.map(this.result, 'score');
     return _.sum(scores) / scores.length
+  }
+
+  getOptionsData(question: any) {
+    return [{data: _.values(question.choices).map((c) => _.toNumber(c.slice(0, -1))), label: ''}]
+  }
+
+  getQuestionOptions(question: any) {
+    return _.keys(question.choices)
+  }
+
+  distributionChartHovered($event: any) {
+  }
+
+  getOptionsColors(question: any) {
+    // TODO: 正确答案
+    const data = _.values(question.choices).map((c) => _.toNumber(c.slice(0, -1)));
+    const max = _.max(data);
+    return [{backgroundColor: data.map((d) => d === max ? '#229fd9' : 'grey')}]
   }
 }
