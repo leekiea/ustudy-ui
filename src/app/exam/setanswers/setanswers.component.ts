@@ -919,7 +919,9 @@ export class SetAnswersComponent implements OnInit {
                 value = subjective.score;
               }
               
-              this.subjectiveScore = this.subjectiveScore + (subjective.endno - subjective.startno + 1) * (value - subjective.score);
+              if(subjective.child == null || subjective.child.length <= 0) {
+                this.subjectiveScore = this.subjectiveScore + (subjective.endno - subjective.startno + 1) * (value - subjective.score);
+              }
               subjective[valueType] = value;
             }
           }
@@ -939,24 +941,40 @@ export class SetAnswersComponent implements OnInit {
 
   initCheckBoxScores(choiceNum, score) {
 
-    var size = 0;
-    if(choiceNum > 1){
-      for (var i = 1; i < choiceNum; i++) {
-        size = size + 1;
+    let maxChoiceNum = 0;
+    for (let objective of this.objectives) {
+      if (objective.type === '多选题') {
+        if (objective.choiceNum > maxChoiceNum) {
+          maxChoiceNum = objective.choiceNum;
+        }
       }
     }
 
-    this.objectiveChoiceNum = choiceNum;
+    //expected choice range 2 ~ x
+    var size = 0;
+    if(maxChoiceNum > 1){
+      for (let i = 1; i < maxChoiceNum; i++) {
+        size = size + 1;
+      }
+    } else {
+      return;
+    }
+
+    this.objectiveChoiceNum = maxChoiceNum;
     this.objectiveScore_ = score;
-    this.currentCheckBox = 2;
-    if (this.checkBoxScores.length !== size) {
-      this.checkBoxScores = [];
-      for (var i = 2; i <= choiceNum; i++) {
+    this.currentCheckBox = choiceNum;
+    let boxLength = this.checkBoxScores.length;
+    if (boxLength > size) {
+      for (let i = 0; i < boxLength - size; i++) {
+        this.checkBoxScores.pop();
+      }
+    } else if (boxLength < size) {
+      for (let i = boxLength; i < size; i++) {
         let scores_ = [];
-        for (var j = 1; j < i; j++) {
+        for (let j = 1; j <= i + 1; j++) {
           scores_.push({ count: j, score: 0 });
         }
-        this.checkBoxScores.push({ size: i, seted: false, scores: scores_ });
+        this.checkBoxScores.push({ size: i+2, seted: false, scores: scores_ });
       }
     }
   }  
@@ -1117,15 +1135,22 @@ export class SetAnswersComponent implements OnInit {
 
   closeCheckBoxModal() {
     if (this.checkBoxScores.length > 0) {
-      this.checkBoxScores[this.checkBoxScores.length - 1].seted = true;
+      for(let box of this.checkBoxScores) {
+        let set: boolean = false;
+        for(let score of box.scores) {
+          if (score.score !== 0) {
+            set = true;
+            break;
+          }
+        }
+        box.seted = set;
+      }
     }
     this.elementRef.nativeElement.querySelector('#infoModal').style.display = 'none';
   }
 
   setDefaultCheckBoxScore(objective) {
     if (objective.type === 2) {
-      console.log('!!! question type is 2');
-      console.dir(objective);
       this.checkBoxScores = [];
       let optionSize = objective['choiceNum'];
 
@@ -1159,11 +1184,11 @@ export class SetAnswersComponent implements OnInit {
   }
 
   setNextCheckBoxScore() {
-    this.checkBoxScores.forEach(element => {
-      if (element.size === this.currentCheckBox) {
-        element.seted = true;
-      }
-    });
+    // this.checkBoxScores.forEach(element => {
+    //   if (element.size === this.currentCheckBox) {
+    //     element.seted = true;
+    //   }
+    // });
 
     if (this.currentCheckBox < this.checkBoxScores[this.checkBoxScores.length - 1].size) {
       this.currentCheckBox = this.currentCheckBox + 1;
