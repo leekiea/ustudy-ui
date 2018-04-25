@@ -321,7 +321,7 @@ export class MarkComponent implements OnInit {
 					this.answer3.questionName = group.papers[2].questionName;
 					this.answer3.isMarked = group.papers[2].isMarked;
 				}
-				this.editMode = "" + this.curPage + Math.round(new Date().getTime()/1000);
+				this.editMode = "" + this.curPage + Math.floor(new Date().getTime()/1000);
 				break;
 			}
 		}
@@ -762,7 +762,7 @@ export class MarkComponent implements OnInit {
 			num += Number(this._markService.getNum(question.progress));
 			total += Number(this._markService.getTotal(question.progress));
 		}
-		this.progress = Math.round(Number(num)/Number(total)*100) + '%';
+		this.progress = Math.floor(Number(num)/Number(total)*100) + '%';
 	}
 
 	submit(): void {

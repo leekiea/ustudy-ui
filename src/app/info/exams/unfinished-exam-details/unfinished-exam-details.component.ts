@@ -92,7 +92,7 @@ export class UnfinishedExamDetailsComponent implements OnInit {
   }
 
   getAnswerPaperPercentage(row) {
-    return Math.round(row.paperCount / row.studentCount * 10000) / 100 + '%'
+    return Math.floor(row.paperCount / row.studentCount * 10000) / 100 + '%'
   }
 
   getMissingExaminees(row) {

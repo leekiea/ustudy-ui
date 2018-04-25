@@ -11,7 +11,7 @@ export class MarkService {
     let index = rawData.indexOf('/');
     let num = rawData.substring(0, index);
     let total = rawData.substring(index + 1);
-    return Math.round(Number(num)/Number(total)*100) + '%';
+    return Math.floor(Number(num)/Number(total)*100) + '%';
   }
 
   getNum(rawData): string {
