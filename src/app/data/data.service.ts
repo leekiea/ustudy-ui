@@ -34,17 +34,9 @@ export class DataService {
               delete metric.endno;
               marked += metric.marked;
               total += metric.total;
-              if (metric.total==0) {
-                metric.progress = 0 + '%';  
-              } else {
-                metric.progress = Math.floor(metric.marked/metric.total*100) + '%';
-              }
+              metric.progress = Math.floor(metric.marked/metric.total*100) + '%';
             }
-            if (total==0) {
-              egs.progress = 0 + '%';  
-            } else {
-              egs.progress = Math.floor(marked/total*100) + '%';
-            }
+            egs.progress = Math.floor(marked/total*100) + '%';
           }
         }
         resolve(data.data)
