@@ -179,8 +179,8 @@
 									<td *ngIf="issynthesize">
 										<select id="subjective_subject_{{subjective.id}}" class="form-control" (change)="onSubjectiveValueChange('subject',subjective.id,0)">
 											<ng-container *ngFor="let subject of subjects">
-												<option *ngIf="subjective.subject === subject.name" selected="selected" value="{{subject.name}}">{{subject.name}}</option>
-												<option *ngIf="subjective.subject !== subject.name" value="{{subject.name}}">{{subject.name}}</option>
+												<option *ngIf="subjective.branch === subject.name" selected="selected" value="{{subject.name}}">{{subject.name}}</option>
+												<option *ngIf="subjective.branch !== subject.name" value="{{subject.name}}">{{subject.name}}</option>
 											</ng-container>
 										</select>
 									</td>
@@ -244,8 +244,8 @@
 											<td *ngIf="issynthesize">
 												<select  id="subjective_subject_{{subjective.id}}_{{child.id}}_0" class="form-control" (change)="onSubjectiveValueChange('subject',subjective.id,child.id,0)">
 													<ng-container *ngFor="let subject of subjects">
-														<option *ngIf="child.subject === subject.name" selected="selected" value="{{subject.name}}">{{subject.name}}</option>
-														<option *ngIf="child.subject !== subject.name" value="{{subject.name}}">{{subject.name}}</option>
+														<option *ngIf="child.branch === subject.name" selected="selected" value="{{subject.name}}">{{subject.name}}</option>
+														<option *ngIf="child.branch !== subject.name" value="{{subject.name}}">{{subject.name}}</option>
 													</ng-container>
 												</select>
 											</td>

@@ -62,7 +62,7 @@ export class SetAnswersComponent implements OnInit {
     this.gradeId = this.route.snapshot.params.gradeId;
     this.subjectId = this.route.snapshot.params.subjectId;
 
-    this.loaAlldSubjects();
+    this.loadAllSubjects();
     this.getQuesAnswers(this.egsId, this.examId, this.gradeId, this.subjectId);
   }
 
@@ -165,7 +165,7 @@ export class SetAnswersComponent implements OnInit {
     this.setSubjectivesScore();
   }
 
-  loaAlldSubjects() {
+  loadAllSubjects() {
     this._sharedService.makeRequest('GET', '/api/subjects', '').then((data: any) => {
       if (data.success) {
         this.allsubjects = data.data;
@@ -266,16 +266,8 @@ export class SetAnswersComponent implements OnInit {
         end = objective['quesno'];
       }
       let score = objective['score'];
-      // the sub questions can have different scores
-      let totalScore = 0;
-      let children = objective['child'];
-      if (children !== null && children.length > 0) {
-        for (let child of children) {
-          totalScore += child.score;
-        }
-      } else {
-        totalScore = (end - start + 1) * score;
-      }
+
+      let totalScore = (end - start + 1) * score;
       this.objectiveScore = this.objectiveScore + totalScore;
 
       let choiceNum = objective.choiceNum;
@@ -377,8 +369,8 @@ export class SetAnswersComponent implements OnInit {
         }
       }
 
-      for (var j = newStart; j < oldStart; j++) {
-        var answersSeted = false;
+      for (let j = newStart; j < oldStart; j++) {
+        let answersSeted = false;
         this.objectiveAnswers.forEach(objectiveAnswer => {
           if (objectiveAnswer.quesno === j) {
             answersSeted = true;
@@ -550,8 +542,8 @@ export class SetAnswersComponent implements OnInit {
 
         if (valueType === 1) {
           var start = Number(this.elementRef.nativeElement.querySelector('#start_' + id).value);
-          if (!start || start < 1 || start > obj['endno']) {
-            start = obj['startno'];
+          if (!start || start < 1) {
+            start = start_;
           } else {
             obj['startno'] = start;
           }
@@ -560,7 +552,7 @@ export class SetAnswersComponent implements OnInit {
         } else if (valueType === 2) {
           var end = Number(this.elementRef.nativeElement.querySelector('#end_' + id).value);
           if (!end || end < 1 || end < obj['startno']) {
-            end = obj['endno'];
+            end = end_;
           } else {
             obj['endno'] = end;
           }
@@ -579,11 +571,12 @@ export class SetAnswersComponent implements OnInit {
           const choiceNum = Number(this.elementRef.nativeElement.querySelector('#option_' + id).value);
           obj['choiceNum'] = choiceNum;
           this.choiceNumValueChange(start_, end_, type_, choiceNum);
+          // TODO: why setting the checkbox value?
           this.setDefaultCheckBoxScore(obj);
         } else if (valueType === 5) {
           var score = Number(this.elementRef.nativeElement.querySelector('#score_' + id).value);
           if (!score || score < 1) {
-            score = obj['score'];
+            score = score_;
           } else {
             obj['score'] = score;
           }
@@ -634,7 +627,7 @@ export class SetAnswersComponent implements OnInit {
   //-------------------------------Subjectives--------------------------------------
 
   subjectives = [
-    { id: 0 - new Date().getTime(), quesno: 0, type: '填空题', startno: 1, endno: 10, branch: '不分科', score: 2 , remark: '' }
+    { id: 0 - new Date().getTime(), quesno: 0, type: '填空题', startno: 1, endno: 10, branch: '不分科', score: 2 , remark: '', child: [] }
   ];
 
   subjectiveCount = 0;
@@ -648,7 +641,13 @@ export class SetAnswersComponent implements OnInit {
     this.subjectives.forEach(subjective => {
       var count = subjective.endno - subjective.startno + 1;
       this.subjectiveCount += count;
-      this.subjectiveScore += count * subjective.score;
+      if (subjective.child != null && subjective.child.length > 0) {
+        for(let child of subjective.child) {
+          this.subjectiveScore += child.score;
+        }
+      } else {
+        this.subjectiveScore += count * subjective.score;
+      }
     })
   }
 
@@ -661,7 +660,7 @@ export class SetAnswersComponent implements OnInit {
             if (!childs) {
               childs = [];
             }
-            let child = { id: 0 - new Date().getTime(), quesno: 1, quesid: subjective.quesno, branch: '不分科', type: subjective.type, score: 1 };
+            let child = { id: 0 - new Date().getTime(), quesno: 1, quesid: subjective.quesno, branch: '不分科', type: subjective.type, score: 1, child: [] };
             child.quesno = childs.length + 1;
             child.branch = subjective.branch;
             childs.push(child);
@@ -671,7 +670,7 @@ export class SetAnswersComponent implements OnInit {
         });
       } else {
         const obj = this.subjectives[this.subjectives.length - 1];
-        const obj_ = { id: 0 - new Date().getTime(), quesno: 0, type: '填空题', startno: 1, endno: 10, branch: '不分科', score: 2 , remark: '' };
+        const obj_ = { id: 0 - new Date().getTime(), quesno: 0, type: '填空题', startno: 1, endno: 10, branch: '不分科', score: 2 , remark: '', child: [] };
         if (obj['type'] === '填空题') obj_['startno'] = obj['endno'] + 1;
         else obj_['startno'] = obj['startno'] + 1;
         obj_['endno'] = obj_['startno'];
@@ -683,7 +682,7 @@ export class SetAnswersComponent implements OnInit {
       }
 
     } else {
-      const obj = { id: 0 - new Date().getTime(), quesno: 0, type: '填空题', startno: 1, endno: 1, branch: '不分科', score: 1 , remark: '' };
+      const obj = { id: 0 - new Date().getTime(), quesno: 0, type: '填空题', startno: 1, endno: 1, branch: '不分科', score: 1 , remark: '', child: [] };
       if (this.objectives.length > 0) {
         let objective = this.objectives[this.objectives.length - 1];
         obj.startno = objective.endno + 1;
