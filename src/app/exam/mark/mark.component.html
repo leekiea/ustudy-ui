@@ -172,7 +172,7 @@
                                     <ng-container *ngIf="markType === '标准'">
                                         <ng-container *ngIf="paper.steps.length === 0">
                                             <label for="">{{paper.questionName}}题: </label>
-                                            <input [ngStyle]="{'border-color':paper.questionName===questionName?'lightgreen':'#ddd'}" (focus)="onFocus(paper.questionName, '', paper.fullscore)" (change)="updateFullScore()" name="{{paper.questionName}}" type="text" class="form-control" id="id_{{paper.questionName}}" size="3" (keyup)="checkScore(paper.score)" [(ngModel)]="paper.score">
+                                            <input [ngStyle]="{'border-color':paper.questionName===questionName?'lightgreen':'#ddd'}" (focus)="onFocus(paper.questionName, '', paper.fullscore)" (change)="updateFullScore()" name="{{paper.questionName}}" type="number" class="form-control" id="id_{{paper.questionName}}" [(ngModel)]="paper.score" min="0" max="{{paper.fullscore}}">
                                             <br/>
                                         </ng-container>
                                         <ng-container *ngIf="paper.steps.length > 0">
@@ -180,14 +180,14 @@
                                             <br/>
                                             <ng-container *ngFor="let step of paper.steps">
                                                 <label style="padding-left: 20px" for="">{{step.name}}: </label>
-                                                <input [ngStyle]="{'border-color': (step.name === stepName || step.name === focusQuestion.stepName) ?'lightgreen':'#ddd'}" (focus)="onFocus(paper.questionName, step.name, step.fullscore)" (change)="updateFullScore()" name="{{step.name}}" type="text" class="form-control" id="id_{{step.name}}" size="3" (keyup)="checkScore(step.score)" [(ngModel)]="step.score">
+                                                <input  [ngStyle]="{'border-color': (step.name === stepName || step.name === focusQuestion.stepName) ? 'lightgreen' : '#ddd'}" (focus)="onFocus(paper.questionName, step.name, step.fullscore)" (change)="updateFullScore()" name="{{step.name}}" type="number" class="form-control" id="id_{{step.name}}" [(ngModel)]="step.score" min="0" max="{{step.fullscore}}">
                                                 <br/>
                                             </ng-container>
                                         </ng-container>
                                     </ng-container>
                                     <ng-container *ngIf="markType === '终评'">
                                         <label for="">终评分: </label>
-                                        <input (focus)="onFocus(paper.questionName, '', paper.fullscore)" (change)="updateFullScore()" name="{{paper.questionName}}" type="text" class="form-control" id="id_{{paper.questionName}}" size="3" (keyup)="checkScore(paper.score)" [(ngModel)]="paper.score">
+                                        <input (focus)="onFocus(paper.questionName, '', paper.fullscore)" (change)="updateFullScore()" name="{{paper.questionName}}" type="number" class="form-control" id="id_{{paper.questionName}}" [(ngModel)]="paper.score" min="0" max="{{paper.fullscore}}">
                                         <br/>
                                     </ng-container>
                                     <br/>

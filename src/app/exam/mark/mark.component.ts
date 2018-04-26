@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, Renderer2 }  from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, Renderer2}  from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MarkService } from './mark.service';
 import { SharedService } from '../../shared.service';
@@ -190,7 +190,6 @@ export class MarkComponent implements OnInit {
 		} else {
 			this.questionList = JSON.parse(this.route.snapshot.params.question);
 		}
-
 	}
 
     ngAfterViewInit(): void {
@@ -294,8 +293,7 @@ export class MarkComponent implements OnInit {
 			this.updateCanvas();
 			this.updateFullScore();
 		}).catch((error: any) => {
-			console.log(error.status);
-			console.log(error.statusText);
+			console.dir(error);
 			alert("无法加载试卷");
 		});
 	}	
@@ -367,6 +365,11 @@ export class MarkComponent implements OnInit {
 						this.fullScore = paper.fullscore;
 						this.questionName = paper.questionName;
 						// console.log("after update full score: " + this.fullScore);
+						let qn = this.questionName;
+						let interval = setInterval(function() {
+	                        $('#id_' + qn).focus();
+	                        clearInterval(interval);
+	                    }, 1);
 						this.updateScoreBoard();
 						return;
 					}
@@ -377,6 +380,11 @@ export class MarkComponent implements OnInit {
 						this.fullScore = paper.fullscore;
 						this.questionName = paper.questionName;
 						// console.log("after update full score: " + this.fullScore);
+						let qn = this.questionName;
+						let interval = setInterval(function() {
+	                        $('#id_' + qn).focus();
+	                        clearInterval(interval);
+	                    }, 1);
 						this.updateScoreBoard();
 						return;
 					} else if (paper.steps.length > 0) {
@@ -385,8 +393,12 @@ export class MarkComponent implements OnInit {
 								this.fullScore = step.fullscore;
 								this.questionName = paper.questionName;
 								this.stepName = step.name;
-								// console.log("after update full score: " + this.fullScore);
-								this.updateScoreBoard();
+								let qn = this.stepName;
+								let interval = setInterval(function() {
+			                        $('#id_' + qn).focus();
+			                        clearInterval(interval);
+			                    }, 1);
+			                    this.updateScoreBoard();
 								return;
 							} 
 						}
@@ -400,12 +412,6 @@ export class MarkComponent implements OnInit {
 		console.log("after update full score");
 	}
 
-	checkScore(value) {
-		console.log(`on key up `, value);
-		if ( Number(value) > Number(this.fullScore) || Number(value) < 0) {
-			alert('给分不能小于零或者大于最大分值' + this.fullScore);
-		} 
-	}
 	onFocus(questionName: string, stepName: string, fullScore: string): void {
 		console.log("get focus!!! " + questionName + " " + stepName + " " + fullScore);
 		this.editMode = "None";
@@ -765,15 +771,25 @@ export class MarkComponent implements OnInit {
 		this.progress = Math.floor(Number(num)/Number(total)*100) + '%';
 	}
 
+	validScore(value, max): boolean {
+		if ( Number(value) > Number(max) || Number(value) < 0) {
+			alert('给分不能小于零或者大于最大分值');
+			return false;
+		} 
+		return true;
+	}
+
 	submit(): void {
 		let message = "";
 		for (let group of this.mark.groups) {
 			if (group.paperSeq === this.curPage) {
 				if (group.papers[0].score !== "") {
 					this.score = group.papers[0].score;
+					if (!this.validScore(this.score, group.papers[0].fullscore)) return;
 				} else if (group.papers[0].steps.length > 0) {
 					let scoreSum = 0;
 					for (let step of group.papers[0].steps) {
+						if (!this.validScore(step.score, step.fullscore)) return;
 						scoreSum += parseFloat(step.score);
 					}
 					this.score = String(scoreSum);
@@ -786,9 +802,11 @@ export class MarkComponent implements OnInit {
 				if (this.markQuestions.length >= 2) {
 					if (group.papers[1].score !== "") {
 						this.score2 = group.papers[1].score;
+						if (!this.validScore(this.score2, group.papers[1].fullscore)) return;
 					} else if (group.papers[1].steps.length > 0) {
 						let scoreSum = 0;
 						for (let step of group.papers[1].steps) {
+							if (!this.validScore(step.score, step.fullscore)) return;
 							scoreSum += parseFloat(step.score);
 						}
 						this.score2 = String(scoreSum);
@@ -802,9 +820,11 @@ export class MarkComponent implements OnInit {
 				if (this.markQuestions.length == 3) {
 					if (group.papers[2].score !== "") {
 						this.score3 = group.papers[2].score;
+						if (!this.validScore(this.score3, group.papers[2].fullscore)) return;
 					} else if (group.papers[2].steps.length > 0) {
 						let scoreSum = 0;
 						for (let step of group.papers[2].steps) {
+							if (!this.validScore(step.score, step.fullscore)) return;
 							scoreSum += parseFloat(step.score);
 						}
 						this.score3 = String(scoreSum);
