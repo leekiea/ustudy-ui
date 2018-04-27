@@ -56,19 +56,19 @@
 				</div>
                 <div class="panel-footer" >
                     <div class="online-marking-wrap">
-                        <ng-container *ngIf="enablePaint">
+                        <ng-container>
                             <div ngDraggable class="control extra clearfix drag-block" data-toggle="buttons" style="bottom: 15px;left: 15px;" (edge)="checkEdge($event)" [bounds]="markPanel" [inBounds]="inBounds">
                                 <span class="control-drag"><i class="iconfont-optionvertical"></i></span>
                                 <a (click)='addBestAnswer()' title="标注优秀"><i class="iconfont-bestanswer"></i></a>
                                 <a (click)='addFAQ()' title="标注FAQ"><i class="iconfont-faq"></i></a>
                                 <a (click)='addQueerAnswer()' title="标注奇葩"><i class="iconfont-queerflower"></i></a>
-                                <a (click)='drawLine()' title="双横线"><i class="iconfont-markdoubleline"></i></a>
+                                <!--<a (click)='drawLine()' title="双横线"><i class="iconfont-markdoubleline"></i></a>
                                 <a (click)='drawCircle()' title="圈注"><i class="iconfont-markcircle"></i></a>
                                 <a (click)='addHelp()' title="疑问"><i class="iconfont-help"></i></a>
                                 <a (click)='addLike()' title="点赞"><i class="iconfont-like"></i></a>
-                                <a (click)='drawText()' title="文字批注"><i class="iconfont-marktext"></i></a>
+                                <a (click)='drawText()' title="文字批注"><i class="iconfont-marktext"></i></a>-->
                                 <a (click)='clear()' title="清除"><i class="iconfont-remove"></i></a>
-                                <a (click)='addMarkScore()' title="批注给分"><i class="iconfont-markgrade"></i></a>
+                                <a  *ngIf="!displayScoreBoard" (click)='addMarkScore()' title="批注给分"><i class="iconfont-markgrade"></i></a>
                             </div>
                         </ng-container>
                     </div>
@@ -95,13 +95,6 @@
                             <div class="checkbox clear-margin-bottom">
                                 <label>
                                     <input type="checkbox" name="scoreBoardSwitch" [checked]="displayScoreBoard" (change)="displayScoreBoard = !displayScoreBoard"> 打分板
-                                </label>
-                            </div>
-                        </div>
-                        <div class="pull-right">
-                            <div class="checkbox clear-margin-bottom">
-                                <label>
-                                    <input type="checkbox" name="paintSwitch" [checked]="enablePaint" (change)="enablePaint = !enablePaint"> 批注阅卷
                                 </label>
                             </div>
                         </div>
@@ -231,5 +224,21 @@
 			</form>
 		</div>
 	</div>
+
+    <!-- 阅卷提示 start -->
+    <div id="markTipModal" tabindex="-1" role="dialog" style="display: '';overflow: scroll;position: fixed;top: 0;right: 0;bottom: 0;left: 0;z-index: 1050;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">您的本题阅卷任务已结束，是否切换到下一题？</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" (click)="closeMarkTipModal(1)">是</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" (click)="closeMarkTipModal(0)">否</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 阅卷提示 end -->
 </div>
 <!-- 内容 end-->

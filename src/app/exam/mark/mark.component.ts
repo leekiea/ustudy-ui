@@ -67,9 +67,6 @@ export class MarkComponent implements OnInit {
 		stepName: ""
 	}
 
-	// paint switch
-	enablePaint = false;
-
 	// page controller
 	curPage: number = 1;
 	pageCount: number = 0; 
@@ -175,21 +172,24 @@ export class MarkComponent implements OnInit {
     }
 
 	ngOnInit(): void {
-		this.egsId = this.route.snapshot.params.egsId;
-		this.markType = this.route.snapshot.params.markType;
-		if(this.route.snapshot.params.composable === 'true') {
-			this.composable = true;
-		} else {
-			this.composable = false;
-		}
-		console.log("composable:" + this.composable);
-		this.questionName = JSON.parse(this.route.snapshot.params.question)[0].n;
-		this.markQuestions = JSON.parse(this.route.snapshot.params.question);
-		if (this.markType === "标准" && this.composable === true) {
-			this.questionList = JSON.parse(this.route.snapshot.params.questionList);
-		} else {
-			this.questionList = JSON.parse(this.route.snapshot.params.question);
-		}
+		this.route.params.subscribe(params => {
+			this.egsId = this.route.snapshot.params.egsId;
+			this.markType = this.route.snapshot.params.markType;
+			if(this.route.snapshot.params.composable === 'true') {
+				this.composable = true;
+			} else {
+				this.composable = false;
+			}
+			console.log("composable:" + this.composable);
+			this.questionName = JSON.parse(this.route.snapshot.params.question)[0].n;
+			this.markQuestions = JSON.parse(this.route.snapshot.params.question);
+			if (this.markType === "标准" && this.composable === true) {
+				this.questionList = JSON.parse(this.route.snapshot.params.questionList);
+			} else {
+				this.questionList = JSON.parse(this.route.snapshot.params.question);
+			}			
+			this.ngAfterViewInit();
+		});
 	}
 
     ngAfterViewInit(): void {
@@ -251,8 +251,7 @@ export class MarkComponent implements OnInit {
 			this.mark = data;
 			this.pageCount = this.mark.groups.length;
 			if (this.pageCount <= 0) {
-				alert("没有可阅试卷");
-				this.router.navigate(['markList']);
+				$('#setCommentModal').style.display = '';
 				return;
 			}
 			if (this.reqContent.startSeq === -1 && this.reqContent.endSeq === -1) {
@@ -1062,4 +1061,45 @@ export class MarkComponent implements OnInit {
 		this.edge = event;
 	}
 
+	closeMarkTipModal(type) {
+		if (type == 1) { //yes: jump to next question
+			$('#markTipModal').hide();
+			//1. get mark list
+			let marks: any;
+			this._markService.getMarkList().then((data: any) => {
+		      console.log('data: ' + JSON.stringify(data));
+		      marks = data.sort(this._markService.sortQuesName);
+			  //2. find the first unfinished mark question
+			  let selectedMark: any;
+		      for (let mark of marks) {
+		      	if (this._markService.getProgress(mark.progress) !== '100%') {
+		      		selectedMark = mark;
+		      		break;
+		      	}
+		      }
+				/*
+				3. route to the question with the following info
+					{
+					 questionList: getQuestionList(mark.subject), 
+					 markType: mark.markType, 
+					 composable: mark.summary[0].composable, 
+					 question: getQuestion(mark.summary[0].quesid, mark.summary[0].questionName), 
+					 egsId: mark.egsId
+					}
+				*/
+			  let questionList = this._markService.getQuestionList(selectedMark.subject, marks);
+			  let markType = selectedMark.markType;
+			  let composable = selectedMark.summary[0].composable;
+			  let question = this._markService.getQuestion(selectedMark.summary[0].quesid, selectedMark.summary[0].questionName);
+			  let egsId = selectedMark.egsId;
+			  this.router.navigate(['mark', {questionList: questionList, markType: markType, composable: composable, question: question, egsId: egsId}]);  
+		    }).catch((error: any) => {
+		      console.log(error.status);
+		      console.log(error.statusText);
+		    });
+		} else { //no: jump to mark list
+			$('#markTipModal').hide();
+			this.router.navigate(['markList']);
+		}
+	}
 }
