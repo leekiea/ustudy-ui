@@ -209,7 +209,7 @@ export class SetAnswersComponent implements OnInit {
 
         this.objectiveAnswers = data.refAnswers;
         // TODO: revise the multiselect checkboxes
-        this.checkBoxScores = data.checkBoxScores;
+        this.checkBoxScores = (data.checkBoxScores == null) ? [] : data.checkBoxScores;
 
         this.resetDatas();
         this.resetOptions();
