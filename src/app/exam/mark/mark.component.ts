@@ -53,6 +53,7 @@ export class MarkComponent implements OnInit {
 	questionList: any;
 	markQuestions: any = [];
 	progress: string;
+	progressText: string;
 	
 	// score board
 	curScore: number = 0;
@@ -206,13 +207,42 @@ export class MarkComponent implements OnInit {
 		console.log("init mark questions:" + JSON.stringify(this.markQuestions));
 		$(this.questionSelector.nativeElement).on('changed.bs.select', {t: this}, this.onQuestionChange);
 		$("#mark-progress").hover(function(){
-			console.log("mouse on");
-			$(".progress-text").toggle();
-		}, function(){
-			$(".progress-text").toggle();
-		}
+				console.log("mouse on");
+				$(".progress-text").toggle();
+			}, function(){
+				$(".progress-text").toggle();
+			}
 		);
 
+		//下拉选择
+        //切换全屏
+        let flag = false,
+            $switch = $('.is-resizefull'),
+            $switchBtn = $switch.children('i'),
+        	$switchContainer = $switch.parents('.container');
+        $switch.on('click', function () {
+            if (flag) {
+                normalScreen();
+                console.log(flag);
+            } else {
+                fullScreen();
+                console.log(flag);
+            }
+        });
+        let fullScreen = function () {
+            flag = true;
+            $switch.attr('title', '返回');
+            $('html').addClass('full-screen');
+            $switchBtn.addClass('iconfont-resizesmall').removeClass('iconfont-resizefull');
+            $('.navbar.navbar-default, .container-breadcrumb').addClass('hide');
+        };
+        let normalScreen = function () {
+            flag = false;
+            $switch.attr('title', '全屏阅卷');
+            $('html').removeClass('full-screen');
+            $switchBtn.removeClass('iconfont-resizesmall').addClass('iconfont-resizefull');
+            $('.navbar.navbar-default, .container-breadcrumb').removeClass('hide');
+        };
 		this.reload();
 	}
 
@@ -771,7 +801,8 @@ export class MarkComponent implements OnInit {
 			num += Number(this._markService.getNum(question.progress));
 			total += Number(this._markService.getTotal(question.progress));
 		}
-		this.progress = Math.floor(Number(num)/Number(total)*100) + '%';
+		this.progress = Math.floor(Number(num)/Number(total)*1000)/10 + '%';
+		this.progressText = num + '/' + total;
 	}
 
 	validScore(value, max): boolean {
