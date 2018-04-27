@@ -29,6 +29,16 @@ export class MarkListComponent implements OnInit {
       //cache the list
       console.log('data: ' + JSON.stringify(data));
       this.marks = data.sort(this._markService.sortQuesName);
+      let isFinished = true;
+      for (let mark of this.marks) {
+        if (this._markService.getProgress(mark.progress) !== '100%') {
+          isFinished = false;
+          break;
+        }
+      }
+      if (isFinished === true) {
+        alert("恭喜你，您在本次考试阅卷任务已全部结束");
+      }
     }).catch((error: any) => {
       console.log(error.status);
       console.log(error.statusText);

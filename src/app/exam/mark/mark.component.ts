@@ -173,6 +173,8 @@ export class MarkComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.route.params.subscribe(params => {
+			// flag of the first params load
+			let summary = this.mark.summary;
 			this.egsId = this.route.snapshot.params.egsId;
 			this.markType = this.route.snapshot.params.markType;
 			if(this.route.snapshot.params.composable === 'true') {
@@ -188,7 +190,9 @@ export class MarkComponent implements OnInit {
 			} else {
 				this.questionList = JSON.parse(this.route.snapshot.params.question);
 			}			
-			this.ngAfterViewInit();
+			if (summary !== undefined) {
+				this.ngAfterViewInit();
+			}
 		});
 	}
 
@@ -1077,6 +1081,11 @@ export class MarkComponent implements OnInit {
 		      		break;
 		      	}
 		      }
+		      if (selectedMark === undefined) {
+		      	alert("恭喜你，您在本次考试阅卷任务已全部结束");
+		      	this.router.navigate(['markList']);
+		      }
+
 				/*
 				3. route to the question with the following info
 					{
