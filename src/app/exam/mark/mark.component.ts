@@ -171,7 +171,7 @@ export class MarkComponent implements OnInit {
 		right: true
 	};
 
-	isFullScreen: false;
+	isFullScreen = false;
 
     constructor(private _sharedService: SharedService, private _markService: MarkService, private renderer: Renderer2, private route: ActivatedRoute, private router: Router) {
 
