@@ -320,7 +320,7 @@ export class MarkComponent implements OnInit {
 				for (let region of this.answer.regions) {
 					let interval = setInterval(function() {
                         $('#id_' + region.id + '_' + region.x + '_' + region.y).width(Math.floor($(window).width()/length));
-                        $('#id_' + region.id + '_' + region.x + '_' + region.y).height($(window).height());
+                        $('#id_' + region.id + '_' + region.x + '_' + region.y).height($(window).height() - 50);
                         clearInterval(interval);
                     }, 1);
 				}
@@ -333,7 +333,7 @@ export class MarkComponent implements OnInit {
 					for (let region of this.answer2.regions) {
 						let interval = setInterval(function() {
 	                        $('#id_' + region.id + '_' + region.x + '_' + region.y).width(Math.floor($(window).width()/length));
-	                        $('#id_' + region.id + '_' + region.x + '_' + region.y).height($(window).height());
+	                        $('#id_' + region.id + '_' + region.x + '_' + region.y).height($(window).height() - 50);
 	                        clearInterval(interval);
 	                    }, 1);
 					}
@@ -347,7 +347,7 @@ export class MarkComponent implements OnInit {
 					for (let region of this.answer3.regions) {
 						let interval = setInterval(function() {
 	                        $('#id_' + region.id + '_' + region.x + '_' + region.y).width(Math.floor($(window).width()/length));
-	                        $('#id_' + region.id + '_' + region.x + '_' + region.y).height($(window).height());
+	                        $('#id_' + region.id + '_' + region.x + '_' + region.y).height($(window).height() - 50);
 	                        clearInterval(interval);
 	                    }, 1);
 					}
