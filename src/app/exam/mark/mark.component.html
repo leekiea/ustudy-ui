@@ -33,7 +33,7 @@
                     <div class="progress-text">{{progressText}}</div>
                     <div class="control-box">
                     	<div class="extra" data-toggle="buttons">
-                            <a href="javascript:;" title="全屏阅卷" class="is-resizefull"><i class="iconfont-resizefull"></i></a>
+                            <a href="javascript:;" title="全屏阅卷" (click)="isFullScreen = !isFullScreen"><i class="iconfont-resizefull"></i></a>
                             <!--<a href="javascript:;" title="还原"><i class="iconfont-resizesmall"></i></a>
                         	<a href="javascript:;" title="放大"><i class="iconfont-zoomin"></i></a>
                         	<a href="javascript:;" title="缩小"><i class="iconfont-zoomout"></i></a>
@@ -81,9 +81,16 @@
 			</div>
 
 		</div>
-		<div class="col-sm-3">
-			<form class="online-marking-sidebar">
+		<div  class="col-sm-3"  style="z-index: 1040">
+			<form [ngDraggable]="isFullScreen === true" class="online-marking-sidebar" [ngStyle]="{transform: isFullScreen? '': 'translate(0px, 0px)'}">
                 <div #markBarHeader class="panel panel-default">
+                    <div id="hideFullScreenBtn" class="panel-heading clear-padding clearfix" [ngStyle]="{display: isFullScreen? '' : 'none'}" >
+                        <div class="pull-right">
+                            <div class="extra" data-toggle="buttons">
+                                <a href="javascript:;" title="普通阅卷" (click)="isFullScreen = !isFullScreen"><i class="iconfont-resizesmall"></i></a>
+                            </div>                            
+                        </div>
+                    </div>
                     <div class="panel-heading clear-padding clearfix">
                         <div class="pull-left">
                             <div class="extra" data-toggle="buttons">
@@ -173,7 +180,7 @@
                                             <br/>
                                             <ng-container *ngFor="let step of paper.steps">
                                                 <label style="padding-left: 20px" for="">{{step.name}}: </label>
-                                                <input  [ngStyle]="{'border-color': (step.name === stepName || step.name === focusQuestion.stepName) ? 'lightgreen' : '#ddd'}" (focus)="onFocus(paper.questionName, step.name, step.fullscore)" (change)="updateFullScore()" name="{{step.name}}" type="number" class="form-control" id="id_{{step.name}}" [(ngModel)]="step.score" min="0" max="{{step.fullscore}}">
+                                                <input  [ngStyle]="{'border-color': (step.name === stepName || step.name === focusQuestion.stepName) ? 'lightgreen' : '#ddd'}" (focus)="onFocus(paper.questionName, step.name, step.fullscore)" (change)="updateFullScore()" name="{{step.name}}" type="number" class="form-control" id="id_{{step.name}}" [(ngModel)]="step.score" min="0" max="{{step.fullscore}}" step='0.1'>
                                                 <br/>
                                             </ng-container>
                                         </ng-container>
@@ -224,6 +231,28 @@
 			</form>
 		</div>
 	</div>
+
+    <!-- 全屏阅卷 start -->
+    <div id="full_screen" tabindex="-1" [ngStyle]="{'display': (isFullScreen ? '':'none'), 'overflow': 'scroll', 'position': 'fixed', 'top': 0, 'right': 0, 'bottom': 0, 'left': 0, 'z-index': 1000}">
+        <table>
+            <tr>
+                <td *ngFor="let region of answer.regions">
+                    <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
+                </td>
+            </tr>
+            <tr [ngStyle]="{'display': markCanvas2Display}">
+                <td *ngFor="let region of answer2.regions">
+                    <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
+                </td>
+            </tr>
+            <tr [ngStyle]="{'display': markCanvas3Display}">
+                <td *ngFor="let region of answer3.regions">
+                    <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- 全屏阅卷 end -->
 
     <!-- 阅卷提示 start -->
     <div id="markTipModal" tabindex="-1" role="dialog" style="display: none;overflow: scroll;position: fixed;top: 0;right: 0;bottom: 0;left: 0;z-index: 1050;">

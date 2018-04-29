@@ -88,6 +88,7 @@ export class MarkComponent implements OnInit {
 	answer = {
 		regions: [
 			{
+				id: 0,
 				quesImg: null,
 				ansImg: null,
 				markImg: null,
@@ -109,6 +110,7 @@ export class MarkComponent implements OnInit {
 	answer2 = {
 		regions: [
 			{
+				id: 0,
 				quesImg: null,
 				ansImg: null,
 				markImg: null,
@@ -130,6 +132,7 @@ export class MarkComponent implements OnInit {
 	answer3 = {
 		regions: [
 			{
+				id: 0,
 				quesImg: null,
 				ansImg: null,
 				markImg: null,
@@ -167,6 +170,8 @@ export class MarkComponent implements OnInit {
 		left: true,
 		right: true
 	};
+
+	isFullScreen: false;
 
     constructor(private _sharedService: SharedService, private _markService: MarkService, private renderer: Renderer2, private route: ActivatedRoute, private router: Router) {
 
@@ -214,35 +219,6 @@ export class MarkComponent implements OnInit {
 			}
 		);
 
-		//下拉选择
-        //切换全屏
-        let flag = false,
-            $switch = $('.is-resizefull'),
-            $switchBtn = $switch.children('i'),
-        	$switchContainer = $switch.parents('.container');
-        $switch.on('click', function () {
-            if (flag) {
-                normalScreen();
-                console.log(flag);
-            } else {
-                fullScreen();
-                console.log(flag);
-            }
-        });
-        let fullScreen = function () {
-            flag = true;
-            $switch.attr('title', '返回');
-            $('html').addClass('full-screen');
-            $switchBtn.addClass('iconfont-resizesmall').removeClass('iconfont-resizefull');
-            $('.navbar.navbar-default, .container-breadcrumb').addClass('hide');
-        };
-        let normalScreen = function () {
-            flag = false;
-            $switch.attr('title', '全屏阅卷');
-            $('html').removeClass('full-screen');
-            $switchBtn.removeClass('iconfont-resizesmall').addClass('iconfont-resizefull');
-            $('.navbar.navbar-default, .container-breadcrumb').removeClass('hide');
-        };
 		this.reload();
 	}
 
@@ -340,17 +316,41 @@ export class MarkComponent implements OnInit {
 				this.answer.answerType = group.papers[0].answerType;
 				this.answer.questionName = group.papers[0].questionName;
 				this.answer.isMarked = group.papers[0].isMarked;
+				let length = this.answer.regions.length;
+				for (let region of this.answer.regions) {
+					let interval = setInterval(function() {
+                        $('#id_' + region.id + '_' + region.x + '_' + region.y).width(Math.floor($(window).width()/length));
+                        $('#id_' + region.id + '_' + region.x + '_' + region.y).height($(window).height());
+                        clearInterval(interval);
+                    }, 1);
+				}
 				if (this.markQuestions.length >= 2) {
 					this.answer2.regions = group.papers[1].regions;
 					this.answer2.answerType = group.papers[1].answerType;
 					this.answer2.questionName = group.papers[1].questionName;
 					this.answer2.isMarked = group.papers[1].isMarked;
+					let length = this.answer2.regions.length;
+					for (let region of this.answer2.regions) {
+						let interval = setInterval(function() {
+	                        $('#id_' + region.id + '_' + region.x + '_' + region.y).width(Math.floor($(window).width()/length));
+	                        $('#id_' + region.id + '_' + region.x + '_' + region.y).height($(window).height());
+	                        clearInterval(interval);
+	                    }, 1);
+					}
 				}
 				if (this.markQuestions.length == 3) {
 					this.answer3.regions = group.papers[2].regions;
 					this.answer3.answerType = group.papers[2].answerType;
 					this.answer3.questionName = group.papers[2].questionName;
 					this.answer3.isMarked = group.papers[2].isMarked;
+					let length = this.answer3.regions.length;
+					for (let region of this.answer3.regions) {
+						let interval = setInterval(function() {
+	                        $('#id_' + region.id + '_' + region.x + '_' + region.y).width(Math.floor($(window).width()/length));
+	                        $('#id_' + region.id + '_' + region.x + '_' + region.y).height($(window).height());
+	                        clearInterval(interval);
+	                    }, 1);
+					}
 				}
 				this.editMode = "" + this.curPage + Math.floor(new Date().getTime()/1000);
 				break;
