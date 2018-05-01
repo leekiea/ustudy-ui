@@ -25,7 +25,7 @@
     <!--已完成考试 start-->
     <div role="tabpanel" class="tab-pane active" id="finishedExam" *ngIf="tab==='classes'">
       <div class="row">
-        <div class="col-sm-12 col-lg-12">
+        <div class="col-sm-12 col-lg-7">
           <form id="editExamForm" method="post" class="form-inline" action="#">
             <div class="input-group">
               <select class="form-control" [(ngModel)]="selectedExam" name="selectedExam" (change)="reload()">
@@ -51,6 +51,13 @@
               <a class="btn btn-default" title="查询" (click)="reload()">查询</a>
             </div>
           </form>
+        </div>
+        <div class="col-sm-12 col-lg-5 text-right">
+            <div class="btn-group" role="group" aria-label="button group">
+                <!--<a href="#" class="btn btn-default" title="编辑列选项">编辑列选项</a>-->
+                <a href="#" class="btn btn-default" title="下载报表">下载报表</a>
+                <!--<a href="#" class="btn btn-default" title="保存为报表模板">保存为报表模板</a>-->
+            </div>
         </div>
       </div><br/>
       <ngx-datatable
