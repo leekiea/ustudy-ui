@@ -22,14 +22,15 @@
     <ngx-datatable-column prop="stuName" name="考生" [flexGrow]="1"></ngx-datatable-column>
     <ngx-datatable-column prop="stuId" name="学籍号" [flexGrow]="1"></ngx-datatable-column>
     <ngx-datatable-column prop="stuExamId" name="考号" [flexGrow]="1"></ngx-datatable-column>
-    <ngx-datatable-column name="班级" [flexGrow]="1">
+    <ngx-datatable-column prop="className" name="班级" [flexGrow]="1"></ngx-datatable-column>
+    <!--<ngx-datatable-column name="班级" [flexGrow]="1">
       <ng-template let-row="row" ngx-datatable-cell-template>
         <select (change)="changeClass($event, row)">
           <option value="0" selected>请选择一个班级</option>
-          <option *ngFor="let cls of grade?.classes" [value]="cls.id" [selected]="cls.id===row.classId" >{{cls.className}}</option>
+          <option *ngFor="let cls of grade?.classes" [value]="cls.id" [selected]="cls.name===row.className" >{{cls.name}}</option>
         </select>
       </ng-template>
-    </ngx-datatable-column>
+    </ngx-datatable-column>-->
   </ngx-datatable>
 </div>
 <div class="modal-footer">
