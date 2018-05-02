@@ -208,7 +208,7 @@ export class MarkComponent implements OnInit {
 			width: 'fit',
 			maxOptions: 3
 		});
-		$(this.questionSelector.nativeElement).selectpicker('val', JSON.parse(this.route.snapshot.params.question)[0].n);
+		$(this.questionSelector.nativeElement).selectpicker('val', JSON.parse(this.route.snapshot.params.question)[0].id);
 		console.log("init mark questions:" + JSON.stringify(this.markQuestions));
 		$(this.questionSelector.nativeElement).on('changed.bs.select', {t: this}, this.onQuestionChange);
 		$("#mark-progress").hover(function(){
@@ -225,21 +225,23 @@ export class MarkComponent implements OnInit {
 	onQuestionChange(event: any): void {
 		var t = event.data.t;
 		t.markQuestions = [];
-		var questionNames = $(t.questionSelector.nativeElement).val();
-		if (questionNames == null || questionNames.length === 0) {
+		var questionIds = $(t.questionSelector.nativeElement).val();
+		if (questionIds == null || questionIds.length === 0) {
 			alert("请选择题号加载试卷！");
 		}
 		
-		this.questionName = questionNames[0];
+		//this.questionName = questionIds[0];
 
-		for(let questionName of questionNames) {
+		for(let questionId of questionIds) {
 			for(let question of t.questionList) {
-				if (question.n === questionName) {
+				if (question.id === questionId) {
 					t.markQuestions.push(question);
 					break;
 				}
 			}
 		}
+
+		this.questionName = t.markQuestions[0].n;
 		
 		// load marks data based on the mark questions.
 		t.reload();

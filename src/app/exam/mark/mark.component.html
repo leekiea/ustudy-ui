@@ -20,7 +20,7 @@
                     <div class="question-box">
                         <!--<select #questionSelector class="selectpicker show-tick" data-style="btn-link" multiple data-width="fit" data-max-options="3" data-size="5">-->
                         <select #questionSelector class="selectpicker" multiple>
-                            <option *ngFor="let question of questionList" [value]="question.n">{{question.n}}</option>
+                            <option *ngFor="let question of questionList" [value]="question.id">{{question.n}}</option>
                         </select>
                     </div>
                     <div id="mark-progress" class="progress-box">
