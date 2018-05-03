@@ -34,6 +34,17 @@ export class ExamService {
     })
   }
 
+  getAllExams() {
+    return new Promise((resolve, reject) => {
+      this._sharedService.makeRequest('GET', '/api/allexams', '').then((data: any) => {
+        if (!data.data) {
+          reject('no data');
+        }
+        resolve(data.data)
+      })
+    })
+  }
+
   anaExams(params) {
     return new Promise((resolve, reject) => {
       // XXX: should use /exams/{examStatus}
@@ -220,7 +231,7 @@ export class ExamService {
           reject()
         }
       })
-    })    
+    })
   }
 
   updateMarkSwitch(egsId, markSwitch) {
