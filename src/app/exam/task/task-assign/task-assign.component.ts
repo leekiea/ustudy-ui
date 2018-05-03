@@ -34,7 +34,7 @@ export class TaskAssignComponent implements OnInit {
   questionId: string;
   questions: any;
   assignType = '平均';
-  markType = '单评';
+  markMode = '单评';
   // teacherType = '全体';
   grade: any;
   selectedQuestion: any;
@@ -50,6 +50,7 @@ export class TaskAssignComponent implements OnInit {
   gradeTeachers = [];
   subjectTeachers = [];
   ownerId: any;
+  scoreDiff = 5;
 
   constructor(private _taskService: TaskService, private route: ActivatedRoute, private router: Router, private _location: Location) { }
 
@@ -90,11 +91,12 @@ export class TaskAssignComponent implements OnInit {
           if (_.includes(['平均', '动态'], data.type)) {
             this.assignType = data.type;
           }
-          this.markType = _.isEmpty(data.finalMarkTeachersIds) ? '单评' : '双评';
+          this.markMode = _.isEmpty(data.finalMarkTeachersIds) ? '单评' : '双评';
           this.withTeachersIds = data.teachersIds;
           this.selectedTeacherIds = _.clone(this.withTeachersIds);
           this.withFinalTeachersIds = data.finalMarkTeachersIds;
           this.timeLimit = Number(data.timeLimit);
+          this.scoreDiff = Number(data.scorediff);
           this.ownerId = data.ownerId;
         })
       }
@@ -114,7 +116,9 @@ export class TaskAssignComponent implements OnInit {
       // ownerId: _.get(_.find(this.grade.groups, (group) => _.includes(group.name, this.subject)), 'owner'),
       ownerId: this.ownerId,
       finalMarkTeachersIds: _.without(this.selectedFinalTeacherIds, this.selectedTeacherIds),
-      timeLimit: this.timeLimit
+      timeLimit: this.timeLimit,
+      markMode: this.markMode,
+      scorediff: this.scoreDiff
     }).then((data) => {
       console.log(data);
       if (_.get(data, 'success')) {

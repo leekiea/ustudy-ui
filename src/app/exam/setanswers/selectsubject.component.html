@@ -36,12 +36,12 @@
 					<div class="col-sm-9 btn-toolbar">
 						<div class="extra btn-group" data-toggle="buttons" *ngIf="type === 'answers'">
 							<ng-container *ngFor="let subject of grade.subjects">
-								<button class="btn btn-primary" (click)="setAnswers(subject.id, grade.id, subject.subId, false)" *ngIf="subject.answerSet === false">{{subject.subName}}</button>
+								<button class="btn btn-primary" (click)="setAnswers(subject.id, grade.id, subject.subId)" *ngIf="subject.answerSet === false" style="margin-top:5px;margin-right:2px;">{{subject.subName}}</button>
 							</ng-container>
 						</div>
 						<div class="extra btn-group" data-toggle="buttons" *ngIf="type === 'task'">
 							<ng-container *ngFor="let subject of grade.subjects">
-								<button class="btn btn-primary" (click)="setTasks(grade.id, subject.subId, false, subject.subName)" *ngIf="subject.taskDispatch === false">{{subject.subName}}</button>
+								<button class="btn btn-primary" (click)="setTasks(grade.id, subject.subId, false, subject.subName)" *ngIf="subject.taskDispatch === false" style="margin-top:5px;margin-right:2px;">{{subject.subName}}</button>
 							</ng-container>
 						</div>
 					</div>
@@ -57,12 +57,12 @@
 					<div class="col-sm-9 btn-toolbar">
 							<div class="extra btn-group" data-toggle="buttons" *ngIf="type === 'answers'">
 								<ng-container *ngFor="let subject of grade.subjects">
-									<a class="btn btn-default" (click)="setAnswers(subject.id, grade.id, subject.subId, true)" *ngIf="subject.answerSet === true">{{subject.subName}}</a>
+									<a class="btn btn-default" (click)="setAnswers(subject.id, grade.id, subject.subId)" *ngIf="subject.answerSet === true" style="margin-top:5px;margin-right:2px;">{{subject.subName}}</a>
 								</ng-container>
 							</div>
 							<div class="extra btn-group" data-toggle="buttons" *ngIf="type === 'task'">
 								<ng-container *ngFor="let subject of grade.subjects">
-									<a class="btn btn-default" [routerLink]="['/viewTasks',{gradeId:grade.id,subjectId:subject.subId,examId:examId,seted:seted}]" *ngIf="subject.taskDispatch === true">{{subject.subName}}</a>
+									<a class="btn btn-default" [routerLink]="['/viewTasks',{gradeId:grade.id,subjectId:subject.subId,examId:examId,seted:seted}]" *ngIf="subject.taskDispatch === true" style="margin-top:5px;margin-right:2px;">{{subject.subName}}</a>
 								</ng-container>
 							</div>
 					</div>

@@ -20,7 +20,7 @@
                     <div class="question-box">
                         <!--<select #questionSelector class="selectpicker show-tick" data-style="btn-link" multiple data-width="fit" data-max-options="3" data-size="5">-->
                         <select #questionSelector class="selectpicker" multiple>
-                            <option *ngFor="let question of questionList" [value]="question.n">{{question.n}}</option>
+                            <option *ngFor="let question of questionList" [value]="question.id">{{question.n}}</option>
                         </select>
                     </div>
                     <div id="mark-progress" class="progress-box">
@@ -30,18 +30,18 @@
                             </div>
                         </div>
                     </div>
-                    <div class="progress-text">{{mark.progress}}</div>
+                    <div class="progress-text">{{progressText}}</div>
                     <div class="control-box">
                     	<div class="extra" data-toggle="buttons">
-                            <a href="javascript:;" title="全屏阅卷"><i class="iconfont-resizefull"></i></a>
-                            <!--<a href="javascript:;" title="还原"><i class="iconfont-resizesmall"></i></a>-->
+                            <a href="javascript:;" title="全屏阅卷" (click)="isFullScreen = !isFullScreen"><i class="iconfont-resizefull"></i></a>
+                            <!--<a href="javascript:;" title="还原"><i class="iconfont-resizesmall"></i></a>
                         	<a href="javascript:;" title="放大"><i class="iconfont-zoomin"></i></a>
                         	<a href="javascript:;" title="缩小"><i class="iconfont-zoomout"></i></a>
                         	<a href="javascript:;" title="查看试题"><i class="iconfont-questions"></i></a>
                         	<a href="javascript:;" title="标准答案"><i class="iconfont-standardanswer"></i></a>
                         	<a href="javascript:;" title="查看整卷"><i class="iconfont-examinationcenter"></i></a>
                         	<a href="markingSearch.html" title="查找本人已阅试题"><i class="iconfont-search"></i></a>
-                        	<a href="javascript:;" title="即时通讯"><i class="iconfont-im"></i></a>
+                        	<a href="javascript:;" title="即时通讯"><i class="iconfont-im"></i></a>-->
                         </div>
                     </div>
 				</div>
@@ -54,23 +54,25 @@
                         </div>
 					</div>
 				</div>
-				<div class="panel-footer" >
-					<div class="online-marking-wrap">
-                    	<div ngDraggable class="control extra clearfix drag-block" data-toggle="buttons" style="bottom: 15px;left: 15px;" (edge)="checkEdge($event)" [bounds]="markPanel" [inBounds]="inBounds">
-                            <span class="control-drag"><i class="iconfont-optionvertical"></i></span>
-                        	<a (click)='addBestAnswer()' title="标注优秀"><i class="iconfont-bestanswer"></i></a>
-                        	<a (click)='addFAQ()' title="标注FAQ"><i class="iconfont-faq"></i></a>
-                        	<a (click)='addQueerAnswer()' title="标注奇葩"><i class="iconfont-queerflower"></i></a>
-                        	<a (click)='drawLine()' title="双横线"><i class="iconfont-markdoubleline"></i></a>
-                        	<a (click)='drawCircle()' title="圈注"><i class="iconfont-markcircle"></i></a>
-                        	<a (click)='addHelp()' title="疑问"><i class="iconfont-help"></i></a>
-                        	<a (click)='addLike()' title="点赞"><i class="iconfont-like"></i></a>
-                        	<a (click)='drawText()' title="文字批注"><i class="iconfont-marktext"></i></a>
-                        	<a (click)='clear()' title="清除"><i class="iconfont-remove"></i></a>
-                        	<a (click)='addMarkScore()' title="批注给分"><i class="iconfont-markgrade"></i></a>
-                        </div>
-					</div>
-				</div>
+                <div class="panel-footer" >
+                    <div class="online-marking-wrap">
+                        <ng-container>
+                            <div ngDraggable class="control extra clearfix drag-block" data-toggle="buttons" style="bottom: 15px;left: 15px;" (edge)="checkEdge($event)" [bounds]="markPanel" [inBounds]="inBounds">
+                                <span class="control-drag"><i class="iconfont-optionvertical"></i></span>
+                                <a (click)='addBestAnswer()' title="标注优秀"><i class="iconfont-bestanswer"></i></a>
+                                <a (click)='addFAQ()' title="标注FAQ"><i class="iconfont-faq"></i></a>
+                                <a (click)='addQueerAnswer()' title="标注奇葩"><i class="iconfont-queerflower"></i></a>
+                                <!--<a (click)='drawLine()' title="双横线"><i class="iconfont-markdoubleline"></i></a>
+                                <a (click)='drawCircle()' title="圈注"><i class="iconfont-markcircle"></i></a>
+                                <a (click)='addHelp()' title="疑问"><i class="iconfont-help"></i></a>
+                                <a (click)='addLike()' title="点赞"><i class="iconfont-like"></i></a>
+                                <a (click)='drawText()' title="文字批注"><i class="iconfont-marktext"></i></a>-->
+                                <a (click)='clear()' title="清除"><i class="iconfont-remove"></i></a>
+                                <a  *ngIf="!displayScoreBoard" (click)='addMarkScore()' title="批注给分"><i class="iconfont-markgrade"></i></a>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
                 <div class="panel-footer border">
                     <ng-container *ngFor="let question of statistics">
                         <div class="online-marking-statistics text-center">{{question.questionName}}题： 平均给分：<span>{{question.avgScore}}</span>/已阅题：<span>{{getNum(question.progress)}}</span></div>
@@ -79,9 +81,16 @@
 			</div>
 
 		</div>
-		<div class="col-sm-3">
-			<form class="online-marking-sidebar">
-                <div #markBarHeader class="panel panel-default">
+		<div  class="col-sm-3"  style="z-index: 1040">
+			<form [ngDraggable]="isFullScreen === true" class="online-marking-sidebar" [ngStyle]="{transform: isFullScreen? '': 'translate(0px, 0px)'}">
+                <div #markBarHeader id="markBarHeader" class="panel panel-default">
+                    <div id="hideFullScreenBtn" class="panel-heading clear-padding clearfix" [ngStyle]="{display: isFullScreen? '' : 'none'}" >
+                        <div class="pull-right">
+                            <div class="extra" data-toggle="buttons">
+                                <a href="javascript:;" title="普通阅卷" (click)="isFullScreen = !isFullScreen"><i class="iconfont-resizesmall"></i></a>
+                            </div>                            
+                        </div>
+                    </div>
                     <div class="panel-heading clear-padding clearfix">
                         <div class="pull-left">
                             <div class="extra" data-toggle="buttons">
@@ -117,13 +126,13 @@
                     <div *ngIf="displayScoreBoard === true && toNum(fullScore) < 20 && composable === true" class="panel-body border clear-border-top ">
                         <div class="extra margin-top margin-left clearfix" data-toggle="buttons">
                             <a *ngFor="let score of scoreList" (click)="setScore(score)" class="btn btn-default btn-block btn-online-marking-score pull-left">{{score}}</a>
-                            <a (click)="setScore('PROBLEM')" class="btn btn-default pull-right">问题卷</a>
+                            <!-- <a (click)="setScore('PROBLEM')" class="btn btn-default pull-right">问题卷</a> -->
                         </div>
                     </div>
                     <div *ngIf="displayScoreBoard === true && composable === false" class="panel-body border clear-border-top ">
                         <div class="extra margin-top margin-left clearfix" data-toggle="buttons">
                             <a *ngFor="let digit of digits" (click)="setDigit(digit)" class="btn btn-default pull-left">{{digit}}</a>
-                            <a (click)="setScore('PROBLEM')" class="btn btn-default pull-right">问题卷</a>
+                            <!-- <a (click)="setScore('PROBLEM')" class="btn btn-default pull-right">问题卷</a> -->
                         </div>
                     </div>
                     <div *ngIf="markType === '终评'" class="panel-body clear-padding clearfix">
@@ -155,15 +164,18 @@
                         </ng-container>
                     </div>
                 </div>
+                <div style="background-color: #fff;">
+                    <br/>
+                </div>
                 <div #markBarBody style="overflow-y: auto;">
-                    <div class="form-group form-inline">
+                    <div class="form-group form-inline" style="background-color: #fff;">
                         <ng-container *ngFor="let group of mark.groups">
                             <ng-container *ngIf="group.paperSeq === curPage">
                                 <ng-container *ngFor="let paper of group.papers">
                                     <ng-container *ngIf="markType === '标准'">
                                         <ng-container *ngIf="paper.steps.length === 0">
                                             <label for="">{{paper.questionName}}题: </label>
-                                            <input [ngStyle]="{'border-color':paper.questionName===questionName?'lightgreen':'#ddd'}" (focus)="onFocus(paper.questionName, '', paper.fullscore)" (change)="updateFullScore()" name="{{paper.questionName}}" type="text" class="form-control" id="id_{{paper.questionName}}" size="3" (keyup)="checkScore(paper.score)" [(ngModel)]="paper.score">
+                                            <input [ngStyle]="{'border-color':paper.questionName===questionName?'lightgreen':'#ddd'}" (focus)="onFocus(paper.questionName, '', paper.fullscore)" (change)="updateFullScore()" name="{{paper.questionName}}" type="number" class="form-control" id="id_{{paper.questionName}}" [(ngModel)]="paper.score" min="0" max="{{paper.fullscore}}">
                                             <br/>
                                         </ng-container>
                                         <ng-container *ngIf="paper.steps.length > 0">
@@ -171,14 +183,14 @@
                                             <br/>
                                             <ng-container *ngFor="let step of paper.steps">
                                                 <label style="padding-left: 20px" for="">{{step.name}}: </label>
-                                                <input [ngStyle]="{'border-color': (step.name === stepName || step.name === focusQuestion.stepName) ?'lightgreen':'#ddd'}" (focus)="onFocus(paper.questionName, step.name, step.fullscore)" (change)="updateFullScore()" name="{{step.name}}" type="text" class="form-control" id="id_{{step.name}}" size="3" (keyup)="checkScore(step.score)" [(ngModel)]="step.score">
+                                                <input  [ngStyle]="{'border-color': (step.name === stepName || step.name === focusQuestion.stepName) ? 'lightgreen' : '#ddd'}" (focus)="onFocus(paper.questionName, step.name, step.fullscore)" (change)="updateFullScore()" name="{{step.name}}" type="number" class="form-control" id="id_{{step.name}}" [(ngModel)]="step.score" min="0" max="{{step.fullscore}}" step='0.1'>
                                                 <br/>
                                             </ng-container>
                                         </ng-container>
                                     </ng-container>
                                     <ng-container *ngIf="markType === '终评'">
                                         <label for="">终评分: </label>
-                                        <input (focus)="onFocus(paper.questionName, '', paper.fullscore)" (change)="updateFullScore()" name="{{paper.questionName}}" type="text" class="form-control" id="id_{{paper.questionName}}" size="3" (keyup)="checkScore(paper.score)" [(ngModel)]="paper.score">
+                                        <input (focus)="onFocus(paper.questionName, '', paper.fullscore)" (change)="updateFullScore()" name="{{paper.questionName}}" type="number" class="form-control" id="id_{{paper.questionName}}" [(ngModel)]="paper.score" min="0" max="{{paper.fullscore}}">
                                         <br/>
                                     </ng-container>
                                     <br/>
@@ -186,10 +198,10 @@
                             </ng-container>
                         </ng-container>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="background-color: #fff;">
                         <button (click)="submit()" type="button" class="btn btn-success btn-block">提交</button>
                     </div>
-                    <div class="panel-footer text-center">
+                    <div class="panel-footer text-center" style="background-color: #fff;">
                         <!-- 翻页 start -->
                         <ul class="pagination">
                             <li [ngClass]="firstPageEnabled">
@@ -222,5 +234,43 @@
 			</form>
 		</div>
 	</div>
+
+    <!-- 全屏阅卷 start -->
+    <div id="full_screen" tabindex="-1" [ngStyle]="{'display': (isFullScreen ? '':'none'), 'overflow': 'scroll', 'position': 'fixed', 'top': 0, 'right': 0, 'bottom': 0, 'left': 0, 'z-index': 1000}">
+        <table>
+            <tr>
+                <td *ngFor="let region of answer.regions">
+                    <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
+                </td>
+            </tr>
+            <tr [ngStyle]="{'display': markCanvas2Display}">
+                <td *ngFor="let region of answer2.regions">
+                    <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
+                </td>
+            </tr>
+            <tr [ngStyle]="{'display': markCanvas3Display}">
+                <td *ngFor="let region of answer3.regions">
+                    <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- 全屏阅卷 end -->
+
+    <!-- 阅卷提示 start -->
+    <div id="markTipModal" tabindex="-1" role="dialog" style="display: none;overflow: scroll;position: fixed;top: 0;right: 0;bottom: 0;left: 0;z-index: 1050;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">您的本题阅卷任务已结束，是否切换到下一题？</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" (click)="closeMarkTipModal(1)">是</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" (click)="closeMarkTipModal(0)">否</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 阅卷提示 end -->
 </div>
-<!-- 内容 end -->
+<!-- 内容 end-->

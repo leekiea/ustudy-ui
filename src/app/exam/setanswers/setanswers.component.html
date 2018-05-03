@@ -166,22 +166,26 @@
 											<span class="input-group-addon clear-border clear-bg" *ngIf="subjective.type === '填空题'">至</span>
 											<input type="text" class="form-control" size="5" id="subjective_end_{{subjective.id}}" value="{{subjective.endno}}" *ngIf="subjective.type === '填空题'" (change)="onSubjectiveValueChange('end',subjective.id,0)">
 										</div>
-										<div class="input-group pull-right" style="display: none;">
-											<a class="btn btn-link" (click)="removeOneSubjectiveRow(subjective.id,0)">
-												<i class="glyphicon glyphicon-trash"></i>
-											</a>
-										</div>
+										<ng-container *ngIf="subjective.step == null">
+											<ng-container *ngIf="subjective.child == null">
+												<div class="input-group pull-right">
+													<a class="btn btn-link" (click)="addRemark(subjective.id,0,0)">
+														<i class="glyphicon glyphicon-comment"></i>
+													</a>
+												</div>
+											</ng-container>
+										</ng-container>
 									</td>
 									<td *ngIf="issynthesize">
 										<select id="subjective_subject_{{subjective.id}}" class="form-control" (change)="onSubjectiveValueChange('subject',subjective.id,0)">
 											<ng-container *ngFor="let subject of subjects">
-												<option *ngIf="subjective.subject === subject.name" selected="selected" value="{{subject.name}}">{{subject.name}}</option>
-												<option *ngIf="subjective.subject !== subject.name" value="{{subject.name}}">{{subject.name}}</option>
+												<option *ngIf="subjective.branch === subject.name" selected="selected" value="{{subject.name}}">{{subject.name}}</option>
+												<option *ngIf="subjective.branch !== subject.name" value="{{subject.name}}">{{subject.name}}</option>
 											</ng-container>
 										</select>
 									</td>
 									<td>
-										<select id="subjective_type_{{subjective.id}}" class="form-control" (change)="onSubjectiveValueChange('type',subjective.id,0)">
+										<select id="subjective_type_{{subjective.id}}_0_0" class="form-control" (change)="onSubjectiveValueChange('type',subjective.id,0,0)">
 											<option *ngIf="subjective.type === '填空题'" selected="selected" value="填空题">填空题</option>
 											<option *ngIf="subjective.type !== '填空题'" value="填空题">填空题</option>
 											<option *ngIf="subjective.type === '解答题'" selected="selected" value="解答题">解答题</option>
@@ -196,56 +200,149 @@
 									</td>
 									<td>
 										<div class="input-group">
-											<input type="number" class="form-control" size="5" id="subjective_score_{{subjective.id}}" value="{{subjective.score}}" (change)="onSubjectiveValueChange('score',subjective.id,0)" style="width:80px;">
+											<input type="number" class="form-control" size="5" id="subjective_score_{{subjective.id}}_0_0" value="{{subjective.score}}" (change)="onSubjectiveValueChange('score',subjective.id,0,0)" style="width:80px;">
 											<ng-container *ngIf="subjective.type !== '填空题'">
 												<span class="input-group-addon clear-border clear-bg">分</span>
 											</ng-container>
 											<ng-container *ngIf="subjective.type === '填空题'">
 												<span class="input-group-addon clear-border clear-bg">分/题</span>
 											</ng-container>
+											<div class="input-group pull-right" *ngIf="subjective.type === '填空题'">
+												<a class="btn btn-link" (click)="setScore(subjective.id)">
+													<i class="glyphicon glyphicon-cog"></i>
+												</a>
+											</div>
 											<div class="input-group pull-right" *ngIf="subjective.type !== '填空题'">
-												<a class="btn btn-link" (click)="addOneSubjectiveRow(subjective.id)">
-													<i class="glyphicon glyphicon-plus" ></i>
-												</a>
-												<a class="btn btn-link" style="display:none;">
-													<i class="glyphicon glyphicon-screenshot"></i>
-												</a>
+												<ng-container *ngIf="subjective.step == null">
+													<a class="btn btn-link" (click)="addOneSubjectiveRow(subjective.id)">
+														<i class="glyphicon glyphicon-plus" ></i>
+													</a>
+												</ng-container>
+												<ng-container *ngIf="subjective.child == null">
+													<a class="btn btn-link" (click)="addOneSubjectiveStep(subjective.id,0)">
+														<i class="glyphicon glyphicon-list"></i>
+													</a>
+												</ng-container>
 											</div>
 										</div>
 									</td>
 								</tr>
 								<ng-container *ngIf="subjective.type !== '填空题'">
-									<tr class="child" *ngFor="let child of subjective.child">
+									<ng-container  *ngFor="let child of subjective.child">
+										<tr class="child">
+											<td>
+												{{subjective.startno}}.{{child.quesno}}
+												<div class="input-group pull-right">
+													<a class="btn btn-link" (click)="addRemark(subjective.id,child.id,0)">
+														<i class="glyphicon glyphicon-comment"></i>
+													</a>
+													<a class="btn btn-link" (click)="removeOneSubjectiveRow(subjective.id,child.quesno)">
+														<i class="glyphicon glyphicon-trash"></i>
+													</a>
+												</div>
+											</td>
+											<td *ngIf="issynthesize">
+												<select  id="subjective_subject_{{subjective.id}}_{{child.id}}_0" class="form-control" (change)="onSubjectiveValueChange('subject',subjective.id,child.id,0)">
+													<ng-container *ngFor="let subject of subjects">
+														<option *ngIf="child.branch === subject.name" selected="selected" value="{{subject.name}}">{{subject.name}}</option>
+														<option *ngIf="child.branch !== subject.name" value="{{subject.name}}">{{subject.name}}</option>
+													</ng-container>
+												</select>
+											</td>
+											<td>
+												<select id="subjective_type_{{subjective.id}}_{{child.id}}_0" class="form-control" (change)="onSubjectiveValueChange('type',subjective.id,child.id,0)">
+													<option *ngIf="child.type === '解答题'" selected="selected" value="解答题">解答题</option>
+													<option *ngIf="child.type !== '解答题'" value="解答题">解答题</option>
+													<option *ngIf="child.type === '证明题'" selected="selected" value="证明题">证明题</option>
+													<option *ngIf="child.type !== '证明题'" value="证明题">证明题</option>
+													<option *ngIf="child.type === '论述题'" selected="selected" value="论述题">论述题</option>
+													<option *ngIf="child.type !== '论述题'" value="论述题">论述题</option>
+													<option *ngIf="child.type === '作文题'" selected="selected" value="作文题">作文题</option>
+													<option *ngIf="child.type !== '作文题'" value="作文题">作文题</option>
+												</select>
+											</td>
+											<td>
+												<input type="number" class="form-control" size="5" id="subjective_score_{{subjective.id}}_{{child.id}}_0" value="{{child.score}}" (change)="onSubjectiveValueChange('score',subjective.id,child.id,0)" style="width:80px;"> 分
+												<div class="input-group pull-right1">
+													<a class="btn btn-link" (click)="addOneSubjectiveStep(subjective.id,child.id)">
+														<i class="glyphicon glyphicon-list"></i>
+													</a>
+												</div>
+											</td>
+										</tr>
+										<ng-container  *ngFor="let step of child.steps">
+											<tr class="child">
+												<td>
+													({{step.step}})
+													<div class="input-group pull-right">
+														<a class="btn btn-link" (click)="addRemark(subjective.id,child.id,step.id)">
+															<i class="glyphicon glyphicon-comment"></i>
+														</a>
+														<a class="btn btn-link" (click)="removeOneSubjectiveStep(subjective.id,child.id,step.id)">
+															<i class="glyphicon glyphicon-trash"></i>
+														</a>
+													</div>
+												</td>
+												<td *ngIf="issynthesize">
+													<select  id="subjective_subject_{{subjective.id}}_{{child.id}}_{{step.id}}" class="form-control" (change)="onSubjectiveValueChange('subject',subjective.id,child.id,step.id)">
+														<ng-container *ngFor="let subject of subjects">
+															<option *ngIf="step.subject === subject.name" selected="selected" value="{{subject.name}}">{{subject.name}}</option>
+															<option *ngIf="step.subject !== subject.name" value="{{subject.name}}">{{subject.name}}</option>
+														</ng-container>
+													</select>
+												</td>
+												<td>
+													<select id="subjective_type_{{subjective.id}}_{{child.id}}_{{step.id}}" class="form-control" (change)="onSubjectiveValueChange('type',subjective.id,child.id,step.id)">
+														<option *ngIf="step.type === '解答题'" selected="selected" value="解答题">解答题</option>
+														<option *ngIf="step.type !== '解答题'" value="解答题">解答题</option>
+														<option *ngIf="step.type === '证明题'" selected="selected" value="证明题">证明题</option>
+														<option *ngIf="step.type !== '证明题'" value="证明题">证明题</option>
+														<option *ngIf="step.type === '论述题'" selected="selected" value="论述题">论述题</option>
+														<option *ngIf="step.type !== '论述题'" value="论述题">论述题</option>
+														<option *ngIf="step.type === '作文题'" selected="selected" value="作文题">作文题</option>
+														<option *ngIf="step.type !== '作文题'" value="作文题">作文题</option>
+													</select>
+												</td>
+												<td>
+													<input type="number" class="form-control" size="5" id="subjective_score_{{subjective.id}}_{{child.id}}_{{step.id}}" value="{{step.score}}" (change)="onSubjectiveValueChange('score',subjective.id,child.id,step.id)" style="width:80px;"> 分
+												</td>
+											</tr>
+										</ng-container>
+									</ng-container>
+									<tr class="child" *ngFor="let step of subjective.step">
 										<td>
-											{{subjective.startno}}.{{child.quesno}}
+											({{step.step}})
 											<div class="input-group pull-right">
-												<a class="btn btn-link" (click)="removeOneSubjectiveRow(subjective.id,child.quesno)">
+												<a class="btn btn-link" (click)="addRemark(subjective.id,0,step.id)">
+													<i class="glyphicon glyphicon-comment"></i>
+												</a>
+												<a class="btn btn-link" (click)="removeOneSubjectiveStep(subjective.id,0,step.id)">
 													<i class="glyphicon glyphicon-trash"></i>
 												</a>
 											</div>
 										</td>
 										<td *ngIf="issynthesize">
-											<select  id="subjective_subject_{{subjective.id}}_{{child.quesno}}" class="form-control" (change)="onSubjectiveValueChange('subject',subjective.id,child.quesno)">
+											<select  id="subjective_subject_{{subjective.id}}_0_{{step.id}}" class="form-control" (change)="onSubjectiveValueChange('subject',subjective.id,0,step.id)">
 												<ng-container *ngFor="let subject of subjects">
-													<option *ngIf="child.subject === subject.name" selected="selected" value="{{subject.name}}">{{subject.name}}</option>
-													<option *ngIf="child.subject !== subject.name" value="{{subject.name}}">{{subject.name}}</option>
+													<option *ngIf="step.subject === subject.name" selected="selected" value="{{subject.name}}">{{subject.name}}</option>
+													<option *ngIf="step.subject !== subject.name" value="{{subject.name}}">{{subject.name}}</option>
 												</ng-container>
 											</select>
 										</td>
 										<td>
-											<select id="subjective_type_{{subjective.id}}_{{child.quesno}}" class="form-control" (change)="onSubjectiveValueChange('type',subjective.id,child.quesno)">
-												<option *ngIf="child.type === '解答题'" selected="selected" value="解答题">解答题</option>
-												<option *ngIf="child.type !== '解答题'" value="解答题">解答题</option>
-												<option *ngIf="child.type === '证明题'" selected="selected" value="证明题">证明题</option>
-												<option *ngIf="child.type !== '证明题'" value="证明题">证明题</option>
-												<option *ngIf="child.type === '论述题'" selected="selected" value="论述题">论述题</option>
-												<option *ngIf="child.type !== '论述题'" value="论述题">论述题</option>
-												<option *ngIf="child.type === '作文题'" selected="selected" value="作文题">作文题</option>
-												<option *ngIf="child.type !== '作文题'" value="作文题">作文题</option>
+											<select id="subjective_type_{{subjective.id}}_0_{{step.id}}" class="form-control" (change)="onSubjectiveValueChange('type',subjective.id,0,step.id)">
+												<option *ngIf="step.type === '解答题'" selected="selected" value="解答题">解答题</option>
+												<option *ngIf="step.type !== '解答题'" value="解答题">解答题</option>
+												<option *ngIf="step.type === '证明题'" selected="selected" value="证明题">证明题</option>
+												<option *ngIf="step.type !== '证明题'" value="证明题">证明题</option>
+												<option *ngIf="step.type === '论述题'" selected="selected" value="论述题">论述题</option>
+												<option *ngIf="step.type !== '论述题'" value="论述题">论述题</option>
+												<option *ngIf="step.type === '作文题'" selected="selected" value="作文题">作文题</option>
+												<option *ngIf="step.type !== '作文题'" value="作文题">作文题</option>
 											</select>
 										</td>
 										<td>
-											<input type="number" class="form-control" size="5" id="subjective_score_{{subjective.id}}_{{child.quesno}}" value="{{child.score}}" (change)="onSubjectiveValueChange('score',subjective.id,child.quesno)" style="width:80px;">
+											<input type="number" class="form-control" size="5" id="subjective_score_{{subjective.id}}_0_{{step.id}}" value="{{step.score}}" (change)="onSubjectiveValueChange('score',subjective.id,0,step.id)" style="width:80px;"> 分
 										</td>
 									</tr>
 								</ng-container>
@@ -263,7 +360,7 @@
 		</div>		
 	</div>
 	<!-- 多选题答案得分设置 start -->
-	 <div id="infoModal" tabindex="-1" role="dialog" style="display: none;overflow: hidden;position: fixed;top: 0;right: 0;bottom: 0;left: 0;z-index: 1050;">
+	<div id="infoModal" tabindex="-1" role="dialog" style="display: none;overflow: scroll;position: fixed;top: 0;right: 0;bottom: 0;left: 0;z-index: 1050;">
 		<form id="infoForm" method="post" class="form-horizontal" action="#">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
@@ -346,5 +443,88 @@
 		</form>
 	</div>
 	<!-- 多选题答案得分设置 end -->
+	
+	<!-- 填空题得分设置 start -->
+	<div id="setScoreModal" tabindex="-1" role="dialog" style="display: none;overflow: scroll;position: fixed;top: 0;right: 0;bottom: 0;left: 0;z-index: 1050;">
+		<form id="setScoreForm" method="post" class="form-horizontal" action="#">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeSetCompletionScoreModal()"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">填空题分值设置</h4>
+					</div>
+					<div class="modal-body">
+						<div class="panel-heading">
+							<h4 class="clear-margin"><strong>设置得分：</strong></h4>
+						</div>
+						<div class="panel-body">
+							<div class="form-group">
+								<div class="col-sm-1 btn-toolbar"></div>
+								<div class="col-sm-11 btn-toolbar">
+									<table class="table table-hover table-bordered form-inline">
+										<thead>
+											<tr>
+												<th>题目</th>
+												<th>分值</th>
+											</tr>
+										</thead>
+										<tbody>
+											<ng-container *ngFor="let child of completions.child">
+												<tr>
+													<td>{{child.quesno}}</td>
+													<td>
+														<div class="extra" data-toggle="buttons">
+															<input type="number" class="form-control" id="setScore_{{completions.id}}_{{child.quesno}}" size="5" value="{{child.score}}" (change)="setCompletionScore(completions.id,child.quesno)" style="width:80px;">分
+														</div>
+													</td>
+												</tr>
+											</ng-container>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal" (click)="closeSetCompletionScoreModal()">取消</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal" (click)="closeSetCompletionScoreModal()">确定</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 填空题得分设置 end -->
+
+	<!-- 阅卷备注注释 start -->
+	<div id="setCommentModal" tabindex="-1" role="dialog" style="display: none;overflow: scroll;position: fixed;top: 0;right: 0;bottom: 0;left: 0;z-index: 1050;">
+		<form id="setCommentForm" method="post" class="form-horizontal" action="#">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeSetCommentModal(0)"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">添加阅卷注释</h4>
+					</div>
+					<div class="modal-body">
+						<div class="panel-body">
+							<div class="form-group">
+								<div class="col-sm-1 btn-toolbar"></div>
+								<div class="col-sm-11 btn-toolbar">
+									<div class="extra" data-toggle="buttons">
+										<textarea class="form-control" id="qes_comment" rows="5" cols="300" value="asdfasdf">{{comment.text}}</textarea>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal" (click)="closeSetCommentModal(0)">取消</button>
+						<button type="button" class="btn btn-success" data-dismiss="modal" (click)="closeSetCommentModal(1)">确定</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 阅卷备注注释 end -->
+
 </div>
 <!-- 内容 end -->

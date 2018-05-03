@@ -25,7 +25,7 @@
     <div role="tabpanel" class="tab-pane active" id="finishedExam" *ngIf="tab==='examinee'">
       <div class="row">
         <div class="col-sm-4">
-          <select class="form-control" [(ngModel)]="selectedExam">
+          <select class="form-control" [(ngModel)]="selectedExam" (change)="reload()">
             <option *ngFor="let exam of exams | async, let i = index" [selected]="i==0" [ngValue]="exam">
               {{exam.examName}}
             </option>
@@ -81,6 +81,24 @@
           </form>
         </div>
       </div><br>
+      <div class="row margin-vertical">
+          <div class="col-sm-12 col-lg-6">
+              <!--<div class="checkbox">
+                  <label>
+                      <input type="checkbox"> 借读生
+                  </label>
+              </div>-->
+          </div>
+          <div class="col-sm-12 col-lg-6 text-right">
+              <div class="btn-group" role="group" aria-label="button group">
+                  <!--<a href="eidtRowExamineeAchievement.html" class="btn btn-default" title="编辑行选项">编辑行选项</a>
+                  <a href="eidtColExamineeAchievement.html" class="btn btn-default" title="编辑列选项">编辑列选项</a>-->
+                  <a href="#" class="btn btn-default" title="下载报表">下载报表</a>
+                  <!--<a href="#" class="btn btn-default" title="保存为报表模板">保存为报表模板</a>-->
+             </div>
+          </div>
+      </div>
+
       <ngx-datatable
         #examineeTable
         style="width: 100%"
@@ -187,7 +205,7 @@
 <ng-template #viewAnswerTemplate>
   <div class="modal-header">
     <h4 class="modal-title pull-left">答案</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+    <button type="button" class="close pull-right" aria-label="Close" (click)="paperModalRef.hide()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>

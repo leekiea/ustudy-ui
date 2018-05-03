@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, Renderer2 }  from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, Renderer2}  from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MarkService } from './mark.service';
 import { SharedService } from '../../shared.service';
@@ -53,6 +53,7 @@ export class MarkComponent implements OnInit {
 	questionList: any;
 	markQuestions: any = [];
 	progress: string;
+	progressText: string;
 	
 	// score board
 	curScore: number = 0;
@@ -87,6 +88,7 @@ export class MarkComponent implements OnInit {
 	answer = {
 		regions: [
 			{
+				id: 0,
 				quesImg: null,
 				ansImg: null,
 				markImg: null,
@@ -108,6 +110,7 @@ export class MarkComponent implements OnInit {
 	answer2 = {
 		regions: [
 			{
+				id: 0,
 				quesImg: null,
 				ansImg: null,
 				markImg: null,
@@ -129,6 +132,7 @@ export class MarkComponent implements OnInit {
 	answer3 = {
 		regions: [
 			{
+				id: 0,
 				quesImg: null,
 				ansImg: null,
 				markImg: null,
@@ -167,27 +171,35 @@ export class MarkComponent implements OnInit {
 		right: true
 	};
 
+	isFullScreen = false;
+
     constructor(private _sharedService: SharedService, private _markService: MarkService, private renderer: Renderer2, private route: ActivatedRoute, private router: Router) {
 
     }
 
 	ngOnInit(): void {
-		this.egsId = this.route.snapshot.params.egsId;
-		this.markType = this.route.snapshot.params.markType;
-		if(this.route.snapshot.params.composable === 'true') {
-			this.composable = true;
-		} else {
-			this.composable = false;
-		}
-		console.log("composable:" + this.composable);
-		this.questionName = JSON.parse(this.route.snapshot.params.question)[0].n;
-		this.markQuestions = JSON.parse(this.route.snapshot.params.question);
-		if (this.markType === "标准" && this.composable === true) {
-			this.questionList = JSON.parse(this.route.snapshot.params.questionList);
-		} else {
-			this.questionList = JSON.parse(this.route.snapshot.params.question);
-		}
-
+		this.route.params.subscribe(params => {
+			// flag of the first params load
+			let summary = this.mark.summary;
+			this.egsId = this.route.snapshot.params.egsId;
+			this.markType = this.route.snapshot.params.markType;
+			if(this.route.snapshot.params.composable === 'true') {
+				this.composable = true;
+			} else {
+				this.composable = false;
+			}
+			console.log("composable:" + this.composable);
+			this.questionName = JSON.parse(this.route.snapshot.params.question)[0].n;
+			this.markQuestions = JSON.parse(this.route.snapshot.params.question);
+			if (this.markType === "标准" && this.composable === true) {
+				this.questionList = JSON.parse(this.route.snapshot.params.questionList);
+			} else {
+				this.questionList = JSON.parse(this.route.snapshot.params.question);
+			}			
+			if (summary !== undefined) {
+				this.ngAfterViewInit();
+			}
+		});
 	}
 
     ngAfterViewInit(): void {
@@ -196,15 +208,15 @@ export class MarkComponent implements OnInit {
 			width: 'fit',
 			maxOptions: 3
 		});
-		$(this.questionSelector.nativeElement).selectpicker('val', JSON.parse(this.route.snapshot.params.question)[0].n);
+		$(this.questionSelector.nativeElement).selectpicker('val', JSON.parse(this.route.snapshot.params.question)[0].id);
 		console.log("init mark questions:" + JSON.stringify(this.markQuestions));
 		$(this.questionSelector.nativeElement).on('changed.bs.select', {t: this}, this.onQuestionChange);
 		$("#mark-progress").hover(function(){
-			console.log("mouse on");
-			$(".progress-text").toggle();
-		}, function(){
-			$(".progress-text").toggle();
-		}
+				console.log("mouse on");
+				$(".progress-text").toggle();
+			}, function(){
+				$(".progress-text").toggle();
+			}
 		);
 
 		this.reload();
@@ -213,21 +225,23 @@ export class MarkComponent implements OnInit {
 	onQuestionChange(event: any): void {
 		var t = event.data.t;
 		t.markQuestions = [];
-		var questionNames = $(t.questionSelector.nativeElement).val();
-		if (questionNames == null || questionNames.length === 0) {
+		var questionIds = $(t.questionSelector.nativeElement).val();
+		if (questionIds == null || questionIds.length === 0) {
 			alert("请选择题号加载试卷！");
 		}
 		
-		this.questionName = questionNames[0];
+		//this.questionName = questionIds[0];
 
-		for(let questionName of questionNames) {
+		for(let questionId of questionIds) {
 			for(let question of t.questionList) {
-				if (question.n === questionName) {
+				if (question.id === questionId) {
 					t.markQuestions.push(question);
 					break;
 				}
 			}
 		}
+
+		this.questionName = t.markQuestions[0].n;
 		
 		// load marks data based on the mark questions.
 		t.reload();
@@ -249,8 +263,7 @@ export class MarkComponent implements OnInit {
 			this.mark = data;
 			this.pageCount = this.mark.groups.length;
 			if (this.pageCount <= 0) {
-				alert("没有可阅试卷");
-				this.router.navigate(['markList']);
+				$('#setCommentModal').style.display = '';
 				return;
 			}
 			if (this.reqContent.startSeq === -1 && this.reqContent.endSeq === -1) {
@@ -291,8 +304,7 @@ export class MarkComponent implements OnInit {
 			this.updateCanvas();
 			this.updateFullScore();
 		}).catch((error: any) => {
-			console.log(error.status);
-			console.log(error.statusText);
+			console.dir(error);
 			alert("无法加载试卷");
 		});
 	}	
@@ -306,19 +318,43 @@ export class MarkComponent implements OnInit {
 				this.answer.answerType = group.papers[0].answerType;
 				this.answer.questionName = group.papers[0].questionName;
 				this.answer.isMarked = group.papers[0].isMarked;
+				let length = this.answer.regions.length;
+				for (let region of this.answer.regions) {
+					let interval = setInterval(function() {
+                        $('#id_' + region.id + '_' + region.x + '_' + region.y).width(Math.floor($(window).width()/length));
+                        $('#id_' + region.id + '_' + region.x + '_' + region.y).height($(window).height() - 50);
+                        clearInterval(interval);
+                    }, 1);
+				}
 				if (this.markQuestions.length >= 2) {
 					this.answer2.regions = group.papers[1].regions;
 					this.answer2.answerType = group.papers[1].answerType;
 					this.answer2.questionName = group.papers[1].questionName;
 					this.answer2.isMarked = group.papers[1].isMarked;
+					let length = this.answer2.regions.length;
+					for (let region of this.answer2.regions) {
+						let interval = setInterval(function() {
+	                        $('#id_' + region.id + '_' + region.x + '_' + region.y).width(Math.floor($(window).width()/length));
+	                        $('#id_' + region.id + '_' + region.x + '_' + region.y).height($(window).height() - 50);
+	                        clearInterval(interval);
+	                    }, 1);
+					}
 				}
 				if (this.markQuestions.length == 3) {
 					this.answer3.regions = group.papers[2].regions;
 					this.answer3.answerType = group.papers[2].answerType;
 					this.answer3.questionName = group.papers[2].questionName;
 					this.answer3.isMarked = group.papers[2].isMarked;
+					let length = this.answer3.regions.length;
+					for (let region of this.answer3.regions) {
+						let interval = setInterval(function() {
+	                        $('#id_' + region.id + '_' + region.x + '_' + region.y).width(Math.floor($(window).width()/length));
+	                        $('#id_' + region.id + '_' + region.x + '_' + region.y).height($(window).height() - 50);
+	                        clearInterval(interval);
+	                    }, 1);
+					}
 				}
-				this.editMode = "" + this.curPage + Math.round(new Date().getTime()/1000);
+				this.editMode = "" + this.curPage + Math.floor(new Date().getTime()/1000);
 				break;
 			}
 		}
@@ -364,6 +400,11 @@ export class MarkComponent implements OnInit {
 						this.fullScore = paper.fullscore;
 						this.questionName = paper.questionName;
 						// console.log("after update full score: " + this.fullScore);
+						let qn = this.questionName;
+						let interval = setInterval(function() {
+	                        $('#id_' + qn).focus();
+	                        clearInterval(interval);
+	                    }, 1);
 						this.updateScoreBoard();
 						return;
 					}
@@ -374,6 +415,11 @@ export class MarkComponent implements OnInit {
 						this.fullScore = paper.fullscore;
 						this.questionName = paper.questionName;
 						// console.log("after update full score: " + this.fullScore);
+						let qn = this.questionName;
+						let interval = setInterval(function() {
+	                        $('#id_' + qn).focus();
+	                        clearInterval(interval);
+	                    }, 1);
 						this.updateScoreBoard();
 						return;
 					} else if (paper.steps.length > 0) {
@@ -382,8 +428,12 @@ export class MarkComponent implements OnInit {
 								this.fullScore = step.fullscore;
 								this.questionName = paper.questionName;
 								this.stepName = step.name;
-								// console.log("after update full score: " + this.fullScore);
-								this.updateScoreBoard();
+								let qn = this.stepName;
+								let interval = setInterval(function() {
+			                        $('#id_' + qn).focus();
+			                        clearInterval(interval);
+			                    }, 1);
+			                    this.updateScoreBoard();
 								return;
 							} 
 						}
@@ -397,12 +447,6 @@ export class MarkComponent implements OnInit {
 		console.log("after update full score");
 	}
 
-	checkScore(value) {
-		console.log(`on key up `, value);
-		if ( Number(value) > Number(this.fullScore) || Number(value) < 0) {
-			alert('给分不能小于零或者大于最大分值' + this.fullScore);
-		} 
-	}
 	onFocus(questionName: string, stepName: string, fullScore: string): void {
 		console.log("get focus!!! " + questionName + " " + stepName + " " + fullScore);
 		this.editMode = "None";
@@ -759,7 +803,16 @@ export class MarkComponent implements OnInit {
 			num += Number(this._markService.getNum(question.progress));
 			total += Number(this._markService.getTotal(question.progress));
 		}
-		this.progress = Math.round(Number(num)/Number(total)*100) + '%';
+		this.progress = Math.floor(Number(num)/Number(total)*1000)/10 + '%';
+		this.progressText = num + '/' + total;
+	}
+
+	validScore(value, max): boolean {
+		if ( Number(value) > Number(max) || Number(value) < 0) {
+			alert('给分不能小于零或者大于最大分值');
+			return false;
+		} 
+		return true;
 	}
 
 	submit(): void {
@@ -768,9 +821,11 @@ export class MarkComponent implements OnInit {
 			if (group.paperSeq === this.curPage) {
 				if (group.papers[0].score !== "") {
 					this.score = group.papers[0].score;
+					if (!this.validScore(this.score, group.papers[0].fullscore)) return;
 				} else if (group.papers[0].steps.length > 0) {
 					let scoreSum = 0;
 					for (let step of group.papers[0].steps) {
+						if (!this.validScore(step.score, step.fullscore)) return;
 						scoreSum += parseFloat(step.score);
 					}
 					this.score = String(scoreSum);
@@ -783,9 +838,11 @@ export class MarkComponent implements OnInit {
 				if (this.markQuestions.length >= 2) {
 					if (group.papers[1].score !== "") {
 						this.score2 = group.papers[1].score;
+						if (!this.validScore(this.score2, group.papers[1].fullscore)) return;
 					} else if (group.papers[1].steps.length > 0) {
 						let scoreSum = 0;
 						for (let step of group.papers[1].steps) {
+							if (!this.validScore(step.score, step.fullscore)) return;
 							scoreSum += parseFloat(step.score);
 						}
 						this.score2 = String(scoreSum);
@@ -799,9 +856,11 @@ export class MarkComponent implements OnInit {
 				if (this.markQuestions.length == 3) {
 					if (group.papers[2].score !== "") {
 						this.score3 = group.papers[2].score;
+						if (!this.validScore(this.score3, group.papers[2].fullscore)) return;
 					} else if (group.papers[2].steps.length > 0) {
 						let scoreSum = 0;
 						for (let step of group.papers[2].steps) {
+							if (!this.validScore(step.score, step.fullscore)) return;
 							scoreSum += parseFloat(step.score);
 						}
 						this.score3 = String(scoreSum);
@@ -1039,4 +1098,50 @@ export class MarkComponent implements OnInit {
 		this.edge = event;
 	}
 
+	closeMarkTipModal(type) {
+		if (type == 1) { //yes: jump to next question
+			$('#markTipModal').hide();
+			//1. get mark list
+			let marks: any;
+			this._markService.getMarkList().then((data: any) => {
+		      console.log('data: ' + JSON.stringify(data));
+		      marks = data.sort(this._markService.sortQuesName);
+			  //2. find the first unfinished mark question
+			  let selectedMark: any;
+		      for (let mark of marks) {
+		      	if (this._markService.getProgress(mark.progress) !== '100%') {
+		      		selectedMark = mark;
+		      		break;
+		      	}
+		      }
+		      if (selectedMark === undefined) {
+		      	alert("恭喜你，您在本次考试阅卷任务已全部结束");
+		      	this.router.navigate(['markList']);
+		      }
+
+				/*
+				3. route to the question with the following info
+					{
+					 questionList: getQuestionList(mark.subject), 
+					 markType: mark.markType, 
+					 composable: mark.summary[0].composable, 
+					 question: getQuestion(mark.summary[0].quesid, mark.summary[0].questionName), 
+					 egsId: mark.egsId
+					}
+				*/
+			  let questionList = this._markService.getQuestionList(selectedMark.subject, marks);
+			  let markType = selectedMark.markType;
+			  let composable = selectedMark.summary[0].composable;
+			  let question = this._markService.getQuestion(selectedMark.summary[0].quesid, selectedMark.summary[0].questionName);
+			  let egsId = selectedMark.egsId;
+			  this.router.navigate(['mark', {questionList: questionList, markType: markType, composable: composable, question: question, egsId: egsId}]);  
+		    }).catch((error: any) => {
+		      console.log(error.status);
+		      console.log(error.statusText);
+		    });
+		} else { //no: jump to mark list
+			$('#markTipModal').hide();
+			this.router.navigate(['markList']);
+		}
+	}
 }

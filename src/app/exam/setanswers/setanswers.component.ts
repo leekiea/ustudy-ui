@@ -28,23 +28,28 @@ export class SetAnswersComponent implements OnInit {
 
   allsubjects = [];
 
+  // subject answers displayed in the UI
   subjects = [
     { id: 0, name: '不分科' }
   ];
 
   selectOptions = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-
+  
+  // object answers displayed in the UI
   objectives = [
     // {id:1, quesno:0, startno:1,endno:2,type:'单选题',choiceNum:4,score:1},
     // {id:2, quesno:0, startno:3,endno:4,type:'多选题',choiceNum:6,score:1},
     // {id:3, quesno:0, startno:5,endno:6,type:'判断题',choiceNum:2,score:1}
   ];
 
+  // answers that will be submitted to server side
   objectiveAnswers = [];
 
   radioScore = 0;
   checkboxScore = 0;
   judgmentScore = 0;
+
+  // object full score
   objectiveScore = 0;
 
   constructor(private _sharedService: SharedService, public fb: FormBuilder, private elementRef: ElementRef, private route: ActivatedRoute, private router: Router) {
@@ -56,29 +61,9 @@ export class SetAnswersComponent implements OnInit {
     this.examId = this.route.snapshot.params.examId;
     this.gradeId = this.route.snapshot.params.gradeId;
     this.subjectId = this.route.snapshot.params.subjectId;
-    this.seted = this.route.snapshot.params.seted;
 
-    this.loaAlldSubjects();
-
-    this.allsubjects.forEach(subject => {
-      if (this.subjectId === subject.id) {
-        if (subject.type === '1' || subject.type === '2') {
-          this.issynthesize = true;
-          this.allsubjects.forEach(subject_ => {
-            if (subject.type === '1' && subject_.type === '3') {
-              this.subjects.push(subject_);
-            } else if (subject.type === '2' && subject_.type === '4') {
-              this.subjects.push(subject_);
-            }
-          })
-        }
-      }
-    });
-
-    if (this.seted) {
-      this.getQuesAnswers(this.egsId, this.examId, this.gradeId, this.subjectId);
-    }
-
+    this.loadAllSubjects();
+    this.getQuesAnswers(this.egsId, this.examId, this.gradeId, this.subjectId);
   }
 
   resetOptions() {
@@ -131,15 +116,15 @@ export class SetAnswersComponent implements OnInit {
         objective.startno = objective.quesno;
         objective.endno = objective.quesno;
       }
-      objectives_.push(objective);
       this.addAnswers(objective);
+      // TODO: revise multiselect questions
       this.setDefaultCheckBoxScore(objective);
+      objectives_.push(objective);
     });
     this.objectives = objectives_;
 
     var subjectives_ = [];
     this.subjectives.forEach(subjective => {
-      subjective.branch = '不分科';
       if (subjective.type !== '填空题') {
         if (subjective.quesno !== 0) {
           subjective.startno = subjective.quesno;
@@ -152,10 +137,11 @@ export class SetAnswersComponent implements OnInit {
               subjective.quesno = subjective.startno;
               subjectives_.push(subjective);
             } else {
+              // TODO: why doing this?
               const start = subjective.startno;
               const end = subjective.endno;
               for (var i = start; i <= end; i++) {
-                var obj = '{"id":' + new Date().getTime() + ',"type":"' + subjective.type + '","startno":' + i + ',"endno":' + i + ',"quesno":' + i + ',"branch":"不分科","score":' + subjective.score + '}';
+                var obj = '{"id":' + new Date().getTime() + ',"type":"' + subjective.type + '","startno":' + i + ',"endno":' + i + ',"quesno":' + i + ',"branch":' + subjective.branch + ',"score":' + subjective.score + '}';
                 subjectives_.push(JSON.parse(obj));
               }
             }
@@ -166,6 +152,7 @@ export class SetAnswersComponent implements OnInit {
           }
         }
       } else {
+        // TODO: how does this happen?
         if (subjective.startno === 0 || subjective.endno === 0) {
           subjective.startno = subjective.quesno;
           subjective.endno = subjective.quesno;
@@ -178,10 +165,24 @@ export class SetAnswersComponent implements OnInit {
     this.setSubjectivesScore();
   }
 
-  loaAlldSubjects() {
+  loadAllSubjects() {
     this._sharedService.makeRequest('GET', '/api/subjects', '').then((data: any) => {
       if (data.success) {
         this.allsubjects = data.data;
+        this.allsubjects.forEach(subject => {
+          if (Number(this.subjectId) === subject.id) {
+            if (subject.type === '1' || subject.type === '2') {
+              this.issynthesize = true;
+              this.allsubjects.forEach(subject_ => {
+                if (subject.type === '1' && subject_.type === '3') {
+                  this.subjects.push(subject_);
+                } else if (subject.type === '2' && subject_.type === '4') {
+                  this.subjects.push(subject_);
+                }
+              })
+            }
+          }
+        });
       }
     }).catch((error: any) => {
       console.log(error.status);
@@ -202,13 +203,13 @@ export class SetAnswersComponent implements OnInit {
           if (type === '单选题' || type === '多选题' || type === '判断题') {
             this.objectives.push(quesAnswer);
           } else {
-            quesAnswer.branch = '不分科';
             this.subjectives.push(quesAnswer);
           }
         });
 
         this.objectiveAnswers = data.refAnswers;
-        this.checkBoxScores = data.checkBoxScores;
+        // TODO: revise the multiselect checkboxes
+        this.checkBoxScores = (data.checkBoxScores == null) ? [] : data.checkBoxScores;
 
         this.resetDatas();
         this.resetOptions();
@@ -238,18 +239,19 @@ export class SetAnswersComponent implements OnInit {
 
   removeOneRow(id) {
     const _objectives = [];
-    for (var i = 0; i < this.objectives.length; i++) {
+    for (let i = 0; i < this.objectives.length; i++) {
       const objective = this.objectives[i];
       if (objective && objective['id'] !== id) {
         _objectives.push(objective);
       } else {
-        this.removeAnswers(objective)
+        this.removeAnswers(objective);
         this.removeScore(objective);
       }
     }
     this.objectives = _objectives;
   }
 
+  // prepare objective answers based on data returned from server side
   addAnswers(objective) {
 
     let type = objective['type'];
@@ -264,6 +266,7 @@ export class SetAnswersComponent implements OnInit {
         end = objective['quesno'];
       }
       let score = objective['score'];
+
       let totalScore = (end - start + 1) * score;
       this.objectiveScore = this.objectiveScore + totalScore;
 
@@ -274,14 +277,13 @@ export class SetAnswersComponent implements OnInit {
         _option.push({ name: 'Y', checked: false });
         _option.push({ name: 'N', checked: false });
       } else {
-        for (var i = 0; i < choiceNum; i++) {
+        for (let i = 0; i < choiceNum; i++) {
           let checked = false;
-          //if (i === 0) checked = true;
           _option.push({ name: this.selectOptions[i], checked: checked });
         }
       }
 
-      for (var j = start; j <= end; j++) {
+      for (let j = start; j <= end; j++) {
         var answersSeted = false;
         this.objectiveAnswers.forEach(objectiveAnswer => {
           if (objectiveAnswer.quesno === j) {
@@ -290,10 +292,7 @@ export class SetAnswersComponent implements OnInit {
         });
 
         if (!answersSeted) {
-          const answer = { quesno: j, type: objective.type, choiceNum: objective.choiceNum, options: _option, answer: '', branch: '不分科' };
-          // if (type === '判断题') {
-          //   answer.answer = 'Y';
-          // }
+          const answer = { quesno: j, type: objective.type, choiceNum: objective.choiceNum, options: _option, answer: '', branch: objective.branch };
           this.objectiveAnswers.push(answer);
         }
       }
@@ -318,9 +317,10 @@ export class SetAnswersComponent implements OnInit {
     let start = objective['startno'];
     let end = objective['endno'];
     let type = objective['type'];
-    for (var j = 0; j < this.objectiveAnswers.length; j++) {
+    for (let j = 0; j < this.objectiveAnswers.length; j++) {
       const answer = this.objectiveAnswers[j];
       const quesno = answer['quesno'];
+      //TODO: if startno != endno, the quesno is always 0.
       if (!(quesno >= start && quesno <= end && answer['type'] === type)) {
         answers.push(answer);
       }
@@ -369,8 +369,8 @@ export class SetAnswersComponent implements OnInit {
         }
       }
 
-      for (var j = newStart; j < oldStart; j++) {
-        var answersSeted = false;
+      for (let j = newStart; j < oldStart; j++) {
+        let answersSeted = false;
         this.objectiveAnswers.forEach(objectiveAnswer => {
           if (objectiveAnswer.quesno === j) {
             answersSeted = true;
@@ -542,8 +542,8 @@ export class SetAnswersComponent implements OnInit {
 
         if (valueType === 1) {
           var start = Number(this.elementRef.nativeElement.querySelector('#start_' + id).value);
-          if (!start || start < 1 || start > obj['endno']) {
-            start = obj['startno'];
+          if (!start || start < 1) {
+            start = start_;
           } else {
             obj['startno'] = start;
           }
@@ -552,7 +552,7 @@ export class SetAnswersComponent implements OnInit {
         } else if (valueType === 2) {
           var end = Number(this.elementRef.nativeElement.querySelector('#end_' + id).value);
           if (!end || end < 1 || end < obj['startno']) {
-            end = obj['endno'];
+            end = end_;
           } else {
             obj['endno'] = end;
           }
@@ -571,11 +571,12 @@ export class SetAnswersComponent implements OnInit {
           const choiceNum = Number(this.elementRef.nativeElement.querySelector('#option_' + id).value);
           obj['choiceNum'] = choiceNum;
           this.choiceNumValueChange(start_, end_, type_, choiceNum);
+          // TODO: why setting the checkbox value?
           this.setDefaultCheckBoxScore(obj);
         } else if (valueType === 5) {
           var score = Number(this.elementRef.nativeElement.querySelector('#score_' + id).value);
           if (!score || score < 1) {
-            score = obj['score'];
+            score = score_;
           } else {
             obj['score'] = score;
           }
@@ -626,7 +627,7 @@ export class SetAnswersComponent implements OnInit {
   //-------------------------------Subjectives--------------------------------------
 
   subjectives = [
-    { id: 0 - new Date().getTime(), quesno: 0, type: '填空题', startno: 1, endno: 10, branch: '不分科', score: 2 }
+    { id: 0 - new Date().getTime(), quesno: 0, type: '填空题', startno: 1, endno: 10, branch: '不分科', score: 2 , remark: '', child: [] }
   ];
 
   subjectiveCount = 0;
@@ -640,7 +641,13 @@ export class SetAnswersComponent implements OnInit {
     this.subjectives.forEach(subjective => {
       var count = subjective.endno - subjective.startno + 1;
       this.subjectiveCount += count;
-      this.subjectiveScore += count * subjective.score;
+      if (subjective.child != null && subjective.child.length > 0) {
+        for(let child of subjective.child) {
+          this.subjectiveScore += child.score;
+        }
+      } else {
+        this.subjectiveScore += count * subjective.score;
+      }
     })
   }
 
@@ -653,7 +660,7 @@ export class SetAnswersComponent implements OnInit {
             if (!childs) {
               childs = [];
             }
-            let child = { quesno: 1, quesid: subjective.quesno, branch: '不分科', type: subjective.type, score: 1 };
+            let child = { id: 0 - new Date().getTime(), quesno: 1, quesid: subjective.quesno, branch: '不分科', type: subjective.type, score: 1, child: [] };
             child.quesno = childs.length + 1;
             child.branch = subjective.branch;
             childs.push(child);
@@ -663,7 +670,7 @@ export class SetAnswersComponent implements OnInit {
         });
       } else {
         const obj = this.subjectives[this.subjectives.length - 1];
-        const obj_ = { id: 0 - new Date().getTime(), quesno: 0, type: '填空题', startno: 1, endno: 10, branch: '不分科', score: 2 };
+        const obj_ = { id: 0 - new Date().getTime(), quesno: 0, type: '填空题', startno: 1, endno: 10, branch: '不分科', score: 2 , remark: '', child: [] };
         if (obj['type'] === '填空题') obj_['startno'] = obj['endno'] + 1;
         else obj_['startno'] = obj['startno'] + 1;
         obj_['endno'] = obj_['startno'];
@@ -675,7 +682,7 @@ export class SetAnswersComponent implements OnInit {
       }
 
     } else {
-      const obj = { id: 0 - new Date().getTime(), quesno: 0, type: '填空题', startno: 1, endno: 1, branch: '不分科', score: 1 };
+      const obj = { id: 0 - new Date().getTime(), quesno: 0, type: '填空题', startno: 1, endno: 1, branch: '不分科', score: 1 , remark: '', child: [] };
       if (this.objectives.length > 0) {
         let objective = this.objectives[this.objectives.length - 1];
         obj.startno = objective.endno + 1;
@@ -685,6 +692,99 @@ export class SetAnswersComponent implements OnInit {
 
       this.subjectiveCount = 1;
       this.subjectiveScore = 1;
+    }
+  }
+
+  addOneSubjectiveStep(id, childId) {
+    if(this.subjectives.length > 0 && id !== 0){
+      this.subjectives.forEach(subjective => {
+        if (subjective.id === id) {
+          if(childId !== 0){
+            let childs = subjective['child'];
+            if(childs && childs.length>0){
+              const childs_ = [];
+              childs.forEach(child =>{
+                if (child.id === childId) {
+                  let steps = child.steps;
+                  if(!steps){
+                    steps = [];
+                  }
+                  if(steps.length > 0){
+                    for (let i = 0; i<steps.length; i++) {
+                      let step = steps[i];
+                      step.step = i+1;
+                    }
+                  }
+                  const step = { id: 0 - new Date().getTime(), quesno: child.quesno, type: child.type, branch: child.branch, score: 1 , 
+                    quesid: child.id, egsId: child.egsId, step: steps.length+1, remark: '' };
+                  
+                  steps.push(step);
+                  child.steps = steps;
+                }
+                childs_.push(child);
+              })
+              subjective['child'] = childs_;
+            }
+          }else{
+            let steps = subjective['step'];
+            if(!steps){
+              steps = [];
+            }
+            if(steps.length > 0){
+              for (let i = 0; i<steps.length; i++) {
+                let step = steps[i];
+                step.step = i+1;
+              }
+            }
+            const step = { id: 0 - new Date().getTime(), quesno: 0, type: subjective.type, branch: subjective.branch, score: 1 , 
+              quesid: subjective.id, egsId: subjective['examGradeSubId'], step: steps.length+1, remark: '' };
+            
+            steps.push(step);
+
+            subjective['step'] = steps;
+          }
+        }
+      })
+    }
+  }  
+
+  removeOneSubjectiveStep(id, childId, stepId) {
+    if(this.subjectives.length > 0 && id !== 0){
+      this.subjectives.forEach(subjective => {
+        if (subjective.id === id) {
+          if(childId !== 0){
+            subjective['child'].forEach(child =>{
+              if (child.id === childId) {
+                let steps = child.steps;
+                if(steps && steps.length > 0){
+                  const steps_ = [];
+                  steps.forEach(step => {
+                    if (step.id !== stepId) {
+                      step.step = steps_.length + 1;
+                      steps_.push(step);
+                    }
+                  });
+                  child['steps'] = steps_;
+                }
+              }
+            })
+          }else{
+            subjective['step'].forEach(step =>{
+              let steps = subjective['step'];
+              if(steps && steps.length > 0){
+                const steps_ = [];
+                steps.forEach(step => {
+                  if (step.id !== stepId) {
+                    step.step = steps_.length + 1;
+                    steps_.push(step);
+                  }
+                });
+                subjective['step'] = steps_;
+              }
+            })
+          }
+        }
+      })
     }
   }
 
@@ -719,82 +819,113 @@ export class SetAnswersComponent implements OnInit {
     this.subjectives = _subjectives;
   }
 
-  onSubjectiveValueChange(valueType, id, childId) {
+  onSubjectiveValueChange(valueType, id, childId, stepId) {
     this.subjectives.forEach(subjective => {
       if (subjective.id === id) {
-        if (childId > 0) {
+        if (childId !== 0) {
           let childs = subjective['child'];
           childs.forEach(child => {
-            if (child.quesno === childId) {
-              let value = this.elementRef.nativeElement.querySelector('#subjective_' + valueType + '_' + id + '_' + childId).value;
-              if (valueType === 'score') {
-                value = Number(value);
-                if (!value || value < 1) {
-                  value = child.score;
-                  this.elementRef.nativeElement.querySelector('#subjective_' + valueType + '_' + id + '_' + childId).value = value;
+            if (child.id === childId) {
+              let value = this.elementRef.nativeElement.querySelector('#subjective_' + valueType + '_' + id + '_' + childId + '_' + stepId).value;
+              if(stepId !== 0){
+                let steps = child['steps'];
+                steps.forEach(step => {
+                  if (step.id === stepId) {
+                    if (valueType === 'score') {
+                      value = Number(value);
+                      if (!value || value < 1) {
+                        value = step.score;
+                      }
+                    }
+                    step[valueType] = value;
+                  }
+                })
+              }else{
+                if (valueType === 'score') {
+                  value = Number(value);
+                  if (!value || value < 1) {
+                    value = child.score;
+                  }
                 }
+                child[valueType] = value;
               }
-              child[valueType] = value;
+              this.elementRef.nativeElement.querySelector('#subjective_' + valueType + '_' + id + '_' + childId + '_' + stepId).value = value;
             }
           });
         } else {
-
-          let value = this.elementRef.nativeElement.querySelector('#subjective_' + valueType + '_' + id).value;
-          if (valueType === 'start') {
-
-            this.subjectiveCount = this.subjectiveCount - (subjective.endno - subjective.startno + 1);
-            this.subjectiveScore = this.subjectiveScore - (subjective.endno - subjective.startno + 1) * subjective.score;
-
-            value = Number(value);
-            if (!value || value < 1) {
-              value = subjective.startno;
-            } else if (value > subjective.endno) {
-              value = subjective.endno;
+          let value = this.elementRef.nativeElement.querySelector('#subjective_' + valueType + '_' + id + '_' + childId + '_' + stepId).value;
+          
+          if(stepId !== 0){
+            let steps = subjective['step'];
+            steps.forEach(step => {
+              if (step.id === stepId) {
+                if (valueType === 'score') {
+                  value = Number(value);
+                  if (!value || value < 1) {
+                    value = step.score;
+                  }
+                }
+                step[valueType] = value;
+              }
+            })
+          }else{
+            if (valueType === 'start') {  
+              this.subjectiveCount = this.subjectiveCount - (subjective.endno - subjective.startno + 1);
+              this.subjectiveScore = this.subjectiveScore - (subjective.endno - subjective.startno + 1) * subjective.score;
+  
+              value = Number(value);
+              if (!value || value < 1) {
+                value = subjective.startno;
+              } else if (value > subjective.endno) {
+                value = subjective.endno;
+              }
+  
+              subjective.startno = value;
+              subjective.quesno = value;
+              if (subjective.endno < subjective.startno) {
+                subjective.endno = subjective.startno;
+              }
+              
+              this.subjectiveCount = this.subjectiveCount + (subjective.endno - subjective.startno + 1);
+              this.subjectiveScore = this.subjectiveScore + (subjective.endno - subjective.startno + 1) * subjective.score;
+  
+            } else if (valueType === 'end') {
+  
+              this.subjectiveCount = this.subjectiveCount - (subjective.endno - subjective.startno + 1);
+              this.subjectiveScore = this.subjectiveScore - (subjective.endno - subjective.startno + 1) * subjective.score;
+  
+              value = Number(value);
+              if (!value || value < 1) {
+                value = subjective.endno;
+              } else if (value < subjective.startno) {
+                value = subjective.startno;
+              }
+              
+              subjective.endno = value;
+              if (subjective.endno < subjective.startno) {
+                subjective.startno = subjective.endno;
+                subjective.quesno = subjective.endno;
+              }
+              
+              this.subjectiveCount = this.subjectiveCount + (subjective.endno - subjective.startno + 1);
+              this.subjectiveScore = this.subjectiveScore + (subjective.endno - subjective.startno + 1) * subjective.score;
+              
+            } else if (valueType === 'type') {
+              subjective[valueType] = value;
+            } else if (valueType === 'score') {
+              
+              value = Number(value);
+              if (!value || value < 1) {
+                value = subjective.score;
+              }
+              
+              if(subjective.child == null || subjective.child.length <= 0) {
+                this.subjectiveScore = this.subjectiveScore + (subjective.endno - subjective.startno + 1) * (value - subjective.score);
+              }
+              subjective[valueType] = value;
             }
-
-            subjective.startno = value;
-            subjective.quesno = value;
-            if (subjective.endno < subjective.startno) {
-              subjective.endno = subjective.startno;
-            }
-
-            this.subjectiveCount = this.subjectiveCount + (subjective.endno - subjective.startno + 1);
-            this.subjectiveScore = this.subjectiveScore + (subjective.endno - subjective.startno + 1) * subjective.score;
-
-          } else if (valueType === 'end') {
-
-            this.subjectiveCount = this.subjectiveCount - (subjective.endno - subjective.startno + 1);
-            this.subjectiveScore = this.subjectiveScore - (subjective.endno - subjective.startno + 1) * subjective.score;
-
-            value = Number(value);
-            if (!value || value < 1) {
-              value = subjective.endno;
-            } else if (value < subjective.startno) {
-              value = subjective.startno;
-            }
-
-            subjective.endno = value;
-            if (subjective.endno < subjective.startno) {
-              subjective.startno = subjective.endno;
-              subjective.quesno = subjective.endno;
-            }
-
-            this.subjectiveCount = this.subjectiveCount + (subjective.endno - subjective.startno + 1);
-            this.subjectiveScore = this.subjectiveScore + (subjective.endno - subjective.startno + 1) * subjective.score;
-
-          } else if (valueType === 'type') {
-            subjective[valueType] = value;
-          } else if (valueType === 'score') {
-
-            value = Number(value);
-            if (!value || value < 1) {
-              value = subjective.score;
-            }
-
-            this.subjectiveScore = this.subjectiveScore + (subjective.endno - subjective.startno + 1) * (value - subjective.score);
-            subjective[valueType] = value;
           }
-          this.elementRef.nativeElement.querySelector('#subjective_' + valueType + '_' + id).value = value;
+          this.elementRef.nativeElement.querySelector('#subjective_' + valueType + '_' + id + '_' + childId + '_' + stepId).value = value;
         }
       }
     });
@@ -810,31 +941,210 @@ export class SetAnswersComponent implements OnInit {
 
   initCheckBoxScores(choiceNum, score) {
 
-    var size = 0;
-    if(choiceNum > 1){
-      for (var i = 1; i < choiceNum; i++) {
-        size = size + 1;
+    let maxChoiceNum = 0;
+    for (let objective of this.objectives) {
+      if (objective.type === '多选题') {
+        if (objective.choiceNum > maxChoiceNum) {
+          maxChoiceNum = objective.choiceNum;
+        }
       }
     }
 
-    this.objectiveChoiceNum = choiceNum;
+    //expected choice range 2 ~ x
+    var size = 0;
+    if(maxChoiceNum > 1){
+      for (let i = 1; i < maxChoiceNum; i++) {
+        size = size + 1;
+      }
+    } else {
+      return;
+    }
+
+    this.objectiveChoiceNum = maxChoiceNum;
     this.objectiveScore_ = score;
-    this.currentCheckBox = 2;
-    if (this.checkBoxScores.length !== size) {
-      this.checkBoxScores = [];
-      for (var i = 2; i <= choiceNum; i++) {
+    this.currentCheckBox = choiceNum;
+    let boxLength = this.checkBoxScores.length;
+    if (boxLength > size) {
+      for (let i = 0; i < boxLength - size; i++) {
+        this.checkBoxScores.pop();
+      }
+    } else if (boxLength < size) {
+      for (let i = boxLength; i < size; i++) {
         let scores_ = [];
-        for (var j = 1; j < i; j++) {
+        for (let j = 1; j <= i + 1; j++) {
           scores_.push({ count: j, score: 0 });
         }
-        this.checkBoxScores.push({ size: i, seted: false, scores: scores_ });
+        this.checkBoxScores.push({ size: i+2, seted: false, scores: scores_ });
       }
     }
+  }  
+
+  //completions = {}
+  completions = { id: 0 - new Date().getTime(), quesno: 0, type: '填空题', startno: 1, endno: 10, branch: '不分科', score: 2, remark:'',child:[] };
+
+  setScore(id) {
+    this.subjectives.forEach(element => {
+      if(element.id === id){
+        //this.completions = element;
+        this.completions.id = element.id;
+        this.completions.quesno = element.quesno;
+        this.completions.type = element.type;
+        this.completions.startno = element.startno;
+        this.completions.endno = element.endno;
+        this.completions.branch = element.branch;
+        this.completions.score = element.score;
+        if(element['child'] === null){
+          var childs = [];
+          for(var i=element.startno;i<=element.endno;i++){
+            var child = { id: 0 - new Date().getTime(), quesno: i, quesid: element.id, branch: element.branch, type: element.type, score: element.score };
+            childs.push(child);
+          }
+          this.completions.child = childs;
+          element['child'] = childs;
+        }else{
+          this.completions.child = element['child'];
+        }
+      }
+    });
+    var childs = this.completions['child']
+    for(var i=0;i<childs.length-1;i++){
+      for(var j=i+1;j<childs.length;j++){
+        if(childs[i].quesno > childs[j].quesno){
+          var child = childs[i];
+          childs[i] = childs[j];          
+          childs[j] = child;
+        }
+      }
+    }
+    this.completions['child'] = childs
+    this.elementRef.nativeElement.querySelector('#setScoreModal').style.display = '';
+  }
+
+  setCompletionScore(completionId,quesno){
+    let score = Number(this.elementRef.nativeElement.querySelector('#setScore_' + completionId + '_' + quesno).value);
+    this.subjectives.forEach(element => {
+      if(element.id === completionId){
+        element['child'].forEach(child => {
+          if(child.quesno === quesno){
+            this.subjectiveScore -= child.score
+            child.score = score;
+            this.subjectiveScore += score
+          }
+        });
+      }
+    });
+  }
+
+  closeSetCompletionScoreModal(){
+    this.elementRef.nativeElement.querySelector('#setScoreModal').style.display = 'none';
+  }
+
+  comment  = {subjective:0,child:0,step:0,text:''}
+
+  addRemark(subjectiveId,childId,stepId){
+
+    if(subjectiveId != 0){
+      this.comment.subjective = subjectiveId;
+      this.comment.child = childId;
+      this.comment.step = stepId;
+      this.subjectives.forEach(element => {
+        if(element.id === subjectiveId){
+          if(childId === 0){
+            if(stepId === 0){
+              if(element.remark && element.remark != null){
+                this.comment.text = element.remark;
+              }else{
+                this.comment.text = '';
+              }
+            }else{
+              element['step'].forEach(step => {
+                if(step.id === stepId){
+                  if(step.remark && step.remark != null){
+                    this.comment.text = step.remark;
+                  }else{
+                    this.comment.text = '';
+                  }
+                }
+              })
+            }
+          }else{
+            element['child'].forEach(child => {
+              if(child.id === childId){
+                if(stepId === 0){
+                  if(child.remark && child.remark != null){
+                    this.comment.text = child.remark;
+                  }else{
+                    this.comment.text = '';
+                  }
+                }else{
+                  child['steps'].forEach(step => {
+                    if(step.id === stepId){
+                      if(step.remark && step.remark != null){
+                        this.comment.text = step.remark;
+                      }else{
+                        this.comment.text = '';
+                      }
+                    }
+                  })
+                }
+              }
+            })
+          }
+        }
+      });  
+    }
+    this.elementRef.nativeElement.querySelector('#qes_comment').value = this.comment.text;
+    this.elementRef.nativeElement.querySelector('#setCommentModal').style.display = '';
+  }
+
+  closeSetCommentModal(type){
+    if(this.comment.subjective !==0 && type === 1){
+      var text = this.elementRef.nativeElement.querySelector('#qes_comment').value;
+      this.subjectives.forEach(element => {
+        if(element.id === this.comment.subjective){
+          if(this.comment.child === 0){
+            if(this.comment.step === 0){
+              element.remark = text;
+            }else{
+              element['step'].forEach(step => {
+                if(step.id === this.comment.step){
+                  step.remark = text;
+                }
+              })
+            }
+          }else{
+            element['child'].forEach(child => {
+              if(child.id === this.comment.child){
+                if(this.comment.step === 0){
+                  child.remark = text;
+                }else{
+                  child['steps'].forEach(step => {
+                    if(step.id === this.comment.step){
+                      step.remark = text;
+                    }
+                  })
+                }
+              }
+            })
+          }
+        }
+      });  
+    }
+    this.elementRef.nativeElement.querySelector('#setCommentModal').style.display = 'none';
   }
 
   closeCheckBoxModal() {
     if (this.checkBoxScores.length > 0) {
-      this.checkBoxScores[this.checkBoxScores.length - 1].seted = true;
+      for(let box of this.checkBoxScores) {
+        let set: boolean = false;
+        for(let score of box.scores) {
+          if (score.score !== 0) {
+            set = true;
+            break;
+          }
+        }
+        box.seted = set;
+      }
     }
     this.elementRef.nativeElement.querySelector('#infoModal').style.display = 'none';
   }
@@ -874,11 +1184,11 @@ export class SetAnswersComponent implements OnInit {
   }
 
   setNextCheckBoxScore() {
-    this.checkBoxScores.forEach(element => {
-      if (element.size === this.currentCheckBox) {
-        element.seted = true;
-      }
-    });
+    // this.checkBoxScores.forEach(element => {
+    //   if (element.size === this.currentCheckBox) {
+    //     element.seted = true;
+    //   }
+    // });
 
     if (this.currentCheckBox < this.checkBoxScores[this.checkBoxScores.length - 1].size) {
       this.currentCheckBox = this.currentCheckBox + 1;
@@ -900,10 +1210,33 @@ export class SetAnswersComponent implements OnInit {
     this.subjectives.forEach(subjective => {
       if (subjective.type !== '填空题') {
         var childs = subjective["child"];
+        var score = subjective.score;
         if(flag && childs && childs.length > 0){
-          var score = subjective.score;
-          var totalScore = 0;
+          var childTotalScore = 0;
           childs.forEach(sc =>{
+            var childScore = sc["score"];
+            childTotalScore += sc["score"];
+            var steps = sc["steps"];
+            if(flag && steps && steps.length > 0){
+              var totalScore = 0;
+              steps.forEach(sc_ =>{
+                totalScore += sc_["score"];
+              })
+              if(childScore !== totalScore){
+                alert(subjective.type + "第 " + subjective.quesno + "." + sc.quesno + " 题分数设置有误，请检查后再次提交！");
+                flag = false;
+              }
+            }
+          })
+          if(flag && score !== childTotalScore){
+            alert(subjective.type + "第 " + subjective.quesno + " 题分数设置有误，请检查后再次提交！");
+            flag = false;
+          }
+        }
+        var steps = subjective["step"];
+        if(flag && steps && steps.length > 0){
+          var totalScore = 0;
+          steps.forEach(sc =>{
             totalScore += sc["score"];
           })
           if(score !== totalScore){

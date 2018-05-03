@@ -146,4 +146,12 @@ export class ExamListComponent implements OnInit {
       this.reloadUnfinished();
     })
   }
+
+  calScore(exam) {
+    this._examService.calScore(exam.id).then((data) => {
+      alert('考试总分发布成功');
+      this.reload();
+      this.reloadUnfinished();
+    })
+  }
 }

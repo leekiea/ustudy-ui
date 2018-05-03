@@ -57,6 +57,10 @@
 	text-align: center;
 }
 
+.online-marking-sidebar .panel-heading .iconfont-resizesmall {
+  font-size: 24px;
+}
+
 .rightfd,
 .wrongfd,
 .plus_mark {
@@ -105,6 +109,11 @@
   right: -14px;
   top: 39px;
   background-position: 0 -41px;
+}
+
+#markBarHeader {
+  margin-bottom: 1px;
+  background-color: #fff;
 }
 
 

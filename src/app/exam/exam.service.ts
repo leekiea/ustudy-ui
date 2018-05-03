@@ -38,6 +38,7 @@ export class ExamService {
     return new Promise((resolve, reject) => {
       // XXX: should use /exams/{examStatus}
       this._sharedService.makeRequest('GET', '/exam/analysis/examlist/', params).then((data: any) => {
+
         if (!data.data) {
           reject('no data');
         }
@@ -210,6 +211,18 @@ export class ExamService {
     })
   }
 
+  publishMark(egsId) {
+    return new Promise((resolve, reject) => {
+      this._sharedService.makeRequest('POST', `/api/examsubject/papers/${egsId}`, '').then((data: any) => {
+        if (data.success) {
+          resolve(data.data)
+        } else {
+          reject()
+        }
+      })
+    })    
+  }
+
   updateMarkSwitch(egsId, markSwitch) {
     return new Promise((resolve, reject) => {
       this._sharedService.makeRequest('POST', `/api/examsubject/markswitch/${egsId}/${markSwitch}`, '').then((data: any) => {
@@ -225,6 +238,18 @@ export class ExamService {
   cancelPublish(examId: any) {
     return new Promise((resolve, reject) => {
       this._sharedService.makeRequest('POST', `/api/score/publish/${examId}/${false}`, '').then((data: any) => {
+        if (data.success) {
+          resolve(data.data)
+        } else {
+          reject()
+        }
+      })
+    })
+  }
+
+  calScore(examId: any) {
+    return new Promise((resolve, reject) => {
+      this._sharedService.makeRequest('POST', `/api/score/publish/${examId}/${true}`, '').then((data: any) => {
         if (data.success) {
           resolve(data.data)
         } else {

@@ -57,11 +57,14 @@
         </td>
         <td>
           <label class="radio-inline">
-            <input type="radio" ng-controll="options" [value]="'单评'" (click)="markType='单评'" [checked]="markType=='单评'"> 单评
+            <input type="radio" ng-controll="options" [value]="'单评'" (click)="markMode='单评'" [checked]="markMode=='单评'"> 单评
           </label>
           <label class="radio-inline">
-            <input type="radio" ng-controll="options" [value]="'双评'" (click)="markType='双评'" [checked]="markType=='双评'"> 双评
+            <input type="radio" ng-controll="options" [value]="'双评'" (click)="markMode='双评'" [checked]="markMode=='双评'"> 双评
           </label>
+          <span aria-hidden="true" class="glyphicon glyphicon-wrench pull-right" style=" " *ngIf="markMode == '双评'">
+            <input style=" width: 40%; " type="number" title="分差设置（设定双评时的分差，分差内成绩取平均分，分差外试题转由终评教师阅卷）" [(ngModel)]="scoreDiff">
+          </span>
           <span aria-hidden="true" class="glyphicon glyphicon-time pull-right" style=" ">
             <input style=" width: 40%; " type="number" title="阅卷时间设置（设置最短时间，限定老师的阅卷速度，单位为秒）" [(ngModel)]="timeLimit">
           </span>
@@ -97,7 +100,7 @@
                             [without]="teachersWithoutIds" [with]="withTeachersIds"></teacher-selector>
         </td>
       </tr>
-      <tr *ngIf="markType==='双评'">
+      <tr *ngIf="markMode==='双评'">
         <td>
           终评老师选择:
         </td>

@@ -47,7 +47,6 @@ export class UnfinishedExamDetailsComponent implements OnInit {
         grade.subjects.forEach((subject) => {
           subject.gradeId = grade.gradeId;
           subject.gradeName = grade.gradeName;
-          subject.studentCount = grade.studentCount;
         })
       }
       const subjects = _.concat.apply(this, _.map(data, 'subjects'));
@@ -77,6 +76,13 @@ export class UnfinishedExamDetailsComponent implements OnInit {
     })
   }
 
+  publishMark(egsId) {
+    this._examService.publishMark(egsId).then((data) => {
+      alert('发布批注成功');
+      this.reload();
+    })
+  }
+
   updateMarkSwitch(row, markSwitch) {
     this._examService.updateMarkSwitch(row.egsId, markSwitch).then((data) => {
       alert(`${markSwitch ? '启动阅卷' : '暂停阅卷'}成功`);
@@ -86,7 +92,7 @@ export class UnfinishedExamDetailsComponent implements OnInit {
   }
 
   getAnswerPaperPercentage(row) {
-    return Math.round(row.paperCount / row.studentCount * 10000) / 100 + '%'
+    return Math.floor(row.paperCount / row.studentCount * 10000) / 100 + '%'
   }
 
   getMissingExaminees(row) {

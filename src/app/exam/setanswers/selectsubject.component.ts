@@ -71,8 +71,8 @@ export class SelectSubjectComponent implements OnInit {
     this.examSelected = true;
   }
 
-  setAnswers(egsId, gradeId, subjectId, seted) {
-    this.router.navigate(['setanswers', { egsId: egsId, examId: this.examId, gradeId: gradeId, subjectId: subjectId, seted: seted }]);
+  setAnswers(egsId, gradeId, subjectId) {
+    this.router.navigate(['setanswers', { egsId: egsId, examId: this.examId, gradeId: gradeId, subjectId: subjectId }]);
   }
 
   setTasks(gradeId, subjectId, seted, subName) {

@@ -90,7 +90,7 @@ export class AnswerComponent implements OnInit {
 
   getUrl(paper) {
     if (this.viewAnswerPaper) {
-      return paper.paperImg.split(',').map((url) => this._sharedService.getImgUrl(url, ''))
+      return paper.paperMarkImg.split(';').map((url) => this._sharedService.getImgUrl(url, ''))
     } else {
       let result = [];
       if(paper.markImgs.length === 1) {

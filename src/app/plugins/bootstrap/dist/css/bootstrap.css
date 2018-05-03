@@ -1589,6 +1589,16 @@ pre code {
     width: 1170px;
   }
 }
+@media (min-width: 1440px) {
+  .container {
+    width: 1398px;
+  }
+}
+@media (min-width: 1680px) {
+  .container {
+    width: 1622px;
+  }
+}
 .container-fluid {
   margin-right: auto;
   margin-left: auto;

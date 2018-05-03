@@ -451,7 +451,6 @@ export class CanvasComponent implements OnInit {
 				this.img.src = 'assets/images/icon-like.png';
 				break;
 			case 'MarkScore':
-				let t = this;
 				let scoreMark = document.createElement("a");
 				scoreMark.insertAdjacentHTML("beforeend", '<span name="scoreVal">0</span><i name="annotationRemove"></i><em name="annotationAdd" class="p" ></em><em name="annotationMin" class="m" ></em>');
 				scoreMark.className = "plus_mark";

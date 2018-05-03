@@ -48,8 +48,8 @@
 		                    	<a href="#" (click)="checkUserStatus()" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">考试中心 <span class="caret"></span></a>
                                 <ng-container *ngIf="_sharedService.userRole!= ''">
                                     <ul class="dropdown-menu" aria-labelledby="dLabel">
-                                        <li *ngIf="checkPerm('模板制作')"><a href="#">模板制作</a></li>
-                                        <li *ngIf="checkPerm('答卷扫描')"><a href="#">答卷扫描</a></li>
+                                        <!-- <li *ngIf="checkPerm('模板制作')"><a href="#">模板制作</a></li> -->
+                                        <!-- <li *ngIf="checkPerm('答卷扫描')"><a href="#">答卷扫描</a></li> -->
                                         <li *ngIf="checkPerm('答案设置')"><a [routerLink]="['/selectsubject',{type:'answers'}]">答案设置</a></li>
                                         <li *ngIf="checkPerm('任务分配')"><a [routerLink]="['/selectsubject',{type:'task'}]">任务分配</a></li>
                                         <li *ngIf="checkPerm('线上阅卷')"><a [routerLink]="['/markList']">线上阅卷</a></li>
@@ -63,13 +63,13 @@
 							    <ng-container *ngIf="_sharedService.userRole!= ''">
                                     <ul class="dropdown-menu" aria-labelledby="dLabel">
                                         <li *ngIf="checkPerm('阅卷统计')"><a [routerLink]="['/data/mark/markStatistics']">阅卷统计</a></li>
-                                        <li *ngIf="true||checkPerm('试卷分析')"><a [routerLink]="['/data/questionsAnalysis']">试卷分析</a></li>
+                                        <li *ngIf="checkPerm('试题分析')"><a [routerLink]="['/data/questionsAnalysis']">试题分析</a></li>
                                         <li *ngIf="checkPerm('成绩统计')"><a [routerLink]="['/data/result/examinees']">成绩统计</a></li>
-                                        <li *ngIf="checkPerm('报表下载')"><a href="#">报表下载</a></li>
+                                        <!-- <li *ngIf="checkPerm('报表下载')"><a href="#">报表下载</a></li> -->
                                     </ul>
 							    </ng-container>
 							</li>
-		                    <li class="dropdown">
+		                    <!-- <li class="dropdown">
 		                    	<a href="#" (click)="checkUserStatus()" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">下载中心 <span class="caret"></span></a>
                                 <ng-container *ngIf="_sharedService.userRole!= ''">
                                     <ul class="dropdown-menu" aria-labelledby="dLabel">
@@ -95,7 +95,7 @@
                                         <li *ngIf="checkPerm('蘑菇云云盘')"><a href="#">蘑菇云云盘</a></li>
                                     </ul>
                                 </ng-container>
-							</li>
+							</li>-->
 		                </ul>
                         <ul class="nav navbar-nav navbar-right navbar-right-box hidden-xs hidden-sm">
                             <ng-container *ngIf="_sharedService.userName===''">

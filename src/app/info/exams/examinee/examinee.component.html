@@ -18,7 +18,7 @@
           <span class="input-group-addon">班级</span>
           <select class="form-control" id="gradeFilterValue" name="selectedClass" [(ngModel)]="selectedClass">
             <option value=""></option>
-            <option *ngFor="let class of classes" [ngValue]="class">{{class.classId}}</option>
+            <option *ngFor="let class of classes" [ngValue]="class">{{class.name}}</option>
           </select>
         </div>
         <div class="input-group">

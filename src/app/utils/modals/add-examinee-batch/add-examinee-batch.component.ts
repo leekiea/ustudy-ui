@@ -43,16 +43,44 @@ export class AddExamineeBatchComponent implements OnInit {
       this._examService.getGrade(this.gradeId).then((data) => {
         this.grade = data;
         _.forEach(this.data.slice(1), (row) => {
+          console.log("row: " + row[0] + "_" + row[1] + "_" + row[2] + "_" + row[3]);
+          if(row[0] == undefined || row[2] == undefined || row[3] == undefined) {
+            return;
+          }
           const examinee = Object.create({});
           // [{stuName: this.name, stuId: this.stuId, stuExamId: this.stuExamId, classId: this.examineeClass.classId,
           examinee.examId = this.examId;
           examinee.gradeId = this.gradeId;
-          examinee.stuName = row[0];
+          if (row[0].indexOf(' ') != -1) {
+            examinee.stuName = row[0].replace(/ /g, '');
+          } else {
+            examinee.stuName = row[0];
+          }
           examinee.stuId = row[1];
-          examinee.stuExamId = row[2];
-          examinee.classId = this.findClass(row[3]);
-          examinee.className = row[3];
-          this.examinees.push(examinee)
+
+          if (row[2].indexOf(' ') != -1) {
+            examinee.stuExamId = row[2].replace(/ /g, '');
+          } else {
+            examinee.stuExamId = row[2];
+          }
+
+          if (row[3].indexOf(' ') != -1) {
+            examinee.className = row[3].replace(/ /g, '');
+          } else {
+            examinee.className = row[3];
+          }
+
+          if (row[3].indexOf('(') != -1) {
+            examinee.className = examinee.className.replace(/\(/g, '（');
+          }
+
+          if (row[3].indexOf(')') != -1) {
+            examinee.className = examinee.className.replace(/\)/g, '）');
+          }
+
+          examinee.classId = this.findClass(examinee.className);
+
+          this.examinees.push(examinee);
         })
       });
     };
