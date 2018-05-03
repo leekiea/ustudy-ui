@@ -15,6 +15,22 @@ export class DataService {
     })
   }
 
+  getAnaResults(entry, egsId, classId) {
+    if (!entry) {
+      return new Promise((resolve, reject) => {
+        this._sharedService.makeRequest('GET', `/api/exam/analysis/${egsId}/${classId}`, '').then((data: any) => {
+          resolve(data.data)
+        })
+      })
+    }
+    return new Promise((resolve, reject) => {
+      this._sharedService.makeRequest('GET', `/api/exam/analysis/questions/${entry}/${egsId}/${classId}`, '').then((data: any) => {
+        resolve(data.data)
+      })
+    })
+  }
+
+
   getMarks() {
     return new Promise((resolve, reject) => {
       //this._sharedService.makeRequest('GET', 'assets/api/exams/marklist.json', '').then((data: any) => {
@@ -73,7 +89,7 @@ export class DataService {
         tags: ['0']
       }*/
     ];
-    
+
     const defaultResultData = [
       {
         text: '成绩统计',
@@ -135,7 +151,7 @@ export class DataService {
       })
     })
   }
-  
+
   getClessResultList(examId, gradeId) {
     return new Promise((resolve, reject) => {
       this._sharedService.makeRequest('GET', `/api/score/cls/${examId}/${gradeId}/`, '').then((data: any) => {

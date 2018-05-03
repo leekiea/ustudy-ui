@@ -1,53 +1,38 @@
 <div class="row">
   <div class="col-sm-12 col-lg-5">
-    <ul class="nav clear-margin dropdown-select">
-      <li class="dropdown">
-        <button type="button" class="btn btn-lg btn-link clear-padding-horizontal" data-toggle="dropdown" aria-expanded="false"><span class="dropdown-btn">铜川局一中期中考试</span> <span class="caret"></span></button>
-        <ul id="myTabs" class="dropdown-menu" aria-labelledby="dLabel">
-          <li><a href="#tab0" data-value="0" data-toggle="tab" aria-expanded="true">铜川局一中期中考试</a></li>
-        </ul>
-      </li>
-    </ul>
   </div>
   <div class="col-sm-12 col-lg-7 text-right">
     <form method="post" class="form-inline" action="#">
       <div class="input-group">
-        <span class="input-group-addon">学校</span>
-        <select class="form-control">
-          <option selected="selected">铜川局一中</option>
-          <option>铜川四校联考</option>
-        </select>
-      </div>
-      <div class="input-group">
-        <span class="input-group-addon">科目</span>
-        <select class="form-control">
-          <option>语文</option>
-          <option>数学</option>
-          <option>数学(文)</option>
-          <option>英语</option>
-          <option>物理</option>
-          <option>化学</option>
-          <option>生物</option>
-          <option>政治</option>
-          <option>历史</option>
-          <option>地理</option>
+        <span class="input-group-addon">年级</span>
+        <select class="form-control" [(ngModel)]="selectedSchool" name="selectedSchool">
+          <option *ngFor="let school of selectedExam?.schools, let i = index" [ngValue]="school">
+            {{school.schoolName}}
+          </option>
         </select>
       </div>
       <div class="input-group">
         <span class="input-group-addon">年级</span>
-        <select class="form-control">
-          <option>高一</option>
-          <option>高二</option>
-          <option>高三</option>
+        <select class="form-control" [(ngModel)]="selectedGrade" name="selectedGrade" (change)="selectedGradeSubs=getSubs();classOptions=getClassOptions()">
+          <option *ngFor="let grade of selectedSchool?.GradeSubs, let i = index" [ngValue]="grade">
+            {{grade.gradeName}}
+          </option>
         </select>
       </div>
       <div class="input-group">
-        <span class="input-group-addon">?</span>
-        <select class="form-control">
-          <option>全体</option>
-          <option>1</option>
-          <option>...</option>
-          <option>10</option>
+        <span class="input-group-addon">科目</span>
+        <select class="form-control" [(ngModel)]="selectedSubject" name="selectedSubject">
+          <option *ngFor="let subject of selectedGradeSubs, let i = index" [ngValue]="subject">
+            {{subject.name}}
+          </option>
+        </select>
+      </div>
+      <div class="input-group">
+        <span class="input-group-addon">班级</span>
+        <select class="form-control" [(ngModel)]="selectedClass" name="selectedClass">
+          <option *ngFor="let class of classOptions, let i = index" [ngValue]="class">
+            {{class}}
+          </option>
         </select>
       </div>
       <div class="input-group">

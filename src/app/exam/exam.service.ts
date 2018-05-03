@@ -32,11 +32,13 @@ export class ExamService {
         resolve(data.data)
       })
     })
-  } 
+  }
 
-  getAllExams() {
+  anaExams(params) {
     return new Promise((resolve, reject) => {
-      this._sharedService.makeRequest('GET', '/api/allexams', '').then((data: any) => {
+      // XXX: should use /exams/{examStatus}
+      this._sharedService.makeRequest('GET', '/exam/analysis/examlist/', params).then((data: any) => {
+
         if (!data.data) {
           reject('no data');
         }
