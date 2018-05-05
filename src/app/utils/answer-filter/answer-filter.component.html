@@ -4,7 +4,7 @@
   <div class="col-sm-12 col-lg-7 text-right">
     <form method="post" class="form-inline" action="#">
       <div class="input-group">
-        <span class="input-group-addon">年级</span>
+        <span class="input-group-addon">学校</span>
         <select class="form-control" [(ngModel)]="selectedSchool" name="selectedSchool">
           <option *ngFor="let school of selectedExam?.schools, let i = index" [ngValue]="school">
             {{school.schoolName}}
