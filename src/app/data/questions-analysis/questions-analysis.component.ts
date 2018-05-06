@@ -68,6 +68,8 @@ export class QuestionsAnalysisComponent implements OnInit {
           const bodyLines = tooltip.body.map(getBody);
 
           let innerHtml = '<thead>';
+          let score;
+          let num;
 
           titleLines.forEach(function(title) {
             innerHtml += '<tr><th>' + title + '</th></tr>';
@@ -81,7 +83,15 @@ export class QuestionsAnalysisComponent implements OnInit {
             style += '; border-color:' + colors.borderColor;
             style += '; border-width: 2px';
             const span = '<span class="chartjs-tooltip-key" style="' + style + '"></span>';
-            innerHtml += '<tr><td>' + span + `${body[0].labels[index]}分: ${body[0].datasets[0].data[index]}人` + '</td></tr>';
+            if (_.isString(body[0])) {
+              const res = body[0].split(' ');
+              score = res[0];
+              num = res[1]
+            } else {
+              score = body[0].labels[index];
+              num = body[0].datasets[0].data[index]
+            }
+            innerHtml += '<tr><td>' + span + `${score}分: ${num}人` + '</td></tr>';
           });
           innerHtml += '</tbody>';
 
@@ -184,9 +194,8 @@ export class QuestionsAnalysisComponent implements OnInit {
   }
 
   getOptionsColors(question: any) {
-    // TODO: 正确答案
-    const options = _.keys(question.choices)
-    return [{backgroundColor: options.map((d) => d === question.refa ? '#229fd9' : 'grey')}]
+    const options = _.keys(question.choices);
+    return [{backgroundColor: options.map((d) => d === question.refa ? '#04BE02' : 'grey')}]
   }
 
   getQuestionScoreLabels(question: any) {
