@@ -26,6 +26,9 @@
     <div class="panel panel-default">
       <div class="row">
         <answer-filter (selectResult)="selectResult($event)" [selectedExam]="selectedExam"></answer-filter>
+        <ul class="pagination" *ngIf="tab!=='summary'">
+          <li *ngFor="let page of pages" [ngClass]="{active: page==currentPage}"><a href="javascript:;" (click)="currentPage=page">{{page}}</a></li>
+        </ul>
       </div>
     </div>
   </div>
@@ -90,7 +93,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let res of objectResult, let i = index">
+          <tr *ngFor="let res of objectResult.slice((currentPage - 1) * 10, currentPage * 10), let i = index">
             <td>{{res.quesno}}</td>
             <td>{{res.score}}</td>
             <td>{{res.aveScore}}</td>
@@ -102,7 +105,7 @@
                         [datasets]="getOptionsData(res)"
                         [legend]="false"
                         [colors]="getOptionsColors(res)"
-                        [options]="{scaleShowVerticalLines: false, responsive: true}"
+                        [options]="{scaleShowVerticalLines: false, responsive: true, animation : false}"
                         [labels]="getQuestionOptions(res)"
                         [chartType]="'bar'"
                 ></canvas>
@@ -119,7 +122,6 @@
   <!--tab3 start-->
   <div role="tabpanel" class="tab-pane" id="tab3" *ngIf="tab==='subjective'">
     <div class="panel panel-default">
-      <div class="panel-heading">
       <!--表格 start-->
       <div class="table-responsive" data-pattern="priority-columns">
         <table class="table table-hover table-bordered text-center">
@@ -133,7 +135,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let res of subjectResult">
+          <tr *ngFor="let res of subjectResult.slice((currentPage - 1) * 10, currentPage * 10), let i = index">
             <td>{{res.quesname}}</td>
             <td>{{res.score}}</td>
             <td>{{res.aveScore}}</td>
@@ -148,7 +150,6 @@
                         [options]="pieChartOptions"
                 > </canvas>
               </div>
-              <!--[options]="{responsive: true, hover: {onHover: functions(evt, active) { console}}}"-->
             </td>
           </tr>
           </tbody>

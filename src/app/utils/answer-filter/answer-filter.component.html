@@ -27,14 +27,14 @@
           </option>
         </select>
       </div>
-      <div class="input-group">
-        <span class="input-group-addon">班级</span>
-        <select class="form-control" [(ngModel)]="selectedClass" name="selectedClass">
-          <option *ngFor="let class of classOptions, let i = index" [ngValue]="class">
-            {{class}}
-          </option>
-        </select>
-      </div>
+      <!--<div class="input-group">-->
+        <!--<span class="input-group-addon">班级</span>-->
+        <!--<select class="form-control" [(ngModel)]="selectedClass" name="selectedClass">-->
+          <!--<option *ngFor="let class of classOptions, let i = index" [ngValue]="class">-->
+            <!--{{class}}-->
+          <!--</option>-->
+        <!--</select>-->
+      <!--</div>-->
       <div class="input-group">
         <a class="btn btn-default" title="查询" (click)="returnResult()">查询</a>
       </div>

@@ -18,6 +18,7 @@ export class QuestionsAnalysisComponent implements OnInit {
   scores: any[];
   scoreDatas: any[];
   barChartOptions: any = {
+    animation : false,
     scaleShowVerticalLines: false,
     responsive: true,
     scales: {
@@ -30,6 +31,7 @@ export class QuestionsAnalysisComponent implements OnInit {
     },
   };
   pieChartOptions: any = {
+    animation : false,
     responsive: true,
     tooltips: {
       custom: function(tooltip) {
@@ -115,6 +117,8 @@ export class QuestionsAnalysisComponent implements OnInit {
   filterResult: any;
   subjectResult: any;
   objectResult: any;
+  pages = [];
+  currentPage = 1;
 
   constructor(private _dataService: DataService, private _examService: ExamService) { }
 
@@ -162,12 +166,16 @@ export class QuestionsAnalysisComponent implements OnInit {
     }
     if (this.tab === 'subjective') {
       this._dataService.getAnaResults('subject', this.filterResult.subject.id, this.filterResult.class).then((data) => {
-        this.subjectResult = data
+        this.subjectResult = data;
+        this.pages = _.range(1, Math.ceil(this.subjectResult.length / 10) + 1)
+        this.currentPage = 1
       })
     }
     if (this.tab === 'objective') {
       this._dataService.getAnaResults('object', this.filterResult.subject.id, this.filterResult.class).then((data) => {
-        this.objectResult = data
+        this.objectResult = data;
+        this.pages = _.range(1, Math.ceil(this.objectResult.length / 10) + 1)
+        this.currentPage = 1
       })
     }
   }
@@ -205,4 +213,14 @@ export class QuestionsAnalysisComponent implements OnInit {
   getOptionsScoreDetails(question: any) {
     return _.values(question.details)
   }
+
+  getPages() {
+    if (this.tab === 'subjective') {
+      length = this.subjectResult.length
+    }
+    if (this.tab === 'objective') {
+    }
+    return _.range(1, Math.ceil(length / 10) + 1)
+  }
 }
+
