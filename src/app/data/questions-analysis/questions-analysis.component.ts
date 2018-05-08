@@ -18,6 +18,7 @@ export class QuestionsAnalysisComponent implements OnInit {
   scores: any[];
   scoreDatas: any[];
   barChartOptions: any = {
+    animation : false,
     scaleShowVerticalLines: false,
     responsive: true,
     scales: {
@@ -30,6 +31,7 @@ export class QuestionsAnalysisComponent implements OnInit {
     },
   };
   pieChartOptions: any = {
+    animation : false,
     responsive: true,
     tooltips: {
       custom: function(tooltip) {
@@ -68,6 +70,8 @@ export class QuestionsAnalysisComponent implements OnInit {
           const bodyLines = tooltip.body.map(getBody);
 
           let innerHtml = '<thead>';
+          let score;
+          let num;
 
           titleLines.forEach(function(title) {
             innerHtml += '<tr><th>' + title + '</th></tr>';
@@ -81,7 +85,15 @@ export class QuestionsAnalysisComponent implements OnInit {
             style += '; border-color:' + colors.borderColor;
             style += '; border-width: 2px';
             const span = '<span class="chartjs-tooltip-key" style="' + style + '"></span>';
-            innerHtml += '<tr><td>' + span + `${body[0].labels[index]}分: ${body[0].datasets[0].data[index]}人` + '</td></tr>';
+            if (_.isString(body[0])) {
+              const res = body[0].split(' ');
+              score = res[0];
+              num = res[1]
+            } else {
+              score = body[0].labels[index];
+              num = body[0].datasets[0].data[index]
+            }
+            innerHtml += '<tr><td>' + span + `${score}分: ${num}人` + '</td></tr>';
           });
           innerHtml += '</tbody>';
 
@@ -105,6 +117,8 @@ export class QuestionsAnalysisComponent implements OnInit {
   filterResult: any;
   subjectResult: any;
   objectResult: any;
+  pages = [];
+  currentPage = 1;
 
   constructor(private _dataService: DataService, private _examService: ExamService) { }
 
@@ -152,12 +166,16 @@ export class QuestionsAnalysisComponent implements OnInit {
     }
     if (this.tab === 'subjective') {
       this._dataService.getAnaResults('subject', this.filterResult.subject.id, this.filterResult.class).then((data) => {
-        this.subjectResult = data
+        this.subjectResult = data;
+        this.pages = _.range(1, Math.ceil(this.subjectResult.length / 10) + 1)
+        this.currentPage = 1
       })
     }
     if (this.tab === 'objective') {
       this._dataService.getAnaResults('object', this.filterResult.subject.id, this.filterResult.class).then((data) => {
-        this.objectResult = data
+        this.objectResult = data;
+        this.pages = _.range(1, Math.ceil(this.objectResult.length / 10) + 1)
+        this.currentPage = 1
       })
     }
   }
@@ -184,9 +202,8 @@ export class QuestionsAnalysisComponent implements OnInit {
   }
 
   getOptionsColors(question: any) {
-    // TODO: 正确答案
-    const options = _.keys(question.choices)
-    return [{backgroundColor: options.map((d) => d === question.refa ? '#229fd9' : 'grey')}]
+    const options = _.keys(question.choices);
+    return [{backgroundColor: options.map((d) => d === question.refa ? '#04BE02' : 'grey')}]
   }
 
   getQuestionScoreLabels(question: any) {
@@ -196,4 +213,14 @@ export class QuestionsAnalysisComponent implements OnInit {
   getOptionsScoreDetails(question: any) {
     return _.values(question.details)
   }
+
+  getPages() {
+    if (this.tab === 'subjective') {
+      length = this.subjectResult.length
+    }
+    if (this.tab === 'objective') {
+    }
+    return _.range(1, Math.ceil(length / 10) + 1)
+  }
 }
+

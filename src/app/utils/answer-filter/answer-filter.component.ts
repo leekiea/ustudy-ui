@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import * as _ from 'lodash';
 
 @Component({
@@ -16,25 +16,17 @@ export class AnswerFilterComponent implements OnChanges {
   selectedSchool: any;
   selectedClass: any;
 
-  constructor() { }
+  constructor(private chRef: ChangeDetectorRef) { }
 
   ngOnChanges(changes) {
+    if (changes.selectedExam.currentValue) {
+      this.selectedSchool = _.first(changes.selectedExam.currentValue.schools);
+      this.selectedGrade = _.first(this.selectedSchool.GradeSubs);
+      this.onGradeChange()
+    }
   }
 
   returnResult() {
-    // const mockData = {
-    //   total: 600,
-    //   highest: 709,
-    //   lowest: 250,
-    //   average: 444,
-    //   median: 451,
-    //   passNum: 501,
-    //   hardness: 0.45,
-    //   discrimination: 0.6,
-    //   sd: 3.7,
-    //   scores: [650, 651, 450, 250]
-    // };
-    // this.selectResult.emit(mockData)
     if (!this.selectedSchool) {
       alert('请选择学校');
       return
@@ -72,5 +64,13 @@ export class AnswerFilterComponent implements OnChanges {
 
   getClassOptions() {
     return _.times(this.selectedGrade.clsNum, (i) => i + 1)
+  }
+
+  onGradeChange() {
+    this.selectedGradeSubs = this.getSubs();
+    this.selectedSubject = _.first(this.selectedGradeSubs);
+    this.classOptions = this.getClassOptions();
+    // this.selectedClass = _.first(this.classOptions)
+    this.selectedClass = 1
   }
 }
