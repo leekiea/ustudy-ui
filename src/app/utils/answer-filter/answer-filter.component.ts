@@ -70,6 +70,7 @@ export class AnswerFilterComponent implements OnChanges {
     this.selectedGradeSubs = this.getSubs();
     this.selectedSubject = _.first(this.selectedGradeSubs);
     this.classOptions = this.getClassOptions();
-    this.selectedClass = _.first(this.classOptions)
+    // this.selectedClass = _.first(this.classOptions)
+    this.selectedClass = 1
   }
 }
