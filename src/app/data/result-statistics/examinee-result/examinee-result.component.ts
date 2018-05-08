@@ -3,10 +3,12 @@ import {DataService} from '../../data.service';
 import {ExamService} from '../../../exam/exam.service';
 import { SharedService } from '../../../shared.service';
 import { sprintf } from 'sprintf-js';
+import * as XLSX from 'xlsx';
 import * as _ from 'lodash';
 import {ActivatedRoute} from '@angular/router';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 
+type AOA = Array<Array<any>>;
 @Component({
   selector: 'app-examinee-result',
   templateUrl: './examinee-result.component.html',
@@ -151,4 +153,53 @@ export class ExamineeResultComponent implements OnInit {
     this.selectedSubject = subject;
     this.subjectDetailModalRef = this.modalService.show(template, {class: 'gray modal-lg'});
   }
+  
+  private downloadExcel(): void {
+    if (!this.resultHdr) {
+      alert('未查询出成绩信息可供下载。');
+      return;
+    }
+    let dataExp:AOA=[];
+    dataExp[0]=new Array();
+    for (let i:number=0; i<this.results.length; i++){
+      dataExp[i+1]=new Array();
+    }
+    /* 第一行 标题 */
+    dataExp[0][0]='序号';
+    dataExp[0][1]='考号';
+    dataExp[0][2]='姓名';
+    dataExp[0][3]='班级';
+    dataExp[0][4]='总分';
+    dataExp[0][5]='排名';
+    for (let j:number =0; j<this.resultHdr.scores.length; j++){
+      dataExp[0][j*2+6]=this.resultHdr.scores[j].subName;
+      dataExp[0][j*2+7]='排名';
+    }
+    for (let i:number=0; i<this.results.length; i++){
+      dataExp[i+1][0]=i+1;
+      dataExp[i+1][1]=this.results[i].exameeNO;
+      dataExp[i+1][2]=this.results[i].exameeName;
+      dataExp[i+1][3]=this.results[i].className;
+      dataExp[i+1][4]=this.results[i].score;
+      dataExp[i+1][5]=this.results[i].rank;
+      for (let j:number=0; j<this.results[i].scores.length; j++){
+        dataExp[i+1][j*2+6]=this.results[i].scores[j].score;
+        dataExp[i+1][j*2+7]=this.results[i].scores[j].rank;
+      }
+    }
+    this.exportExcel(dataExp,"考生成绩.csv");
+  }
+
+	private exportExcel(dataAoa:AOA,fileNameSave:string): void {
+		/* generate worksheet */
+		const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(dataAoa);
+
+		/* generate workbook and add the worksheet */
+		const wb: XLSX.WorkBook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+		/* save to file */
+		XLSX.writeFile(wb, fileNameSave);
+  }
+
 }
