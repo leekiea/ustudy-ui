@@ -17,6 +17,7 @@ export class QuestionsAnalysisComponent implements OnInit {
   selectedExam: any;
   scores: any[];
   scoreDatas: any[];
+  temp: any;
   barChartOptions: any = {
     animation : false,
     scaleShowVerticalLines: false,
@@ -155,9 +156,9 @@ export class QuestionsAnalysisComponent implements OnInit {
     if (this.tab === 'summary') {
       this._dataService.getAnaResults('', this.filterResult.subject.id, this.filterResult.class.id).then((data) => {
         this.result = data[0];
+        this.scoreDatas = [{data: _.values(this.result.scoreplacement), label: '分数统计'}];
         setTimeout(() => {
           this.scores = _.keys(this.result.scoreplacement);
-          this.scoreDatas = [{data: _.values(this.result.scoreplacement), label: '分数统计'}];
         }, 500);
       })
     }
