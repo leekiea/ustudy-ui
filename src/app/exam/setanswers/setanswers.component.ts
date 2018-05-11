@@ -594,19 +594,17 @@ export class SetAnswersComponent implements OnInit {
       if (answer.quesno === id && answer.type === type) {
         if (type === '多选题') {
           let ans = answer.answer;
-          if (ans.indexOf(value) >= 0) {
-            ans = ans.replace(',' + value, '');
-            ans = ans.replace(value, '');
-            if (ans.indexOf(',') === 0) {
-              ans = ans.substring(1);
-            }
-            answer.answer = ans;
+          let index = ans.indexOf(value);
+          if ( index >= 0) {
+            answer.answer = ans.replace(value, '');
           } else {
-            ans = ans + ',' + value;
-            if (ans.indexOf(',') === 0) {
-              ans = ans.substring(1);
+            ans = ans + value;
+            let tempArr = [];
+            for(let i=0; i<ans.length; i++) {
+              tempArr.push(ans.charAt(i));
             }
-            answer.answer = ans;
+            tempArr = tempArr.sort();
+            answer.answer = tempArr.join('');
           }
         } else {
           answer.answer = value;
