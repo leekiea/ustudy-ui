@@ -39,7 +39,7 @@ export class AnswerComponent implements OnInit {
   selectedImgUrls: Array<string>;
 
   constructor(private route: ActivatedRoute, private _answerService: AnswerService, private _taskService: TaskService,
-              private _sharedService: SharedService, private modalService: BsModalService) { }
+              public _sharedService: SharedService, private modalService: BsModalService) { }
 
   ngOnInit() {
     this.egsId = Number(this.route.snapshot.params.egsId);
