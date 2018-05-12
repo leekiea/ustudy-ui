@@ -109,6 +109,27 @@ export class AnswerComponent implements OnInit {
     }
   }
 
+  setProblemPapers() {
+    let paperIds = '';
+    for(let paper of this.papers) {
+      if(paper.hasProblem) {
+        paperIds = paperIds + ',' + paper.paperId;
+      }
+    }
+    if(paperIds === '') {
+      alert('请先勾选想标记为异常卷的答题卡！');
+      return;
+    } else {
+      paperIds = paperIds.substring(1, paperIds.length);
+    }
+    this._answerService.setProblemPapers(paperIds).then(()=> {
+      alert('异常卷标记成功！');
+    }).catch((error: any) => {
+      console.dir(error);
+      alert('无法标记异常卷');
+    });
+  }
+
   viewPaper(template: TemplateRef<any>, paper: any) {
     this.selectedImgUrls = this.getUrl(paper);
     this.modalRef = this.modalService.show(template,  { class: 'gray modal-lg'});

@@ -32,6 +32,11 @@
           <div class="input-group">
             <a class="btn btn-default" title="查询" (click)="returnResult()">查询</a>
           </div>
+          <ng-container *ngIf="viewAnswerPaper === true && _sharedService.checkPerm('异常卷处理')">
+            <div class="input-group">
+              <a class="btn btn-warning" title="标记异常卷" (click)="setProblemPapers()">标记异常卷</a>
+            </div>            
+          </ng-container>
         </div>
       </div>
     </div>
@@ -56,6 +61,13 @@
         <span></span>
         <span>({{paper.examCode}})</span>
         <span></span>
+      </div>
+      <div *ngIf="_sharedService.checkPerm('异常卷处理')">
+          <div class="checkbox clear-margin-top">
+              <label>
+                  <input type="checkbox" name="problemCheckbox" [checked]="paper.hasProblem" (change)="paper.hasProblem = !paper.hasProblem"> 异常卷
+              </label>
+          </div>
       </div>
     </div>
   </ng-container>
