@@ -1,0 +1,39 @@
+<div class="col-sm-4">
+  <select class="form-control" [(ngModel)]="selectedExam">
+    <option *ngFor="let exam of exams" [ngValue]="exam">{{exam.examName}}</option>
+  </select>
+</div>
+
+<div class="col-sm-12">
+  <form class="panel-heading">
+    <div class="row">
+      <div class="col-sm-12 col-lg-12">
+        <form id="reportForm" method="post" class="form-inline" action="#">
+          <div class="input-group">
+            <span class="input-group-addon">学校</span>
+            <select class="form-control" [(ngModel)]="selectedSchool" name="selectedSchool">
+              <option *ngFor="let school of selectedExam?.schools" [ngValue]="school">{{school.schoolName}}</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <span class="input-group-addon">年级</span>
+            <select class="form-control" [(ngModel)]="selectedGrade" name="selectedGrade">
+              <option *ngFor="let grade of selectedSchool?.GradeDetails" [ngValue]="grade">{{grade.gradeName}}</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <span class="input-group-addon">学科</span>
+            <select class="form-control" [(ngModel)]="selectedSubject" name="selectedSubject">
+              <option *ngFor="let sub of selectedGrade?.subList" [ngValue]="sub">{{sub.name}}</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <a class="btn btn-default" title="下载单科成绩" (click)="getSubScore()">下载单科成绩</a>
+            <a class="btn btn-default" title="下载分科成绩" (click)="getBranchScore()">下载分科成绩</a>
+            <a class="btn btn-default" title="下载答题明细" (click)="getDetailScore()">下载答题明细</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </form>
+</div>
