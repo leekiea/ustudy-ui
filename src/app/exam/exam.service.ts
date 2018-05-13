@@ -290,6 +290,18 @@ export class ExamService {
     })
   }
 
+  getGradeSub() {
+    return new Promise((resolve, reject) => {
+      this._sharedService.makeRequest('GET', '/info/school/gs/', '').then((data: any) => {
+        if (data.success) {
+          resolve(data.data);
+        } else {
+          reject();
+        }
+      })
+    })    
+  }
+
   getTeacherProps() {
     return new Promise((resolve, reject) => {
       this._sharedService.makeRequest('GET', `/info/teacher/prop/`, '').then((data: any) => {
