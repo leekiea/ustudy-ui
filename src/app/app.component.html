@@ -65,7 +65,7 @@
                                         <li *ngIf="checkPerm('阅卷统计')"><a [routerLink]="['/data/mark/markStatistics']">阅卷统计</a></li>
                                         <li *ngIf="checkPerm('试题分析')"><a [routerLink]="['/data/questionsAnalysis']">试题分析</a></li>
                                         <li *ngIf="checkPerm('成绩统计')"><a [routerLink]="['/data/result/examinees']">成绩统计</a></li>
-                                        <!-- <li *ngIf="checkPerm('报表下载')"><a href="#">报表下载</a></li> -->
+                                        <li *ngIf="checkPerm('报表下载')"><a [routerLink]="['/data/report']">报表下载</a></li>
                                     </ul>
 							    </ng-container>
 							</li>

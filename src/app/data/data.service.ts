@@ -175,4 +175,17 @@ export class DataService {
       })
     })
   }
+
+  getExamList() {
+    return new Promise((resolve, reject) => {
+      this._sharedService.makeRequest('GET', `/api/exam/analysis/examlist/`, '').then((data: any) => {
+        if (data.success) {
+          resolve(data.data)
+        } else {
+          reject()
+        }
+      })
+    })
+  }
+
 }
