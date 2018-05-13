@@ -22,6 +22,9 @@ export class ExamineeComponent implements OnInit {
   text: string;
   selectedClass: any;
 
+  grades: any;
+  grade: any;
+
   temp = [];
   examinees = [];
   classes: any[];
@@ -38,6 +41,8 @@ export class ExamineeComponent implements OnInit {
   stuExamId: string;
   examineeClass: any;
   examineeId: any;
+  examineeSubs = [];
+
 
 
   constructor(private route: ActivatedRoute, private _examService: ExamService, public fb: FormBuilder, private _sharedService: SharedService,
@@ -62,32 +67,42 @@ export class ExamineeComponent implements OnInit {
       params.classId = this.selectedClass.id
     }
     this._examService.getExaminees(this.examId, this.gradeId, params).then((data: any) => {
-      console.log('111', data);
       const examinees = data.students;
       this.temp = [...examinees];
       this.examinees = examinees;
     });
     this._examService.getClasses(this.gradeId).then((data: any) => {
       this.classes = data;
-    })
+    });
+    this._examService.getGradeSub().then((data: any) => {
+      this.grades = data;
+      for(let grade of this.grades) {
+        if (grade.id === Number(this.gradeId)) {
+          this.grade = grade;
+          break;
+        }
+      }
+    });
   }
 
   addOrUpdateExaminee(modal) {
-    if (!this.name || !this.stuExamId || !this.examineeClass) {
+    if (!this.name || !this.stuExamId || !this.examineeClass || !this.examineeSubs) {
       alert('请输入必填内容');
       return
     }
     this._examService.addOrUpdateExaminee([{stuName: this.name, stuId: this.stuId, stuExamId: this.stuExamId, classId: this.examineeClass.id,
-      examId: this.examId, gradeId: this.gradeId}]).then((data) => {
+      examId: this.examId, gradeId: this.gradeId, subs: this.examineeSubs}]).then((data) => {
       alert(`${this.examineeId ? '更新' : '新建'}考生成功`);
-      if (this.examineeId) {
-        const examinee = _.find(this.examinees, {studentId: this.examineeId});
-        examinee.studentName = this.name;
-        examinee.stuId = this.stuId;
-        examinee.stuExamId = this.stuExamId;
-        examinee.className = this.examineeClass.name;
-        examinee.classId = this.examineeClass.id;
-      }
+      // if (this.examineeId) {
+      //   const examinee = _.find(this.examinees, {studentId: this.examineeId});
+      //   examinee.studentName = this.name;
+      //   examinee.stuId = this.stuId;
+      //   examinee.stuExamId = this.stuExamId;
+      //   examinee.className = this.examineeClass.name;
+      //   examinee.classId = this.examineeClass.id;
+      //   examinee.subs = this.examineeSubs;
+      // }
+      this.reload();
       modal.hide()
     });
   }
@@ -104,6 +119,7 @@ export class ExamineeComponent implements OnInit {
     this.stuExamId = examinee.examCode;
     this.examineeClass = _.find(this.classes, {id: examinee.classId});
     this.examineeId = examinee.studentId;
+    this.examineeSubs = examinee.subs;
     modal.show()
   }
 
@@ -116,6 +132,26 @@ export class ExamineeComponent implements OnInit {
     this.bsModalRef = this.modalService.show(AddExamineeBatchComponent);
     this.bsModalRef.content.gradeId = this.gradeId;
     this.bsModalRef.content.examId = this.examId;
+    this.bsModalRef.content.grade = this.grade;
+  }
+
+  trigger(subject) {
+    console.log('subject: ' + JSON.stringify(subject));
+    if (_.includes(this.examineeSubs, subject.id)) {
+      this.examineeSubs = _.without(this.examineeSubs, subject.id)
+    } else {
+      this.examineeSubs.push(subject.id)
+    }
+    console.log('examinee subs: ', this.examineeSubs)
+  }
+
+  getClass(subject) {
+    const selected =  _.includes(this.examineeSubs, subject.id);
+    if (selected) {
+      return 'btn-primary'
+    } else {
+      return 'btn-default'
+    }
   }
 
   unsubscribe() {

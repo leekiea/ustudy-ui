@@ -8,6 +8,7 @@ import { MarkQualityComponent } from './mark-quality/mark-quality.component';
 import { MarkSearchComponent } from './mark-search/mark-search.component';
 import { MarkDetailsComponent } from './mark-details/mark-details.component';
 import { QuestionsAnalysisComponent } from './questions-analysis/questions-analysis.component';
+import { ReportComponent } from './report/report.component';
 import {FormsModule} from '@angular/forms';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 import { UtilsModule } from '../utils/utils.module';
@@ -39,6 +40,7 @@ import {ModalModule} from 'ngx-bootstrap';
             ]
           },
           { path: 'questionsAnalysis', component: QuestionsAnalysisComponent },
+          { path: 'report', component: ReportComponent },
           {
             path: 'result', component: ResultStatisticsComponent, children: [
               { path: 'examinees', component: ExamineeResultComponent },
@@ -58,6 +60,7 @@ import {ModalModule} from 'ngx-bootstrap';
     MarkSearchComponent,
     MarkDetailsComponent,
     QuestionsAnalysisComponent,
+    ReportComponent,
     ResultStatisticsComponent,
     ExamineeResultComponent,
     ClassesResultComponent

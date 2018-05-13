@@ -49,6 +49,7 @@
     <ngx-datatable-column prop="studentName" name="考生" [flexGrow]="1"></ngx-datatable-column>
     <ngx-datatable-column prop="examCode" name="考号" [flexGrow]="1"></ngx-datatable-column>
     <ngx-datatable-column prop="className" name="班级" [flexGrow]="1"></ngx-datatable-column>
+    <ngx-datatable-column prop="subNames" name="科目" [flexGrow]="1"></ngx-datatable-column>
     <ngx-datatable-column name="成绩" [flexGrow]="1">
       <ng-template let-row="row" ngx-datatable-cell-template>
         <button class="btn btn-primary" (click)="editExaminee(staticModal, row)">编辑</button>
@@ -91,6 +92,15 @@
                 <option value="0" selected>请选择一个班级</option>
                 <option *ngFor="let class of classes" [ngValue]="class" [selected]="class.id===selectedClass?.id">{{class.name}}</option>
               </select>
+              <span> *</span>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-4 control-label"><strong>科目：</strong></label>
+                <div class="extra btn-group" data-toggle="buttons">
+                  <ng-container *ngFor="let sub of grade.subjects">
+                    <button class="btn" [ngClass]="getClass(sub)" (click)="trigger(sub)" style="margin: 5px;">{{sub.name}}</button>
+                  </ng-container>
+                </div>
               <span> *</span>
             </div>
             <div class="form-group text-center">

@@ -17,7 +17,6 @@ export class AddExamineeBatchComponent implements OnInit {
   examinees = [];
   examId: string;
   gradeId: string;
-  grades: any;
   grade: any;
 
   constructor(public bsModalRef: BsModalRef, private _examService: ExamService) { }
@@ -41,89 +40,80 @@ export class AddExamineeBatchComponent implements OnInit {
 
       /* save data */
       this.data = <AOA>(XLSX.utils.sheet_to_json(ws, {header: 1}));
-      this._examService.getGradeSub().then((data) => {
-        this.grades = data;
-        for(let grade of this.grades) {
-          if (grade.id === Number(this.gradeId)) {
-            this.grade = grade;
-            break;
-          }
+      _.forEach(this.data.slice(1), (row) => {
+        console.log("row: " + row[0] + "_" + row[1] + "_" + row[2] + "_" + row[3] + "_" + row[4]);
+        if(row[0] == undefined || row[2] == undefined || row[3] == undefined || row[4] == undefined) {
+          return;
         }
-        _.forEach(this.data.slice(1), (row) => {
-          console.log("row: " + row[0] + "_" + row[1] + "_" + row[2] + "_" + row[3] + "_" + row[4]);
-          if(row[0] == undefined || row[2] == undefined || row[3] == undefined || row[4] == undefined) {
+        const examinee = Object.create({});
+        // [{stuName: this.name, stuId: this.stuId, stuExamId: this.stuExamId, classId: this.examineeClass.classId,
+        examinee.examId = Number(this.examId);
+        examinee.gradeId = Number(this.gradeId);
+        if (row[0].indexOf(' ') != -1) {
+          examinee.stuName = row[0].replace(/ /g, '');
+        } else {
+          examinee.stuName = row[0];
+        }
+        examinee.stuId = row[1];
+
+        if (row[2].indexOf(' ') != -1) {
+          examinee.stuExamId = row[2].replace(/ /g, '');
+        } else {
+          examinee.stuExamId = row[2];
+        }
+
+        if (row[3].indexOf(' ') != -1) {
+          examinee.className = row[3].replace(/ /g, '');
+        } else {
+          examinee.className = row[3];
+        }
+
+        if (row[3].indexOf('(') != -1) {
+          examinee.className = examinee.className.replace(/\(/g, '（');
+        }
+
+        if (row[3].indexOf(')') != -1) {
+          examinee.className = examinee.className.replace(/\)/g, '）');
+        }
+
+        let subNames = '';
+        if (row[4].indexOf(' ') != -1) {
+          subNames = row[4].replace(/ /g, '');
+        } else {
+          subNames = row[4];
+        }
+
+        if (row[4].indexOf('（') != -1) {
+          subNames = subNames.replace(/\（/g, '(');
+        }
+
+        if (row[4].indexOf('）') != -1) {
+          subNames = subNames.replace(/\）/g, ')');
+        }
+
+        if (row[4].indexOf('，') != -1) {
+          subNames = subNames.replace(/\，/g, ',');
+        }
+
+        examinee.subs = [];
+        for(let subName of subNames.split(',')) {
+          let matched = false;
+          for(let sub of this.grade.subjects) {
+            if (sub.name === subName) {
+              matched = true;
+              examinee.subs.push(sub.id);
+              break;
+            }
+          }
+          if (!matched) {
+            alert('无法找到科目：' + subName);
             return;
           }
-          const examinee = Object.create({});
-          // [{stuName: this.name, stuId: this.stuId, stuExamId: this.stuExamId, classId: this.examineeClass.classId,
-          examinee.examId = Number(this.examId);
-          examinee.gradeId = Number(this.gradeId);
-          if (row[0].indexOf(' ') != -1) {
-            examinee.stuName = row[0].replace(/ /g, '');
-          } else {
-            examinee.stuName = row[0];
-          }
-          examinee.stuId = row[1];
+        }
 
-          if (row[2].indexOf(' ') != -1) {
-            examinee.stuExamId = row[2].replace(/ /g, '');
-          } else {
-            examinee.stuExamId = row[2];
-          }
-
-          if (row[3].indexOf(' ') != -1) {
-            examinee.className = row[3].replace(/ /g, '');
-          } else {
-            examinee.className = row[3];
-          }
-
-          if (row[3].indexOf('(') != -1) {
-            examinee.className = examinee.className.replace(/\(/g, '（');
-          }
-
-          if (row[3].indexOf(')') != -1) {
-            examinee.className = examinee.className.replace(/\)/g, '）');
-          }
-
-          let subNames = '';
-          if (row[4].indexOf(' ') != -1) {
-            subNames = row[4].replace(/ /g, '');
-          } else {
-            subNames = row[4];
-          }
-
-          if (row[4].indexOf('（') != -1) {
-            subNames = subNames.replace(/\（/g, '(');
-          }
-
-          if (row[4].indexOf('）') != -1) {
-            subNames = subNames.replace(/\）/g, ')');
-          }
-
-          if (row[4].indexOf('，') != -1) {
-            subNames = subNames.replace(/\，/g, ',');
-          }
-
-          examinee.subs = [];
-          for(let subName of subNames.split(',')) {
-            let matched = false;
-            for(let sub of this.grade.subjects) {
-              if (sub.name === subName) {
-                matched = true;
-                examinee.subs.push(sub.id);
-                break;
-              }
-            }
-            if (!matched) {
-              alert('无法找到科目：' + subName);
-              return;
-            }
-          }
-
-          this.examinees.push(examinee);
-        });
-        this.examinees = [...this.examinees]; // refresh the table rows
+        this.examinees.push(examinee);
       });
+      this.examinees = [...this.examinees]; // refresh the table rows
     };
     reader.readAsBinaryString(target.files[0]);
   }
