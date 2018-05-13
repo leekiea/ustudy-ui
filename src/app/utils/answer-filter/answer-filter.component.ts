@@ -12,7 +12,7 @@ export class AnswerFilterComponent implements OnChanges {
   selectedGrade: any;
   selectedSubject: any;
   selectedGradeSubs: any[];
-  classOptions: any[];
+  selectedGradeCls: any[];
   selectedSchool: any;
   selectedClass: any;
 
@@ -21,7 +21,7 @@ export class AnswerFilterComponent implements OnChanges {
   ngOnChanges(changes) {
     if (changes.selectedExam.currentValue) {
       this.selectedSchool = _.first(changes.selectedExam.currentValue.schools);
-      this.selectedGrade = _.first(this.selectedSchool.GradeSubs);
+      this.selectedGrade = _.first(this.selectedSchool.GradeDetails);
       this.onGradeChange()
     }
   }
@@ -55,10 +55,23 @@ export class AnswerFilterComponent implements OnChanges {
     if (!this.selectedGrade) {
       return []
     } else {
-      console.log(1);
       return _.map(_.toPairs(this.selectedGrade.subs), (a) => {
         return {id: a[0], name: a[1]}
       })
+    }
+  }
+
+  getClasses() {
+    if (!this.selectedGrade) {
+      return []
+    } else {
+      let map = _.map(_.toPairs(this.selectedGrade.clsinfo), (a) => {
+        return {id: a[0], name: a[1]}
+      });
+      let resultMap = [];
+      resultMap.push({id: '-1', name: '全部'});
+      resultMap = resultMap.concat(map);
+      return resultMap;
     }
   }
 
@@ -69,8 +82,7 @@ export class AnswerFilterComponent implements OnChanges {
   onGradeChange() {
     this.selectedGradeSubs = this.getSubs();
     this.selectedSubject = _.first(this.selectedGradeSubs);
-    this.classOptions = this.getClassOptions();
-    // this.selectedClass = _.first(this.classOptions)
-    this.selectedClass = 1
+    this.selectedGradeCls = this.getClasses();
+    this.selectedClass = _.first(this.selectedGradeCls);
   }
 }

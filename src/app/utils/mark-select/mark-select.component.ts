@@ -42,14 +42,20 @@ export class MarkSelectComponent implements OnChanges {
   }
 
   filterQuestion() {
-    let res = _.filter(this.marks, { schoolName: this.selectedSchool, examName: this.selectedExam });
-    if (this.selectedGrade !== '全部') {
-      res = _.filter(res, { gradeName: this.selectedGrade })
+    const temp = JSON.parse(this.marks);
+    let res = _.filter(temp, { schoolName: this.selectedSchool, examName: this.selectedExam });
+    for(let mark of res) {
+      if (this.selectedGrade !== '全部') {
+        mark.egs = _.filter(mark.egs, { gradeName: this.selectedGrade })
+      }
+      if (this.selectedSubject !== '全部') {
+        mark.egs = _.filter(mark.egs, { subName: this.selectedSubject })
+      }
+      console.log("!!!!!!");
+      console.dir(mark);
     }
-    if (this.selectedSubject !== '全部') {
-      res = _.filter(res, { subName: this.selectedSubject })
-    }
-    return res
+    console.log(`marks after filter: `, this.marks);
+    return res;
   }
 
   // getQuestions() {
@@ -65,12 +71,12 @@ export class MarkSelectComponent implements OnChanges {
   // }
 
   reload() {
-    console.log('marks ', this.marks);
-    this.schools = _.keys(_.groupBy(_.map(this.marks, 'schoolName')));
+    let marks = JSON.parse(this.marks);
+    this.schools = _.keys(_.groupBy(_.map(marks, 'schoolName')));
     this.selectedSchool = _.first(this.schools);
     let res;
     let egs = [];
-    _.forEach(_.map(this.marks, 'egs'), (value)=>{
+    _.forEach(_.map(marks, 'egs'), (value)=>{
       egs = _.concat(egs, value);
     });
     res = _.keys(_.groupBy(_.map(egs, 'gradeName')));
@@ -86,7 +92,7 @@ export class MarkSelectComponent implements OnChanges {
     }
     this.subjects = res;
     this.selectedSubject = _.first(this.subjects);
-    this.exams = _.keys(_.groupBy(_.map(this.marks, 'examName')));
+    this.exams = _.keys(_.groupBy(_.map(marks, 'examName')));
     this.selectedExam = _.first(this.exams);
     // this.getQuestions();
   }

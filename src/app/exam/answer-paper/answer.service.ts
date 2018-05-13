@@ -41,4 +41,16 @@ export class AnswerService {
       })
     })
   }
+  setProblemPapers(paperIds) {
+    console.log(`setProblemPapers: `, paperIds);
+    let ids = {ids: paperIds};
+    return new Promise((resolve, reject) => {
+      this._sharedService.makeRequest('POST', `/api/exam/exception/paper/update/1`, JSON.stringify(ids)).then((data: any) => {
+        if (!data.success) {
+          reject('failed to set problem papers!');
+        }
+        resolve();
+      })
+    })
+  }
 }

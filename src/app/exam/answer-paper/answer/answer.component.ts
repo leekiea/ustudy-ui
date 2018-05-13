@@ -39,7 +39,7 @@ export class AnswerComponent implements OnInit {
   selectedImgUrls: Array<string>;
 
   constructor(private route: ActivatedRoute, private _answerService: AnswerService, private _taskService: TaskService,
-              private _sharedService: SharedService, private modalService: BsModalService) { }
+              public _sharedService: SharedService, private modalService: BsModalService) { }
 
   ngOnInit() {
     this.egsId = Number(this.route.snapshot.params.egsId);
@@ -107,6 +107,27 @@ export class AnswerComponent implements OnInit {
       }
       return result;
     }
+  }
+
+  setProblemPapers() {
+    let paperIds = '';
+    for(let paper of this.papers) {
+      if(paper.hasProblem) {
+        paperIds = paperIds + ',' + paper.paperId;
+      }
+    }
+    if(paperIds === '') {
+      alert('请先勾选想标记为异常卷的答题卡！');
+      return;
+    } else {
+      paperIds = paperIds.substring(1, paperIds.length);
+    }
+    this._answerService.setProblemPapers(paperIds).then(()=> {
+      alert('异常卷标记成功！');
+    }).catch((error: any) => {
+      console.dir(error);
+      alert('无法标记异常卷');
+    });
   }
 
   viewPaper(template: TemplateRef<any>, paper: any) {

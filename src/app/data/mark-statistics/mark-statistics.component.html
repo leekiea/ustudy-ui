@@ -1,5 +1,5 @@
 <div class="row">
-  <mark-select (selectResult)="selectResult($event)" [marks]="marks" [selectAll]="true"></mark-select>
+  <mark-select (selectResult)="selectResult($event)" [marks]="stringify(marks)" [selectAll]="true"></mark-select>
 </div>
 
 <div class="table-responsive" data-pattern="priority-columns">
@@ -17,7 +17,7 @@
     <ng-container *ngFor="let mark of filteredMarks">
       <tr *ngFor="let egs of mark.egs">
         <td>
-          <a [routerLink]="['/data/mark/markDetails', {egsId: egs.egsId, metrics: stringify(egs.metrics)}]">{{egs.subName}}</a>
+          <a [routerLink]="['/data/mark/markDetails', {egsId: egs.egsId, metrics: stringify(egs.metrics)}]">{{egs.gradeName}}{{egs.subName}}</a>
         </td>
         <td>
           <div class="progress clear-margin-bottom">

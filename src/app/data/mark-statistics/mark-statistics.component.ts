@@ -22,7 +22,7 @@ export class MarkStatisticsComponent implements OnInit {
   ngOnInit(): void {
     this._dataService.getMarks().then((data: any) => {
       this.marks = data;
-      this.filteredMarks = this.marks;
+      this.filteredMarks = JSON.parse(JSON.stringify(data));
       console.log("got marks: " + JSON.stringify(this.marks));
     })
   }

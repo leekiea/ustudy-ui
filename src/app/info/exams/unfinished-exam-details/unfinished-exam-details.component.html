@@ -44,7 +44,8 @@
       </ngx-datatable-column>
       <ngx-datatable-column name="答案" [flexGrow]="1" [cellClass]="'text-center'">
         <ng-template let-row="row" ngx-datatable-cell-template>
-          <span class="glyphicon" [ngClass]="{'glyphicon-ok': row.answerSet, 'glyphicon-open-file': !row.answerSet}" ></span>
+          <span class="glyphicon" [ngClass]="{'glyphicon-ok': row.isObjAnsSet, 'glyphicon-open-file': !row.isObjAnsSet}" ></span>
+          <span class="glyphicon" [ngClass]="{'glyphicon-ok': row.isSubAnsSet, 'glyphicon-open-file': !row.isSubAnsSet}" ></span>
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column name="答题卡" [flexGrow]="1" [cellClass]="'text-center'">
@@ -95,8 +96,8 @@
       <ngx-datatable-column name="阅卷开关" [flexGrow]="1" [cellClass]="'text-center'">
         <ng-template let-row="row" ngx-datatable-cell-template>
           <button class="btn btn-primary" *ngIf="row.markSwitch===true" (click)="updateMarkSwitch(row, false)">暂停阅卷</button>
-          <button class="btn btn-default" *ngIf="row.markSwitch===false&&row.taskDispatch===true&&row.answerSet===true" (click)="updateMarkSwitch(row, true)">启动阅卷</button>
-          <button class="btn btn-default disabled" *ngIf="row.markSwitch===false&&(row.taskDispatch===false||row.answerSet===false)" (click)="updateMarkSwitch(row, true)">启动阅卷</button>
+          <button class="btn btn-default" *ngIf="row.markSwitch===false&&row.taskDispatch===true&&row.isSubAnsSet===true" (click)="updateMarkSwitch(row, true)">启动阅卷</button>
+          <button class="btn btn-default disabled" *ngIf="row.markSwitch===false&&(row.taskDispatch===false||row.isSubAnsSet===false)" (click)="updateMarkSwitch(row, true)">启动阅卷</button>
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column name="阅卷进度" [flexGrow]="1" [cellClass]="'text-center'">
@@ -112,8 +113,8 @@
       <ngx-datatable-column name="成绩" [flexGrow]="1">
         <ng-template let-row="row" ngx-datatable-cell-template>
           <button class="btn btn-primary" *ngIf="row.status==='2'" (click)="publish(row, false)">取消发布</button>
-          <button class="btn btn-default" *ngIf="row.status!=='2' && row.progressRate==='100'" (click)="publish(row, true)">发布成绩</button>
-          <button class="btn btn-default disabled" *ngIf="row.status!=='2' && row.progressRate!=='100'">发布成绩</button>
+          <button class="btn btn-default" *ngIf="row.status!=='2' && row.progressRate==='100' && row.isObjAnsSet && row.isSubAnsSet" (click)="publish(row, true)">发布成绩</button>
+          <button class="btn btn-default disabled" *ngIf="row.status!=='2' && (row.progressRate!=='100' || !row.isObjAnsSet || !row.isSubAnsSet)">发布成绩</button>
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column name="批注" [flexGrow]="1">

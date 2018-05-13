@@ -17,6 +17,7 @@ export class AddExamineeBatchComponent implements OnInit {
   examinees = [];
   examId: string;
   gradeId: string;
+  grades: any;
   grade: any;
 
   constructor(public bsModalRef: BsModalRef, private _examService: ExamService) { }
@@ -40,17 +41,23 @@ export class AddExamineeBatchComponent implements OnInit {
 
       /* save data */
       this.data = <AOA>(XLSX.utils.sheet_to_json(ws, {header: 1}));
-      this._examService.getGrade(this.gradeId).then((data) => {
-        this.grade = data;
+      this._examService.getGradeSub().then((data) => {
+        this.grades = data;
+        for(let grade of this.grades) {
+          if (grade.id === Number(this.gradeId)) {
+            this.grade = grade;
+            break;
+          }
+        }
         _.forEach(this.data.slice(1), (row) => {
-          console.log("row: " + row[0] + "_" + row[1] + "_" + row[2] + "_" + row[3]);
-          if(row[0] == undefined || row[2] == undefined || row[3] == undefined) {
+          console.log("row: " + row[0] + "_" + row[1] + "_" + row[2] + "_" + row[3] + "_" + row[4]);
+          if(row[0] == undefined || row[2] == undefined || row[3] == undefined || row[4] == undefined) {
             return;
           }
           const examinee = Object.create({});
           // [{stuName: this.name, stuId: this.stuId, stuExamId: this.stuExamId, classId: this.examineeClass.classId,
-          examinee.examId = this.examId;
-          examinee.gradeId = this.gradeId;
+          examinee.examId = Number(this.examId);
+          examinee.gradeId = Number(this.gradeId);
           if (row[0].indexOf(' ') != -1) {
             examinee.stuName = row[0].replace(/ /g, '');
           } else {
@@ -78,26 +85,47 @@ export class AddExamineeBatchComponent implements OnInit {
             examinee.className = examinee.className.replace(/\)/g, '）');
           }
 
-          examinee.classId = this.findClass(examinee.className);
+          let subNames = '';
+          if (row[4].indexOf(' ') != -1) {
+            subNames = row[4].replace(/ /g, '');
+          } else {
+            subNames = row[4];
+          }
+
+          if (row[4].indexOf('（') != -1) {
+            subNames = subNames.replace(/\（/g, '(');
+          }
+
+          if (row[4].indexOf('）') != -1) {
+            subNames = subNames.replace(/\）/g, ')');
+          }
+
+          if (row[4].indexOf('，') != -1) {
+            subNames = subNames.replace(/\，/g, ',');
+          }
+
+          examinee.subs = [];
+          for(let subName of subNames.split(',')) {
+            let matched = false;
+            for(let sub of this.grade.subjects) {
+              if (sub.name === subName) {
+                matched = true;
+                examinee.subs.push(sub.id);
+                break;
+              }
+            }
+            if (!matched) {
+              alert('无法找到科目：' + subName);
+              return;
+            }
+          }
 
           this.examinees.push(examinee);
-        })
+        });
+        this.examinees = [...this.examinees]; // refresh the table rows
       });
     };
     reader.readAsBinaryString(target.files[0]);
-  }
-
-  test() {
-    console.log(1)
-  }
-
-  private findClass(name: any) {
-    const classes = this.grade.classes;
-    return _.get(_.find(classes, {className: name}), 'id')
-  }
-
-  changeClass(event, row) {
-    row.classId = event.target.value
   }
 
   submit() {

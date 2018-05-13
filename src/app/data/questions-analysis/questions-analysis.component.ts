@@ -17,6 +17,7 @@ export class QuestionsAnalysisComponent implements OnInit {
   selectedExam: any;
   scores: any[];
   scoreDatas: any[];
+  temp: any;
   barChartOptions: any = {
     animation : false,
     scaleShowVerticalLines: false,
@@ -51,6 +52,7 @@ export class QuestionsAnalysisComponent implements OnInit {
           tooltipEl.style.opacity = '0';
           return;
         }
+        tooltipEl.style.opacity = '1';
 
 // Set caret Position
         tooltipEl.classList.remove('above', 'below', 'no-transform');
@@ -131,50 +133,46 @@ export class QuestionsAnalysisComponent implements OnInit {
       this.selectedExam = _.first(data);
       if (!this.selectedExam) {
         this.exams = this._examService.filterExams({finished: true});
-        this.exams.then((data) => {
-          this.selectedExam = _.first(data);
+        this.exams.then((data1) => {
+          this.selectedExam = _.first(data1);
         })
       }
     });
   }
 
   selectResult(result) {
-    // XXX: mock
-    // this.result = result;
-    // const counts = _.countBy(result.scores, Number);
-    // setTimeout(() => {
-    //   this.scores = _.keys(counts);
-    //   this.scoreDatas = [{data: _.values(counts), label: '分数统计'}];
-    // }, 500);
-
     this.filterResult = result;
     this.loadResult()
   }
 
   loadResult() {
+    const tooltipEl = document.getElementById('chartjs-tooltip');
+    if (tooltipEl) {
+      tooltipEl.style.opacity = '0';
+    }
     if (!this.filterResult) {
       return
     }
     if (this.tab === 'summary') {
-      this._dataService.getAnaResults('', this.filterResult.subject.id, this.filterResult.class).then((data) => {
+      this._dataService.getAnaResults('', this.filterResult.subject.id, this.filterResult.class.id).then((data) => {
         this.result = data[0];
+        this.scoreDatas = [{data: _.values(this.result.scoreplacement), label: '分数统计'}];
         setTimeout(() => {
           this.scores = _.keys(this.result.scoreplacement);
-          this.scoreDatas = [{data: _.values(this.result.scoreplacement), label: '分数统计'}];
         }, 500);
       })
     }
     if (this.tab === 'subjective') {
-      this._dataService.getAnaResults('subject', this.filterResult.subject.id, this.filterResult.class).then((data) => {
+      this._dataService.getAnaResults('subject', this.filterResult.subject.id, this.filterResult.class.id).then((data) => {
         this.subjectResult = data;
-        this.pages = _.range(1, Math.ceil(this.subjectResult.length / 10) + 1)
+        this.pages = _.range(1, Math.ceil(this.subjectResult.length / 10) + 1);
         this.currentPage = 1
       })
     }
     if (this.tab === 'objective') {
-      this._dataService.getAnaResults('object', this.filterResult.subject.id, this.filterResult.class).then((data) => {
+      this._dataService.getAnaResults('object', this.filterResult.subject.id, this.filterResult.class.id).then((data) => {
         this.objectResult = data;
-        this.pages = _.range(1, Math.ceil(this.objectResult.length / 10) + 1)
+        this.pages = _.range(1, Math.ceil(this.objectResult.length / 10) + 1);
         this.currentPage = 1
       })
     }
@@ -212,15 +210,6 @@ export class QuestionsAnalysisComponent implements OnInit {
 
   getOptionsScoreDetails(question: any) {
     return _.values(question.details)
-  }
-
-  getPages() {
-    if (this.tab === 'subjective') {
-      length = this.subjectResult.length
-    }
-    if (this.tab === 'objective') {
-    }
-    return _.range(1, Math.ceil(length / 10) + 1)
   }
 }
 
