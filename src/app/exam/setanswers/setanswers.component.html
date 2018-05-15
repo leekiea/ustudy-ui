@@ -34,6 +34,7 @@
 								<th>题型</th>
 								<th>选项</th>
 								<th>分值</th>
+								<th *ngIf="issynthesize">分科</th>
 							</tr>
 						</thead>
 						<tbody id="objective">
@@ -77,6 +78,14 @@
 										</div>
 									</div>
 								</td>
+								<td *ngIf="issynthesize">
+									<select id="answersBranch_{{objective.id}}" class="form-control" (change)="setAnswersBranch(objective.id)">
+										<ng-container *ngFor="let subject of subjects">
+											<option *ngIf="objective.branch === subject.name" selected="selected" value="{{subject.name}}">{{subject.name}}</option>
+											<option *ngIf="objective.branch !== subject.name" value="{{subject.name}}">{{subject.name}}</option>
+										</ng-container>
+									</select>
+								</td>
 							</tr>
 						</tbody>
 					</table>
@@ -90,7 +99,6 @@
 								<th>题号</th>
 								<th>选项</th>
 								<th>正确答案</th>
-								<th *ngIf="issynthesize">分科设置</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -111,14 +119,6 @@
 									</div>
 								</td>
 								<td>{{answer.answer}}</td>
-								<td *ngIf="issynthesize">
-									<select id="answersSubject_{{answer.quesno}}" class="form-control" (change)="setAnswersSubject(answer.quesno,answer.type)">
-										<ng-container *ngFor="let subject of subjects">
-											<option *ngIf="answer.subject === subject.name" selected="selected" value="{{subject.name}}">{{subject.name}}</option>
-											<option *ngIf="answer.subject !== subject.name" value="{{subject.name}}">{{subject.name}}</option>
-										</ng-container>
-									</select>
-								</td>
 							</tr>
 						</tbody>
 					</table>
@@ -177,7 +177,7 @@
 										</ng-container>
 									</td>
 									<td *ngIf="issynthesize">
-										<select id="subjective_subject_{{subjective.id}}" class="form-control" (change)="onSubjectiveValueChange('subject',subjective.id,0)">
+										<select id="subjective_branch_{{subjective.id}}_0_0" class="form-control" (change)="onSubjectiveValueChange('branch',subjective.id,0,0)">
 											<ng-container *ngFor="let subject of subjects">
 												<option *ngIf="subjective.branch === subject.name" selected="selected" value="{{subject.name}}">{{subject.name}}</option>
 												<option *ngIf="subjective.branch !== subject.name" value="{{subject.name}}">{{subject.name}}</option>
@@ -242,7 +242,7 @@
 												</div>
 											</td>
 											<td *ngIf="issynthesize">
-												<select  id="subjective_subject_{{subjective.id}}_{{child.id}}_0" class="form-control" (change)="onSubjectiveValueChange('subject',subjective.id,child.id,0)">
+												<select  id="subjective_branch_{{subjective.id}}_{{child.id}}_0" class="form-control" (change)="onSubjectiveValueChange('branch',subjective.id,child.id,0)">
 													<ng-container *ngFor="let subject of subjects">
 														<option *ngIf="child.branch === subject.name" selected="selected" value="{{subject.name}}">{{subject.name}}</option>
 														<option *ngIf="child.branch !== subject.name" value="{{subject.name}}">{{subject.name}}</option>
@@ -284,7 +284,7 @@
 													</div>
 												</td>
 												<td *ngIf="issynthesize">
-													<select  id="subjective_subject_{{subjective.id}}_{{child.id}}_{{step.id}}" class="form-control" (change)="onSubjectiveValueChange('subject',subjective.id,child.id,step.id)">
+													<select  id="subjective_branch_{{subjective.id}}_{{child.id}}_{{step.id}}" class="form-control" (change)="onSubjectiveValueChange('branch',subjective.id,child.id,step.id)">
 														<ng-container *ngFor="let subject of subjects">
 															<option *ngIf="step.subject === subject.name" selected="selected" value="{{subject.name}}">{{subject.name}}</option>
 															<option *ngIf="step.subject !== subject.name" value="{{subject.name}}">{{subject.name}}</option>
@@ -322,7 +322,7 @@
 											</div>
 										</td>
 										<td *ngIf="issynthesize">
-											<select  id="subjective_subject_{{subjective.id}}_0_{{step.id}}" class="form-control" (change)="onSubjectiveValueChange('subject',subjective.id,0,step.id)">
+											<select  id="subjective_branch_{{subjective.id}}_0_{{step.id}}" class="form-control" (change)="onSubjectiveValueChange('branch',subjective.id,0,step.id)">
 												<ng-container *ngFor="let subject of subjects">
 													<option *ngIf="step.subject === subject.name" selected="selected" value="{{subject.name}}">{{subject.name}}</option>
 													<option *ngIf="step.subject !== subject.name" value="{{subject.name}}">{{subject.name}}</option>

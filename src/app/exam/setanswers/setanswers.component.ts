@@ -627,11 +627,11 @@ export class SetAnswersComponent implements OnInit {
     });
   }
 
-  setAnswersSubject(id, type) {
-    let value = this.elementRef.nativeElement.querySelector('#answersSubject_' + id).value;
-    this.objectiveAnswers.forEach(answer => {
-      if (answer.quesno === id && answer.type === type) {
-        answer.subject = value;
+  setAnswersBranch(id) {
+    let value = this.elementRef.nativeElement.querySelector('#answersBranch_' + id).value;
+    this.objectives.forEach(objective => {
+      if (objective.id === id) {
+        objective.branch = value;
       }
     });
   }
@@ -934,6 +934,8 @@ export class SetAnswersComponent implements OnInit {
               if(subjective.child == null || subjective.child.length <= 0) {
                 this.subjectiveScore = this.subjectiveScore + (subjective.endno - subjective.startno + 1) * (value - subjective.score);
               }
+              subjective[valueType] = value;
+            } else if (valueType === 'branch') {
               subjective[valueType] = value;
             }
           }
