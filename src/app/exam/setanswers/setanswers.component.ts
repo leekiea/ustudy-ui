@@ -399,7 +399,7 @@ export class SetAnswersComponent implements OnInit {
     }
   }
 
-  endValueChange(oldEnd, newEnd, type, score) {
+  endValueChange(oldEnd, newEnd, type, score, sameStartEnd) {
     let total = (newEnd - oldEnd) * score;
     if (type === '单选题') {
       this.radioScore = this.radioScore + total;
@@ -409,6 +409,11 @@ export class SetAnswersComponent implements OnInit {
       this.judgmentScore = this.judgmentScore + total;
     }
     this.objectiveScore = this.objectiveScore + total;
+
+    if(sameStartEnd === true) {
+      oldEnd = newEnd - 1;
+    }
+    
     if (oldEnd < newEnd) {
       let choiceNum = 4;
       let _option = [];
@@ -542,13 +547,22 @@ export class SetAnswersComponent implements OnInit {
 
         if (valueType === 1) {
           var start = Number(this.elementRef.nativeElement.querySelector('#start_' + id).value);
+          let sameStartEnd = false;
           if (!start || start < 1) {
             start = start_;
+          } else if (start > end_) {
+            sameStartEnd = true;
+            obj['startno'] = start;
           } else {
             obj['startno'] = start;
           }
           this.elementRef.nativeElement.querySelector('#start_' + id).value = start;
           this.startValueChange(start_, start, type_, score_);
+          if (sameStartEnd === true) {
+            this.elementRef.nativeElement.querySelector('#end_' + id).value = start;
+            obj['endno'] = start;
+            this.endValueChange(start_, start, type_, score_, sameStartEnd);
+          }
         } else if (valueType === 2) {
           var end = Number(this.elementRef.nativeElement.querySelector('#end_' + id).value);
           if (!end || end < 1 || end < obj['startno']) {
@@ -557,7 +571,7 @@ export class SetAnswersComponent implements OnInit {
             obj['endno'] = end;
           }
           this.elementRef.nativeElement.querySelector('#end_' + id).value = end;
-          this.endValueChange(end_, end, type_, score_);
+          this.endValueChange(end_, end, type_, score_, false);
         } else if (valueType === 3) {
           var type = this.elementRef.nativeElement.querySelector('#type_' + id).value;
           obj['type'] = type;
@@ -613,11 +627,11 @@ export class SetAnswersComponent implements OnInit {
     });
   }
 
-  setAnswersSubject(id, type) {
-    let value = this.elementRef.nativeElement.querySelector('#answersSubject_' + id).value;
-    this.objectiveAnswers.forEach(answer => {
-      if (answer.quesno === id && answer.type === type) {
-        answer.subject = value;
+  setAnswersBranch(id) {
+    let value = this.elementRef.nativeElement.querySelector('#answersBranch_' + id).value;
+    this.objectives.forEach(objective => {
+      if (objective.id === id) {
+        objective.branch = value;
       }
     });
   }
@@ -920,6 +934,8 @@ export class SetAnswersComponent implements OnInit {
               if(subjective.child == null || subjective.child.length <= 0) {
                 this.subjectiveScore = this.subjectiveScore + (subjective.endno - subjective.startno + 1) * (value - subjective.score);
               }
+              subjective[valueType] = value;
+            } else if (valueType === 'branch') {
               subjective[valueType] = value;
             }
           }

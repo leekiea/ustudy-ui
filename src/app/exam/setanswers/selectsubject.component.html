@@ -36,7 +36,7 @@
 					<div class="col-sm-9 btn-toolbar">
 						<div class="extra btn-group" data-toggle="buttons" *ngIf="type === 'answers'">
 							<ng-container *ngFor="let subject of grade.subjects">
-								<button class="btn btn-primary" (click)="setAnswers(subject.id, grade.id, subject.subId)" *ngIf="subject.answerSet === false" style="margin-top:5px;margin-right:2px;">{{subject.subName}}</button>
+								<button class="btn btn-primary" (click)="setAnswers(subject.id, grade.id, subject.subId)" *ngIf="subject.objAnsSet === false || subject.subAnsSet === false" style="margin-top:5px;margin-right:2px;">{{subject.subName}}</button>
 							</ng-container>
 						</div>
 						<div class="extra btn-group" data-toggle="buttons" *ngIf="type === 'task'">
@@ -57,7 +57,7 @@
 					<div class="col-sm-9 btn-toolbar">
 							<div class="extra btn-group" data-toggle="buttons" *ngIf="type === 'answers'">
 								<ng-container *ngFor="let subject of grade.subjects">
-									<a class="btn btn-default" (click)="setAnswers(subject.id, grade.id, subject.subId)" *ngIf="subject.answerSet === true" style="margin-top:5px;margin-right:2px;">{{subject.subName}}</a>
+									<a class="btn btn-default" (click)="setAnswers(subject.id, grade.id, subject.subId)" *ngIf="subject.objAnsSet === true && subject.subAnsSet" style="margin-top:5px;margin-right:2px;">{{subject.subName}}</a>
 								</ng-container>
 							</div>
 							<div class="extra btn-group" data-toggle="buttons" *ngIf="type === 'task'">
