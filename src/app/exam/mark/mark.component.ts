@@ -937,7 +937,12 @@ export class MarkComponent implements OnInit {
 					this.focusQuestion.stepName = '';
 					console.log(error.status);
 					console.log(error.statusText);
-					alert("修改失败！");
+					if (error.status == 403) {
+						alert("阅卷已暂停，请联系管理员。");
+						this.router.navigate(['markList']);
+					} else {
+						alert("修改失败！");
+					}					
 				});
 			}
 		}
