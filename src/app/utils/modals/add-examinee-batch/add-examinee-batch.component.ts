@@ -46,7 +46,7 @@ export class AddExamineeBatchComponent implements OnInit {
           return;
         }
         const examinee = Object.create({});
-        // [{stuName: this.name, stuId: this.stuId, stuExamId: this.stuExamId, classId: this.examineeClass.classId,
+        // [{stuName: this.name, stuId: this.stuId, examCode: this.examCode, classId: this.examineeClass.classId,
         examinee.examId = Number(this.examId);
         examinee.gradeId = Number(this.gradeId);
         if (row[0].indexOf(' ') != -1) {
@@ -57,9 +57,9 @@ export class AddExamineeBatchComponent implements OnInit {
         examinee.stuId = row[1];
 
         if (row[2].indexOf(' ') != -1) {
-          examinee.stuExamId = row[2].replace(/ /g, '');
+          examinee.examCode = row[2].replace(/ /g, '');
         } else {
-          examinee.stuExamId = row[2];
+          examinee.examCode = row[2];
         }
 
         if (row[3].indexOf(' ') != -1) {
