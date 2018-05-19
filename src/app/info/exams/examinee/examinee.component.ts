@@ -36,9 +36,9 @@ export class ExamineeComponent implements OnInit {
   ];
 
   // for new examinee
-  name: string;
+  stuName: string;
   stuId: string;
-  stuExamId: string;
+  examCode: string;
   examineeClass: any;
   examineeId: any;
   examineeSubs = [];
@@ -67,7 +67,7 @@ export class ExamineeComponent implements OnInit {
       params.classId = this.selectedClass.id
     }
     this._examService.getExaminees(this.examId, this.gradeId, params).then((data: any) => {
-      const examinees = data.students;
+      const examinees = data;
       this.temp = [...examinees];
       this.examinees = examinees;
     });
@@ -86,18 +86,18 @@ export class ExamineeComponent implements OnInit {
   }
 
   addOrUpdateExaminee(modal) {
-    if (!this.name || !this.stuExamId || !this.examineeClass || !this.examineeSubs) {
+    if (!this.stuName || !this.examCode || !this.examineeClass || !this.examineeSubs) {
       alert('请输入必填内容');
       return
     }
-    this._examService.addOrUpdateExaminee([{stuName: this.name, stuId: this.stuId, stuExamId: this.stuExamId, classId: this.examineeClass.id,
+    this._examService.addOrUpdateExaminee([{stuName: this.stuName, stuId: this.stuId, examCode: this.examCode, classId: this.examineeClass.id,
       examId: this.examId, gradeId: this.gradeId, subs: this.examineeSubs}]).then((data) => {
       alert(`${this.examineeId ? '更新' : '新建'}考生成功`);
       // if (this.examineeId) {
       //   const examinee = _.find(this.examinees, {studentId: this.examineeId});
       //   examinee.studentName = this.name;
       //   examinee.stuId = this.stuId;
-      //   examinee.stuExamId = this.stuExamId;
+      //   examinee.examCode = this.examCode;
       //   examinee.className = this.examineeClass.name;
       //   examinee.classId = this.examineeClass.id;
       //   examinee.subs = this.examineeSubs;
@@ -108,15 +108,15 @@ export class ExamineeComponent implements OnInit {
   }
 
   deleteExaminee(examinee) {
-    this._examService.deleteExaminee(examinee.studentId).then((data) => {
+    this._examService.deleteExaminee(examinee.id).then((data) => {
       alert('删除考生成功');
       _.remove(this.examinees, examinee)
     });
   }
 
   editExaminee(modal, examinee) {
-    this.name = examinee.studentName;
-    this.stuExamId = examinee.examCode;
+    this.stuName = examinee.stuName;
+    this.examCode = examinee.examCode;
     this.examineeClass = _.find(this.classes, {id: examinee.classId});
     this.examineeId = examinee.studentId;
     this.examineeSubs = examinee.subs;

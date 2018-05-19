@@ -164,7 +164,7 @@ export class ExamService {
 
   getExaminees(examId: any, gradeId: any, params: any) {
     return new Promise((resolve, reject) => {
-      this._sharedService.makeRequest('GET', `/api/students/${examId}/${gradeId}`, params).then((data: any) => {
+      this._sharedService.makeRequest('GET', `/api/info/examinee/${examId}/${gradeId}`, params).then((data: any) => {
         if (data.success) {
           resolve(data.data)
         } else {
@@ -272,7 +272,7 @@ export class ExamService {
 
   getMissingExaminees(egsId, gradeId) {
     return new Promise((resolve, reject) => {
-      this._sharedService.makeRequest('GET', `/api/students/miss/${egsId}/${gradeId}`, '').then((data: any) => {
+      this._sharedService.makeRequest('GET', `/info/examinee/absent/${egsId}`, '').then((data: any) => {
         if (data.success) {
           resolve(data.data)
         } else {
