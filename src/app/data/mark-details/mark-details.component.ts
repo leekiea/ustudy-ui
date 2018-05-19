@@ -25,7 +25,7 @@ export class MarkDetailsComponent implements OnInit {
   ngOnInit() {
     console.log("metrics is "+ this.route.snapshot.params.metrics);
     console.log("egsId is "+ this.route.snapshot.params.egsId);
-    this.questionList = _.orderBy(JSON.parse(this.route.snapshot.params.metrics), 'quesName');
+    this.questionList = JSON.parse(this.route.snapshot.params.metrics);
     this.reload(this.route.snapshot.params.egsId);
   }
 
