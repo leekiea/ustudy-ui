@@ -188,4 +188,30 @@ export class DataService {
     })
   }
 
+  //获取答题明细(单科)
+  getReprotDetailScore(egsId: any) {
+    return new Promise((resolve, reject) => {
+      this._sharedService.makeRequest('GET', `/exam/report/answer/details/${egsId}/`, '').then((data: any) => {
+        if (data.success) {
+          resolve(data.data)
+        } else {
+          reject()
+        }
+      })
+    })
+  }
+
+  //获取单科成绩
+  getReprotSubScore(egsId: any) {
+    return new Promise((resolve, reject) => {
+      this._sharedService.makeRequest('GET', `/exam/report/egsscore/${egsId}/`, '').then((data: any) => {
+        if (data.success) {
+          resolve(data.data)
+        } else {
+          reject()
+        }
+      })
+    })
+  }
+  
 }
