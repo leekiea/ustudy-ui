@@ -47,7 +47,7 @@ export class ReportComponent implements OnInit {
 
   // selectedSubject.id is the egsId you can use.
 
-  private getSubScore() {
+  getSubScore() {
     //检查画面条件
     if (!this.checkSelected()){
       return;
@@ -70,7 +70,7 @@ export class ReportComponent implements OnInit {
 
   }
 
-  private getDetailScore() {
+  getDetailScore() {
     //检查画面条件
     if (!this.checkSelected()){
       return;
@@ -95,7 +95,7 @@ export class ReportComponent implements OnInit {
         alert('您选择的条件不正确。');
         return false;
     }
-      return true 
+      return true
   }
 
   private downloadSubScore(resultData:any): void {
@@ -127,7 +127,7 @@ export class ReportComponent implements OnInit {
 		XLSX.utils.book_append_sheet(wb, ws, this.selectedSubject.name);
 
 		/* save to file */
-		XLSX.writeFile(wb, this.fileNameFirst + '单科成绩.xlsx');    
+		XLSX.writeFile(wb, this.fileNameFirst + '单科成绩.xlsx');
   }
 
   private downloadDetailScore(resultData:any): void {
@@ -137,7 +137,7 @@ export class ReportComponent implements OnInit {
     let sheetRow:number;
     /* generate workbook and add the worksheet */
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    
+
     for (let idx:number=0;idx<details.length;idx++){
       if (!clsName || clsName!=details[idx].clsName ) {
         sheetRow=0;
@@ -150,7 +150,7 @@ export class ReportComponent implements OnInit {
         dataExp=this.creatDetailScoreHead(resultData);
         sheetRow=3;
       }
-      
+
       //body生成 1行
       this.creatDetailScoreBody(resultData,dataExp,idx,sheetRow);
 
@@ -207,7 +207,7 @@ export class ReportComponent implements OnInit {
         dataExp[row][col]=resultData.subRef[i].quesno;
         col+=1;
       }
-    }    
+    }
     dataExp[row][col]='总分';
 
     /* 第3行 标题 */
@@ -235,7 +235,7 @@ export class ReportComponent implements OnInit {
     let col:number;
     //行初始化
     dataExp[row]=new Array();
-    
+
     /* 1行 分数详情 */
     dataExp[row][0]=resultData.details[idx].eeName;
     dataExp[row][1]=resultData.details[idx].clsName;
