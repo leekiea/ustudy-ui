@@ -14,7 +14,7 @@
       <div class="input-group">
         <span class="input-group-addon">年级</span>
         <select class="form-control" [(ngModel)]="selectedGrade" name="selectedGrade" (change)="onGradeChange()">
-          <option *ngFor="let grade of selectedSchool?.GradeDetails, let i = index" [ngValue]="grade">
+          <option *ngFor="let grade of selectedSchool?.GradeSubs, let i = index" [ngValue]="grade">
             {{grade.gradeName}}
           </option>
         </select>
