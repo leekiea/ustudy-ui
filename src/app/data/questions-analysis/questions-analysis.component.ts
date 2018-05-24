@@ -156,7 +156,7 @@ export class QuestionsAnalysisComponent implements OnInit {
     if (this.tab === 'summary') {
       this._dataService.getAnaResults('', this.filterResult.subject.id, this.filterResult.class.id).then((data) => {
         this.result = data[0];
-        this.scoreDatas = [{data: _.values(this.result.scoreplacement), label: '分数统计'}];
+        this.scoreDatas = [{data: _.values(this.result.scoreplacement), label: '人数'}];
         setTimeout(() => {
           this.scores = _.keys(this.result.scoreplacement);
         }, 500);
