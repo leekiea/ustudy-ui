@@ -12,15 +12,15 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "4.3.4",
-    "@angular/common": "4.3.4",
-    "@angular/compiler": "4.3.4",
-    "@angular/core": "4.3.4",
-    "@angular/forms": "4.3.4",
-    "@angular/http": "4.3.4",
-    "@angular/platform-browser": "4.3.4",
-    "@angular/platform-browser-dynamic": "4.3.4",
-    "@angular/router": "4.3.4",
+    "@angular/animations": "4.3.0",
+    "@angular/common": "4.3.0",
+    "@angular/compiler": "4.3.0",
+    "@angular/core": "4.3.0",
+    "@angular/forms": "4.3.0",
+    "@angular/http": "4.3.0",
+    "@angular/platform-browser": "4.3.0",
+    "@angular/platform-browser-dynamic": "4.3.0",
+    "@angular/router": "4.3.0",
     "@swimlane/ngx-datatable": "11.2.0",
     "@types/lodash": "^4.14.85",
     "@types/sprintf": "^0.1.0",
@@ -30,11 +30,9 @@
     "chart.js": "^2.7.2",
     "core-js": "^2.4.1",
     "font-awesome": "^4.7.0",
-    "i": "^0.3.6",
     "ng2-charts": "^1.6.0",
     "ngx-bootstrap": "^2.0.0-beta.8",
     "ngx-treeview": "git+https://github.com/iJetLi/ngx-treeview-dist.git",
-    "npm": "^6.0.1",
     "rxjs": "^5.5.2",
     "sprintf-js": "^1.1.1",
     "ts-md5": "^1.2.0",
@@ -42,9 +40,9 @@
     "zone.js": "^0.8.4"
   },
   "devDependencies": {
-    "@angular/cli": "1.4.9",
-    "@angular/compiler-cli": "4.3.4",
-    "@angular/language-service": "4.3.3",
+    "@angular/cli": "1.2.6",
+    "@angular/compiler-cli": "4.3.0",
+    "@angular/language-service": "4.0.0",
     "@types/jasmine": "2.5.45",
     "@types/node": "~6.0.60",
     "codelyzer": "~3.0.1",
@@ -59,6 +57,6 @@
     "protractor": "~5.1.2",
     "ts-node": "~3.0.4",
     "tslint": "~5.3.2",
-    "typescript": "2.3.4"
+    "typescript": "^2.5.3"
   }
 }
