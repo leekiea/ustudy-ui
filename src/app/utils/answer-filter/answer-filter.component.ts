@@ -22,7 +22,8 @@ export class AnswerFilterComponent implements OnChanges {
     if (changes.selectedExam.currentValue) {
       this.selectedSchool = _.first(changes.selectedExam.currentValue.schools);
       this.selectedGrade = _.first(this.selectedSchool.GradeDetails);
-      this.onGradeChange()
+      this.onGradeChange();
+      this.returnResult();
     }
   }
 
