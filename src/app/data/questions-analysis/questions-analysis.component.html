@@ -95,7 +95,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let res of objectResult?.slice((currentPage - 1) * 10, currentPage * 10), let i = index">
+          <tr *ngFor="let res of objectResult?.slice((currentPage - 1) * 20, currentPage * 20), let i = index">
             <td>{{res.quesno}}</td>
             <td>{{res.score}}</td>
             <td>{{res.aveScore}}</td>
@@ -137,7 +137,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let res of subjectResult?.slice((currentPage - 1) * 10, currentPage * 10), let i = index">
+          <tr *ngFor="let res of subjectResult?.slice((currentPage - 1) * 20, currentPage * 20), let i = index">
             <td>{{res.quesname}}</td>
             <td>{{res.score}}</td>
             <td>{{res.aveScore}}</td>
@@ -162,4 +162,13 @@
     </div>
   </div>
   <!--tab3 end-->
+  <div role="tabpanel">
+    <div class="panel panel-default">
+      <div class="row">
+        <ul class="pagination" *ngIf="tab!=='summary'">
+          <li *ngFor="let page of pages" [ngClass]="{active: page==currentPage}"><a href="javascript:;" (click)="currentPage=page">{{page}}</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>
