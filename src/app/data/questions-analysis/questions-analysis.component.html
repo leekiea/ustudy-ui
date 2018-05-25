@@ -95,7 +95,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let res of objectResult.slice((currentPage - 1) * 10, currentPage * 10), let i = index">
+          <tr *ngFor="let res of objectResult?.slice((currentPage - 1) * 10, currentPage * 10), let i = index">
             <td>{{res.quesno}}</td>
             <td>{{res.score}}</td>
             <td>{{res.aveScore}}</td>
@@ -107,7 +107,7 @@
                         [datasets]="getOptionsData(res)"
                         [legend]="false"
                         [colors]="getOptionsColors(res)"
-                        [options]="{scaleShowVerticalLines: false, responsive: true, animation : false}"
+                        [options]="objBarChartOptions"
                         [labels]="getQuestionOptions(res)"
                         [chartType]="'bar'"
                 ></canvas>
@@ -137,7 +137,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let res of subjectResult.slice((currentPage - 1) * 10, currentPage * 10), let i = index">
+          <tr *ngFor="let res of subjectResult?.slice((currentPage - 1) * 10, currentPage * 10), let i = index">
             <td>{{res.quesname}}</td>
             <td>{{res.score}}</td>
             <td>{{res.aveScore}}</td>
