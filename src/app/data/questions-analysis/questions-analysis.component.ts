@@ -115,7 +115,7 @@ export class QuestionsAnalysisComponent implements OnInit {
             } else {
               percentage = body[0].labels[index];
             }
-            innerHtml += '<tr><td>' + span + `百分比:${percentage }%` + '</td></tr>';
+            innerHtml += '<tr><td>' + span + `${percentage }%` + '</td></tr>';
           });
           innerHtml += '</tbody>';
 
