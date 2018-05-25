@@ -270,14 +270,14 @@ export class QuestionsAnalysisComponent implements OnInit {
     if (this.tab === 'subjective') {
       this._dataService.getAnaResults('subject', this.filterResult.subject.id, this.filterResult.class.id).then((data) => {
         this.subjectResult = data;
-        this.pages = _.range(1, Math.ceil(this.subjectResult.length / 10) + 1);
+        this.pages = _.range(1, Math.ceil(this.subjectResult.length / 20) + 1);
         this.currentPage = 1
       })
     }
     if (this.tab === 'objective') {
       this._dataService.getAnaResults('object', this.filterResult.subject.id, this.filterResult.class.id).then((data) => {
         this.objectResult = data;
-        this.pages = _.range(1, Math.ceil(this.objectResult.length / 10) + 1);
+        this.pages = _.range(1, Math.ceil(this.objectResult.length / 20) + 1);
         this.currentPage = 1
       })
     }
