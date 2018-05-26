@@ -29,10 +29,14 @@ export class AnswerService {
       })
     })
   }
-  getPapers(egsId, questionId) {
-    console.log(`getPapers: `, egsId, questionId);
+  getPapers(type, questionId) {
+    let typeUrl:string = type;
+    if (type=='class') {
+      typeUrl='NONE';
+    }
+    console.log(`getPapers: `, type, questionId);
     return new Promise((resolve, reject) => {
-      this._sharedService.makeRequest('GET', `/api/${egsId}/${questionId}/papers`, '').then((data: any) => {
+      this._sharedService.makeRequest('GET', `/exam/answersheet/papers/${questionId}/${typeUrl}`, '').then((data: any) => {
       //this._sharedService.makeRequest('GET', `assets/api/exams/papers.json`, '').then((data: any) => {
         if (!data.data) {
           reject('no data');

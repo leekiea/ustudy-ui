@@ -33,55 +33,63 @@ export class ExamsFilterComponent implements OnInit {
       this.props = data;
     })
     ]).then(() => {
+      let that = this;
       let perms = this._sharedService.checkViewPerm('paper');
       if (perms.grade == 'NONE' || perms.subject == 'NONE') {
         this.exams = [];
       } else if (perms.grade == 'ALL_GRADE') {
         if (perms.subject == 'SELF_SUBJECT') { 
           this.exams.forEach( (exam, i) => {
-            let match = false;
-            for(let subject of this.props.subjects) {
-              if (subject.id === exam.subId) {
-                match = true;
-                break;
+            exam.GrSubDetails=exam.GrSubDetails.filter(function(grSubDetail) {
+              let match = false;
+              for(let subject of that.props.subjects) {
+                if (subject.id === grSubDetail.subId) {
+                  match = true;
+                  break;
+                }
               }
-            }
-            if(match === false) {
+              return match;
+            });
+            if (exam.GrSubDetails.length===0) {
               delete this.exams[i];
             }
           });
         }
       } else {
         if (perms.subject == 'ALL_SUBJECT') { 
-          this.exams.forEach( (exam, i) => {
+          this.exams = this.exams.filter(function(exam) {
             let match = false;
-            for(let grade of this.props.grades) {
+            for(let grade of that.props.grades) {
               if (grade.id === exam.gradeId) {
                 match = true;
                 break;
               }
             }
-            if(match === false) {
-              delete this.exams[i];
-            }
+            return match;
           });
         } else if (perms.subject == 'SELF_SUBJECT') { 
-          this.exams.forEach( (exam, i) => {
-            let matchGrade = false;
-            let matchSub = false;
-            for(let grade of this.props.grades) {
+          this.exams = this.exams.filter(function(exam) {
+            let match = false;
+            for(let grade of that.props.grades) {
               if (grade.id === exam.gradeId) {
-                matchGrade = true;
+                match = true;
                 break;
               }
             }
-            for(let subject of this.props.subjects) {
-              if (subject.id === exam.subId) {
-                matchSub = true;
-                break;
+            return match;
+          });
+          this.exams.forEach( (exam, i) => {
+            exam.GrSubDetails=exam.GrSubDetails.filter(function(grSubDetail) {
+              let match = false;
+              for(let subject of that.props.subjects) {
+                if (subject.id === grSubDetail.subId) {
+                  match = true;
+                  break;
+                }
               }
-            }
-            if(!(matchGrade && matchSub)) {
+              return match;
+            });
+            if (exam.GrSubDetails.length===0) {
               delete this.exams[i];
             }
           });
@@ -132,11 +140,17 @@ export class ExamsFilterComponent implements OnInit {
     // filter our data
     const temp = this.exams.filter(function(d) {
       return d.gradeName.indexOf(options.gradeName) !== -1
-        && d.subName.indexOf(options.subjectName) !== -1
         && d.examName.indexOf(options.examName) !== -1;
     });
-
+    temp.forEach( (exam, i) => {
+      exam.GrSubDetails=exam.GrSubDetails.filter(function(d) {
+        return d.subName.indexOf(options.subjectName) !== -1;
+      });
+      if (exam.GrSubDetails.length===0) {
+        delete temp[i];
+      }
+    });
     console.log("after filter " + JSON.stringify(temp));
-    this.result.emit(temp)
+    this.result.emit(temp);
   }
 }

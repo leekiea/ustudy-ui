@@ -744,6 +744,24 @@ body {
   font-size: 12px;
   border-top: 1px solid #ddd;
 }
+@media (min-width: 568px) {
+  .container.container-fluid-online-marking > .row {
+    position: relative;
+  }
+  .container.container-fluid-online-marking > .row > .col-sm-9 {
+    float: none;
+    padding-right: 150px;
+    width: 100%;
+  }
+  .container.container-fluid-online-marking > .row > .col-sm-3 {
+    float: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+    width: 150px;
+  }
+}
 @media (min-width: 992px) {
   .container.container-fluid-online-marking > .row {
     position: relative;

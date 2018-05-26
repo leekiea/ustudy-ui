@@ -55,16 +55,19 @@ export class AnswerComponent implements OnInit {
     }
     this.selectedQuestion = this.questionList[0];
     for(let question of this.questionList) {
-      if (question.id === this.questionId) {
+      if (question.quesid === this.questionId) {
         this.selectedQuestion = question;
         break;
       }
     }
     Promise.all([
       this._taskService.getGrade(this.gradeId).then((data) => {
-        this.grade = data
+        this.grade = data;
+        if (this.grade !=undefined) {
+          this.grade.classes= _.orderBy(this.grade.classes,'id');
+        }
       }),
-      this._answerService.getPapers(this.egsId, this.selectedQuestion.id).then((data: any) => {
+      this._answerService.getPapers(this.type, this.selectedQuestion.quesid).then((data: any) => {
         this.papers = data;
         this.temp = [...data];
       })
@@ -75,7 +78,7 @@ export class AnswerComponent implements OnInit {
     this.temp = this.papers = [];
     console.log(`question changed:`, JSON.stringify(this.selectedQuestion));
     Promise.all([
-      this._answerService.getPapers(this.egsId, this.selectedQuestion.id).then((data: any) => {
+      this._answerService.getPapers(this.type, this.selectedQuestion.quesid).then((data: any) => {
         this.papers = data;
         this.temp = [...data];
       })
@@ -90,22 +93,9 @@ export class AnswerComponent implements OnInit {
 
   getUrl(paper) {
     if (this.viewAnswerPaper) {
-      return paper.paperMarkImg.split(';').map((url) => this._sharedService.getImgUrl(url, ''))
+      return paper.fullPaper.split(';').map((url) => this._sharedService.getImgUrl(url, ''))
     } else {
-      let result = [];
-      if(paper.markImgs.length === 1) {
-        result.push(this._sharedService.getImgUrl(paper.markImgs[0].ansMarkImg, ''));
-      } else if (paper.markImgs.length === 2) {
-        result.push(this._sharedService.getImgUrl(paper.markImgs[0].ansMarkImg, ''));
-        result.push(this._sharedService.getImgUrl(paper.markImgs[1].ansMarkImg, ''));
-      } else if (paper.markImgs.length === 3) {
-        for (let img of paper.markImgs) {
-          if (img.isfinal === true) {
-            result.push(this._sharedService.getImgUrl(img.ansMarkImg, ''));
-          }
-        }
-      }
-      return result;
+      return paper.markAnsPaper.split(',').map((url) => this._sharedService.getImgUrl(url, ''))
     }
   }
 
@@ -154,7 +144,7 @@ export class AnswerComponent implements OnInit {
     if (this.papers) {
       const temp = this.temp.filter(function(d) {
         return d.clsName.indexOf(options.clsName) !== -1
-          && d.examCode.indexOf(options.examCode) !== -1;
+          && d.eeCode.indexOf(options.examCode) !== -1;
       });
       this.papers = temp;
     }

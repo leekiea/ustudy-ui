@@ -12,35 +12,26 @@
    </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let subject of subjects">
-      <ng-container *ngIf="subject != undefined">
-        <td>{{ subject.examName }}<br>({{ subject.gradeName }})</td>
-        <td>{{ subject.subName }}</td>
-        <td></td>
-        <td>
-          <span *ngIf="subject.examId === 1 && subject.subName === '数学'">
-            <a href="http://ustudy.oss-cn-beijing.aliyuncs.com/AM_36-50_0_18612345678_E2_0000144616000003901.png" target="view_window">180427</a>,
-            <a href="http://ustudy.oss-cn-beijing.aliyuncs.com/AM_36-50_0_18612345678_E2_0000144616000004301.png" target="view_window">180443</a>
-          </span>
-        </td>
-        <td>
-          <span *ngIf="subject.examId === 1 && subject.subName === '数学'">
-            <a href="http://ustudy.oss-cn-beijing.aliyuncs.com/AM_36-50_0_18612345678_E2_0000144616000006801.png" target="view_window">180630</a>,
-            <a href="http://ustudy.oss-cn-beijing.aliyuncs.com/AM_36-50_0_18612345678_E2_0000144616000007501.png" target="view_window">180706</a>
-          </span>
-        </td>        
-        <!--<td>-->
-
-          <!--<span *ngFor="let question of subject.questions, last as isLast"><a [routerLink]="['/answers', {egsId:subject.egsId, questionId:question.id, type:'BEST'}]">{{question.name}}</a><span *ngIf="!isLast">,</span></span>-->
-        <!--</td>
-        <td>-->
-          <!--<span *ngFor="let question of subject.questions, last as isLast"><a [routerLink]="['/answers', {egsId:subject.egsId, questionId:question.id, type:'FAQ'}]">{{question.name}}</a><span *ngIf="!isLast">,</span></span>-->
-        <!--</td>-->
-        <td>
-          <span *ngFor="let question of subject.questions, last as isLast"><a [routerLink]="['/answers', {egsId:subject.egsId, gradeId: subject.gradeId, subName: subject.subName, questionId:question.id, questionList: stringify(subject.questions), type:'class'}]">{{question.name}}</a><span *ngIf="!isLast">,</span></span>
-          <span><a [routerLink]="['/answers', {egsId: subject.egsId, gradeId: subject.gradeId, subName: subject.subName, questionList: stringify(subject.questions), viewAnswerPaper: true, type: 'class'}]">答题卡</a></span>
-        </td>
-      </ng-container>
-    </tr>
+    <ng-container *ngFor="let subject of subjects">
+      <ng-container *ngIf="subject.GrSubDetails != undefined">
+        <tr *ngFor="let grSubDetail of subject.GrSubDetails">
+          <ng-container *ngIf="grSubDetail != undefined">
+            <td>{{ subject.examName }}<br>({{ subject.gradeName }})</td>
+            <td>{{ grSubDetail.subName }}</td>
+            <td></td>
+            <td>
+                <span *ngFor="let question of grSubDetail.bestL, last as isLast"><a [routerLink]="['/answers', {egsId:grSubDetail.egsId, gradeId: subject.gradeId, subName: grSubDetail.subName, questionId: question.quesid, questionList: stringify(grSubDetail.bestL), type:'BEST'}]">{{question.quesno}}</a><span *ngIf="!isLast">,</span></span>
+            </td>
+            <td>
+                <span *ngFor="let question of grSubDetail.faqL, last as isLast"><a [routerLink]="['/answers', {egsId:grSubDetail.egsId, gradeId: subject.gradeId, subName: grSubDetail.subName, questionId: question.quesid, questionList: stringify(grSubDetail.faqL), type:'FAQ'}]">{{question.quesno}}</a><span *ngIf="!isLast">,</span></span>
+            </td>
+            <td>
+              <span *ngFor="let question of grSubDetail.quesL, last as isLast"><a [routerLink]="['/answers', {egsId:grSubDetail.egsId, gradeId: subject.gradeId, subName: grSubDetail.subName, questionId: question.quesid, questionList: stringify(grSubDetail.quesL), type:'class'}]">{{question.quesno}}</a><span *ngIf="!isLast">,</span></span>
+              <span><a [routerLink]="['/answers', {egsId: grSubDetail.egsId, gradeId: subject.gradeId, subName: grSubDetail.subName, questionList: stringify(grSubDetail.quesL), viewAnswerPaper: true, type: 'class'}]">答题卡</a></span>
+            </td>
+          </ng-container>
+        </tr>
+      </ng-container>  
+    </ng-container>
   </tbody>
 </table>

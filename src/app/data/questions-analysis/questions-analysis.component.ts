@@ -31,6 +31,111 @@ export class QuestionsAnalysisComponent implements OnInit {
       }]
     },
   };
+  objBarChartOptions: any = {
+    scaleShowVerticalLines: false,
+    responsive: true,
+    animation : false,
+    scales: {
+      yAxes: [
+        {
+          id: 'y-axis-1',
+          display: true,
+          position: 'left',
+          ticks: {
+            min: 0,
+            max: 100,
+            stepSize: 20,
+            callback: function(value, index, values) {
+              return value + '%';
+            }
+          },
+          scaleLabel: {
+            display: true,
+            labelString: '百分比',
+            fontColor: '#546372'
+          }
+        }
+      ]
+    },
+    tooltips: {
+      custom: function(tooltip) {
+        // Tooltip Element
+        let tooltipEl = document.getElementById('chartjs-tooltip');
+
+        // Create element on first render
+        if (!tooltipEl) {
+          tooltipEl = document.createElement('div');
+          tooltipEl.id = 'chartjs-tooltip';
+          tooltipEl.innerHTML = '<table></table>';
+          document.body.appendChild(tooltipEl);
+          jQuery(tooltipEl).css({'position': 'absolute'})
+        }
+        // Hide if no tooltip
+        if (tooltip.opacity === 0) {
+          tooltipEl.style.opacity = '0';
+          return;
+        }
+        tooltipEl.style.opacity = '1';
+
+// Set caret Position
+        tooltipEl.classList.remove('above', 'below', 'no-transform');
+        if (tooltip.yAlign) {
+          tooltipEl.classList.add(tooltip.yAlign);
+        } else {
+          tooltipEl.classList.add('no-transform');
+        }
+
+        function getBody(bodyItem) {
+          return bodyItem.lines;
+        }
+
+// Set Text
+        if (tooltip.body) {
+          const titleLines = tooltip.title || [];
+          const bodyLines = tooltip.body.map(getBody);
+
+          let innerHtml = '<thead>';
+          let percentage;
+
+          titleLines.forEach(function(title) {
+            innerHtml += '<tr><th>' + title + '</th></tr>';
+          });
+          innerHtml += '</thead><tbody>';
+
+          const index = tooltip.dataPoints[0].index;
+          bodyLines.forEach(function(body, i) {
+            const colors = tooltip.labelColors[i];
+            let style = 'background:' + colors.backgroundColor;
+            style += '; border-color:' + colors.borderColor;
+            style += '; border-width: 2px';
+            const span = '<span class="chartjs-tooltip-key" style="' + style + '"></span>';
+            if (_.isString(body[0])) {
+              const res = body[0].split(' ');
+              percentage = res[0];
+            } else {
+              percentage = body[0].labels[index];
+            }
+            innerHtml += '<tr><td>' + span + `${percentage }%` + '</td></tr>';
+          });
+          innerHtml += '</tbody>';
+
+          const tableRoot = tooltipEl.querySelector('table');
+          tableRoot.innerHTML = innerHtml;
+        }
+
+        const position = jQuery(this._chart.canvas).position();
+
+// Display, position, and set styles for font
+        tooltipEl.style.opacity = '1';
+        tooltipEl.style.left = position.left + tooltip.caretX + 'px';
+        tooltipEl.style.top = position.top + tooltip.caretY + 'px';
+        tooltipEl.style.fontFamily = tooltip._bodyFontFamily;
+        tooltipEl.style.fontSize = tooltip.bodyFontSize;
+        tooltipEl.style.fontStyle = tooltip._bodyFontStyle;
+        tooltipEl.style.padding = tooltip.yPadding + 'px ' + tooltip.xPadding + 'px';
+      },
+    }
+  };
   pieChartOptions: any = {
     animation : false,
     responsive: true,
@@ -156,23 +261,23 @@ export class QuestionsAnalysisComponent implements OnInit {
     if (this.tab === 'summary') {
       this._dataService.getAnaResults('', this.filterResult.subject.id, this.filterResult.class.id).then((data) => {
         this.result = data[0];
-        this.scoreDatas = [{data: _.values(this.result.scoreplacement), label: '分数统计'}];
+        this.scoreDatas = [{data: _.values(this.result.scoreplacement), label: '人数'}];
         setTimeout(() => {
-          this.scores = _.keys(this.result.scoreplacement);
+          this.scores = _.keys(this.result.scoreplacement).map((i) => String(Number(i)));
         }, 500);
       })
     }
     if (this.tab === 'subjective') {
       this._dataService.getAnaResults('subject', this.filterResult.subject.id, this.filterResult.class.id).then((data) => {
         this.subjectResult = data;
-        this.pages = _.range(1, Math.ceil(this.subjectResult.length / 10) + 1);
+        this.pages = _.range(1, Math.ceil(this.subjectResult.length / 20) + 1);
         this.currentPage = 1
       })
     }
     if (this.tab === 'objective') {
       this._dataService.getAnaResults('object', this.filterResult.subject.id, this.filterResult.class.id).then((data) => {
         this.objectResult = data;
-        this.pages = _.range(1, Math.ceil(this.objectResult.length / 10) + 1);
+        this.pages = _.range(1, Math.ceil(this.objectResult.length / 20) + 1);
         this.currentPage = 1
       })
     }

@@ -6,7 +6,7 @@
           <div class="input-group">
             <span class="input-group-addon">题目</span>
             <select class="form-control" (change)="onQuestionChange()" [(ngModel)]="selectedQuestion">
-              <option *ngFor="let question of questionList" [ngValue]="question" [selected]="question.id==questionId">{{subName + '-' + question.name}}</option>
+              <option *ngFor="let question of questionList" [ngValue]="question" [selected]="question.quesid==questionId">{{subName + '-' + question.quesno}}</option>
             </select>
           </div>
           <div class="input-group">
@@ -48,9 +48,10 @@
     <div *ngFor="let paper of papers; let i = index" class="col-sm-1">
       <img src="/assets/images/answer_67.png"  alt="点击查看" class="img-thumbnail" (click)="viewPaper(viewAnswerTemplate, paper)">
       <div>
-        <span></span>
-        <span>({{paper.examCode}})</span>
-        <span></span>
+        <span>{{paper.eeName}}</span>
+        <br/>
+        <span>({{paper.eeCode}})</span>
+        <span>{{paper.score}}分</span>
       </div>
     </div>
   </ng-container>
@@ -58,9 +59,10 @@
     <div *ngFor="let paper of papers; let i = index" class="col-sm-1">
       <img src="/assets/images/paper_60.png"  alt="点击查看" class="img-thumbnail" (click)="viewPaper(viewAnswerTemplate, paper)">
       <div>
-        <span></span>
-        <span>({{paper.examCode}})</span>
-        <span></span>
+        <span>{{paper.eeName}}</span>
+        <br/>
+        <span>({{paper.eeCode}})</span>
+        <span>{{paper.fscore}}分</span>
       </div>
       <div *ngIf="_sharedService.checkPerm('异常卷处理')">
           <div class="checkbox clear-margin-top">
