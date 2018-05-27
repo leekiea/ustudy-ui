@@ -230,18 +230,9 @@ export class QuestionsAnalysisComponent implements OnInit {
   constructor(private _dataService: DataService, private _examService: ExamService) { }
 
   ngOnInit() {
-    const params = Object.create({});
-    params.finished = false;
-    this.exams = this._examService.filterExams({finished: false});
     this.exams = this._examService.anaExams({finished: false});
     this.exams.then((data) => {
       this.selectedExam = _.first(data);
-      if (!this.selectedExam) {
-        this.exams = this._examService.filterExams({finished: true});
-        this.exams.then((data1) => {
-          this.selectedExam = _.first(data1);
-        })
-      }
     });
   }
 
