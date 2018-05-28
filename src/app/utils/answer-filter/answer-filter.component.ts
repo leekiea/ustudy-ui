@@ -1,5 +1,7 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import * as _ from 'lodash';
+import { ExamService } from '../../exam/exam.service';
+import { SharedService } from '../../shared.service';
 
 @Component({
   selector: 'answer-filter',
@@ -15,15 +17,58 @@ export class AnswerFilterComponent implements OnChanges {
   selectedGradeCls: any[];
   selectedSchool: any;
   selectedClass: any;
+  props: any;
 
-  constructor(private chRef: ChangeDetectorRef) { }
+  constructor(private chRef: ChangeDetectorRef, private _sharedService: SharedService, private _examService: ExamService) { }
 
   ngOnChanges(changes) {
     if (changes.selectedExam.currentValue) {
-      this.selectedSchool = _.first(changes.selectedExam.currentValue.schools);
-      this.selectedGrade = _.first(this.selectedSchool.GradeDetails);
-      this.onGradeChange();
-      this.returnResult();
+      this._examService.getTeacherProps().then((data) => {
+        this.props = data;
+        let that = this;
+        this.selectedSchool = _.first(changes.selectedExam.currentValue.schools);
+        let perms = this._sharedService.checkViewPerm('analysis');
+        if (perms.grade == 'NONE' || perms.subject == 'NONE') {
+          this.selectedSchool.GradeDetails = [];
+        } else if (perms.grade == 'ALL_GRADE') {
+          if (perms.subject == 'SELF_SUBJECT') {
+            for(let grade of this.selectedSchool.GradeDetails) {
+              for (let sub in grade.subs) { // subs is a JSON Object
+                for(let propSub of this.props.subjects) {
+                  if (propSub.id != sub) {
+                    delete grade.subs[sub]; 
+                  }
+                }
+              }
+            }
+          }
+        } else if (perms.grade == 'SELF_GRADE') {
+          this.selectedSchool.GradeDetails = this.selectedSchool.GradeDetails.filter(function(grade){
+            let match = false;
+            for(let propGrade of that.props.grades) {
+              if (propGrade.name == grade.gradeName) {
+                match = true;
+                break;
+              }
+            }
+            return match;
+          });
+          if (perms.subject == 'SELF_SUBJECT') {
+            for(let grade of this.selectedSchool.GradeDetails) {
+              for (let sub in grade.subs) {
+                for(let propSub of this.props.subjects) {
+                  if (propSub.id != sub) {
+                    delete grade.subs[sub]; 
+                  }
+                }
+              }
+            }
+          }
+        }
+        this.selectedGrade = _.first(this.selectedSchool.GradeDetails);
+        this.onGradeChange();
+        this.returnResult();
+      });
     }
   }
 
