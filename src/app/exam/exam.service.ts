@@ -188,7 +188,7 @@ export class ExamService {
 
   addOrUpdateExaminee(params: any) {
     return new Promise((resolve, reject) => {
-      this._sharedService.makeRequest('POST', `/api/info/examinee/create/`, params).then((data: any) => {
+      this._sharedService.makeRequest('POST', `/api/info/examinee/update/`, params).then((data: any) => {
         if (data.success) {
           resolve(data.data)
         } else {
