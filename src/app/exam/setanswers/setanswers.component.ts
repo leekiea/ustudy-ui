@@ -166,20 +166,19 @@ export class SetAnswersComponent implements OnInit {
   }
 
   loadAllSubjects() {
-    this._sharedService.makeRequest('GET', '/api/subjects', '').then((data: any) => {
+    this._sharedService.makeRequest('GET', '/info/school/subjects/', '').then((data: any) => {
       if (data.success) {
         this.allsubjects = data.data;
         this.allsubjects.forEach(subject => {
           if (Number(this.subjectId) === subject.id) {
-            if (subject.type === '1' || subject.type === '2') {
+            if (subject.childSubs != null) {
               this.issynthesize = true;
-              this.allsubjects.forEach(subject_ => {
-                if (subject.type === '1' && subject_.type === '3') {
-                  this.subjects.push(subject_);
-                } else if (subject.type === '2' && subject_.type === '4') {
-                  this.subjects.push(subject_);
-                }
-              })
+              for(let sub_ in subject.childSubs) {
+                let sub = {id: 0, name: ''};
+                sub.id = Number(sub_);
+                sub.name = subject.childSubs[sub_];
+                this.subjects.push(sub);
+              }
             }
           }
         });

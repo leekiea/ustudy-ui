@@ -90,21 +90,21 @@ export class ExamineeComponent implements OnInit {
       alert('请输入必填内容');
       return
     }
-    this._examService.addOrUpdateExaminee([{stuName: this.stuName, stuId: this.stuId, examCode: this.examCode, classId: this.examineeClass.id,
-      examId: this.examId, gradeId: this.gradeId, subs: this.examineeSubs}]).then((data) => {
-      alert(`${this.examineeId ? '更新' : '新建'}考生成功`);
-      // if (this.examineeId) {
-      //   const examinee = _.find(this.examinees, {studentId: this.examineeId});
-      //   examinee.studentName = this.name;
-      //   examinee.stuId = this.stuId;
-      //   examinee.examCode = this.examCode;
-      //   examinee.className = this.examineeClass.name;
-      //   examinee.classId = this.examineeClass.id;
-      //   examinee.subs = this.examineeSubs;
-      // }
-      this.reload();
-      modal.hide()
-    });
+    if(this.examineeId) {
+      this._examService.updateExaminee([{stuName: this.stuName, stuId: this.stuId, examCode: this.examCode, classId: this.examineeClass.id,
+        examId: this.examId, gradeId: this.gradeId, subs: this.examineeSubs}]).then((data) => {
+        alert('更新考生成功');
+        this.reload();
+        modal.hide()
+      });
+    } else {
+      this._examService.addExaminee([{stuName: this.stuName, stuId: this.stuId, examCode: this.examCode, classId: this.examineeClass.id,
+        examId: this.examId, gradeId: this.gradeId, subs: this.examineeSubs}]).then((data) => {
+          alert('新建考生成功');
+        this.reload();
+        modal.hide()
+      });
+    }
   }
 
   deleteExaminee(examinee) {
@@ -118,7 +118,8 @@ export class ExamineeComponent implements OnInit {
     this.stuName = examinee.stuName;
     this.examCode = examinee.examCode;
     this.examineeClass = _.find(this.classes, {id: examinee.classId});
-    this.examineeId = examinee.studentId;
+    this.examineeId = examinee.id;
+    this.stuId = examinee.stuId;
     this.examineeSubs = examinee.subs;
     modal.show()
   }

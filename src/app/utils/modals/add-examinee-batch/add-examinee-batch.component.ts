@@ -145,7 +145,7 @@ export class AddExamineeBatchComponent implements OnInit {
   }
 
   submit() {
-    this._examService.addOrUpdateExaminee(this.examinees).then((data) => {
+    this._examService.addExaminee(this.examinees).then((data) => {
       alert(`批量新建考生成功`);
       this.bsModalRef.hide()
     });
