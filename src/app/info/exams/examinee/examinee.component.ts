@@ -110,7 +110,7 @@ export class ExamineeComponent implements OnInit {
   deleteExaminee(examinee) {
     this._examService.deleteExaminee(examinee.id).then((data) => {
       alert('删除考生成功');
-      _.remove(this.examinees, examinee)
+      this.reload();
     });
   }
 
