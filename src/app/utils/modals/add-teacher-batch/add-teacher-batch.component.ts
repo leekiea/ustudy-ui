@@ -13,8 +13,6 @@ type AOA = Array<Array<any>>;
 })
 export class AddTeacherBatchComponent implements OnInit {
   examOptions: any;
-
-  @ViewChild('teacherTable') table: any;
   data: AOA = [[]];
   data1: [any];
   teachers = [];
@@ -45,6 +43,9 @@ export class AddTeacherBatchComponent implements OnInit {
       /* save data */
       this.data = <AOA>(XLSX.utils.sheet_to_json(ws, {header: 1}));
         _.forEach(this.data.slice(1), (row) => {
+          if(row[0] == undefined || row[1] == undefined || row[2] == undefined || row[4] == undefined) {
+            return;
+          }  
           let teacherRow = {
             "teacherId": "",
             "teacherName": "",
@@ -58,15 +59,37 @@ export class AddTeacherBatchComponent implements OnInit {
             "subjects": [{"id": "", "name": null}],
             "roles": [{ "id": "", "name": null }]
           };
-          teacher.teacherName = row[0];
-          teacherRow.teacherName = row[0];
+
+          let teacherName = '';
+          if (row[0].indexOf(' ') != -1) {
+            teacherName = row[0].replace(/ /g, '');
+          } else {
+            teacherName = row[0];
+          }  
+          teacher.teacherName = teacherName;
+          teacherRow.teacherName = teacherName;
+          
+          let gradeName = '';
+          if (row[2].indexOf(' ') != -1) {
+            gradeName = row[2].replace(/ /g, '');
+          } else {
+            gradeName = row[2];
+          }    
+          
+          let subName = '';
+          if (row[1].indexOf(' ') != -1) {
+            subName = row[1].replace(/ /g, '');
+          } else {
+            subName = row[1];
+          }
+
           for (let grade of this.examOptions.grades) {
-            if (row[2] === grade.name) {
+            if (gradeName === grade.name) {
               teacher.grades[0].id = grade.id;
               teacher.grades[0].name = grade.name;
               teacherRow.gradeName = grade.name;
               for(let subject of grade.subjects) {
-                if (row[1] === subject.name) {
+                if (subName === subject.name) {
                   teacher.subjects[0].id = subject.id;
                   teacher.subjects[0].name = subject.name;
                   teacherRow.subjectName = subject.name;
@@ -82,17 +105,22 @@ export class AddTeacherBatchComponent implements OnInit {
               teacher.roles[0].name = role.name;
             }
           }
-          teacher.teacherId = row[4];
-          teacherRow.teacherId = row[4];
+
+          let teacId = '';
+          if (row[4].indexOf(' ') != -1) {
+            teacId = row[4].replace(/ /g, '');
+          } else {
+            teacId = row[4];
+          }
+
+          teacher.teacherId = teacId;
+          teacherRow.teacherId = teacId;
           this.teachers.push(teacher);
           this.teacherRows.push(teacherRow);
         });
+        this.teacherRows = [...this.teacherRows]; // refresh the table rows
     };
     reader.readAsBinaryString(target.files[0]);
-  }
-
-  test() {
-    console.log(1)
   }
 
   submit() {

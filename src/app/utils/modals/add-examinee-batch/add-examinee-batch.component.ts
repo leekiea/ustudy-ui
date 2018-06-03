@@ -11,7 +11,6 @@ type AOA = Array<Array<any>>;
   styleUrls: ['./add-examinee-batch.component.css']
 })
 export class AddExamineeBatchComponent implements OnInit {
-  @ViewChild('examineeTable') table: any;
   data: AOA = [[]];
   data1: [any];
   examinees = [];
