@@ -319,9 +319,15 @@ export class MarkComponent implements OnInit {
 				this.answer.questionName = group.papers[0].questionName;
 				this.answer.isMarked = group.papers[0].isMarked;
 				let length = this.answer.regions.length;
+				let t = this;
 				for (let region of this.answer.regions) {
 					let interval = setInterval(function() {
-						let w = Math.floor($(window).width()/length);
+						let w = 0;
+						if(t.isMobile()) {
+							w = Math.floor($(window).width());
+						} else {
+							w = Math.floor($(window).width()/length);
+						}
 						let h = Math.floor(region.h*w/region.w);
                         $('#id_' + region.id + '_' + region.x + '_' + region.y).width(w);
                         $('#id_' + region.id + '_' + region.x + '_' + region.y).height(h);
@@ -336,7 +342,12 @@ export class MarkComponent implements OnInit {
 					let length = this.answer2.regions.length;
 					for (let region of this.answer2.regions) {
 						let interval = setInterval(function() {
-							let w = Math.floor($(window).width()/length);
+							let w = 0;
+							if(t.isMobile()) {
+								w = Math.floor($(window).width());
+							} else {
+								w = Math.floor($(window).width()/length);
+							}	
 							let h = Math.floor(region.h*w/region.w);
 							$('#id_' + region.id + '_' + region.x + '_' + region.y).width(w);
 							$('#id_' + region.id + '_' + region.x + '_' + region.y).height(h);
@@ -352,7 +363,12 @@ export class MarkComponent implements OnInit {
 					let length = this.answer3.regions.length;
 					for (let region of this.answer3.regions) {
 						let interval = setInterval(function() {
-							let w = Math.floor($(window).width()/length);
+							let w = 0;
+							if(t.isMobile()) {
+								w = Math.floor($(window).width());
+							} else {
+								w = Math.floor($(window).width()/length);
+							}	
 							let h = Math.floor(region.h*w/region.w);
 							$('#id_' + region.id + '_' + region.x + '_' + region.y).width(w);
 							$('#id_' + region.id + '_' + region.x + '_' + region.y).height(h);
@@ -1153,6 +1169,14 @@ export class MarkComponent implements OnInit {
 		} else { //no: jump to mark list
 			$('#markTipModal').hide();
 			this.router.navigate(['markList']);
+		}
+	}
+
+	isMobile(): boolean {
+		if ($(window).width() <= 812) { //812 is the max width of iphone X
+			return true;
+		} else {
+			return false;
 		}
 	}
 }

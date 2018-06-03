@@ -758,12 +758,12 @@ export class CanvasComponent implements OnInit {
 		
 		this.ctx.font = '64px Arial';
 		this.ctx.fillStyle = this.scoreStyle;
-		this.ctx.fillText(this.score, 400, 64);
+		this.ctx.fillText(this.score, 120, 64);
 
 		//hidden canvas
 		this.hCtx.font = '64px Arial';
 		this.hCtx.fillStyle = this.scoreStyle;
-		this.hCtx.fillText(this.score, 400, 64);
+		this.hCtx.fillText(this.score, 120, 64);
 
 		console.dir(this.scoreMarks);
 		// add mark score to the canvas
