@@ -75,8 +75,16 @@
                 </div>
                 <div class="panel-footer border">
                     <ng-container *ngFor="let question of statistics">
-                        <div class="online-marking-statistics text-center">{{question.questionName}}题： 平均给分：<span>{{question.avgScore}}</span>/已阅题：<span>{{getNum(question.progress)}}</span></div>
-                    </ng-container>                
+                        <div class="online-marking-statistics text-center">{{question.questionName}}题： 平均给分：<span>{{question.avgScore}}</span>/已阅题：<span>{{getNum(question.progress)}}</span>
+                            <ng-container *ngFor="let group of mark.groups">
+                                    <ng-container *ngIf="group.paperSeq === curPage">
+                                        <ng-container *ngFor="let paper of group.papers">
+                                                <span>/试卷编号：</span><span>{{paper.paperImg}}</span>
+                                        </ng-container>
+                                    </ng-container>
+                            </ng-container>
+                        </div>
+                    </ng-container>
                 </div>
 			</div>
 
