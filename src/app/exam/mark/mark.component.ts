@@ -323,14 +323,20 @@ export class MarkComponent implements OnInit {
 				for (let region of this.answer.regions) {
 					let interval = setInterval(function() {
 						let w = 0;
-						if(t.isMobile()) {
-							w = Math.floor($(window).width());
-						} else {
-							w = Math.floor($(window).width()/length);
+						let h = 0;
+						if (length > 1) {
+							if(t.isMobile()) {
+								w = Math.floor($(window).width());
+							} else {
+								w = Math.floor($(window).width()/length);
+							}
+							h = Math.floor(region.h*w/region.w);
+						} else if (length == 1) {
+							h = Math.floor($(window).height());
+							w = Math.floor(region.w*h/region.h);
 						}
-						let h = Math.floor(region.h*w/region.w);
-                        $('#id_' + region.id + '_' + region.x + '_' + region.y).width(w);
-                        $('#id_' + region.id + '_' + region.x + '_' + region.y).height(h);
+						$('#id_' + region.id + '_' + region.x + '_' + region.y).width(w);
+						$('#id_' + region.id + '_' + region.x + '_' + region.y).height(h);
                         clearInterval(interval);
                     }, 1);
 				}
