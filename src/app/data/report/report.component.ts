@@ -111,6 +111,14 @@ export class ReportComponent implements OnInit {
     dataExp[0][3]='班级';
     dataExp[0][4]='成绩';
     dataExp[0][5]='排名';
+    let childScores = resultData[0].childScores;
+    if (childScores != null && childScores.length >0) {
+      let index = 5;
+      for (let childScore of childScores) {
+        dataExp[0][++index]=childScore.subName;
+        dataExp[0][++index]='排名';
+      }
+    }
     for (let i:number=0; i<resultData.length; i++){
       dataExp[i+1][0]=i+1;
       dataExp[i+1][1]=resultData[i].eeCode;
@@ -118,6 +126,13 @@ export class ReportComponent implements OnInit {
       dataExp[i+1][3]=resultData[i].clsName;
       dataExp[i+1][4]=resultData[i].score;
       dataExp[i+1][5]=resultData[i].rank;
+      if (resultData[i].childScores != null && resultData[i].childScores.length >0) {
+        let index = 5;
+        for (let childScore of resultData[i].childScores) {
+          dataExp[i+1][++index]=childScore.score;
+          dataExp[i+1][++index]=childScore.rank;
+        }
+      }        
     }
 		/* generate worksheet */
 		const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(dataExp);
