@@ -247,38 +247,44 @@
     <div id="full_screen" tabindex="-1" [ngStyle]="{'display': (isFullScreen ? '':'none'), 'overflow': 'scroll', 'position': 'fixed', 'top': 0, 'right': 0, 'bottom': 0, 'left': 0, 'z-index': 1000, 'background-color': '#FFFFFF'}">
         <table *ngIf="!isMobile()">
             <tr>
-                <td *ngFor="let region of answer.regions">
+                <ng-container *ngFor="let region of answer.regions">
+                    <td>
+                        <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
+                    </td>
+                </ng-container>
+                <ng-container *ngIf="markCanvas2Display=='block'">
+                    <ng-container *ngFor="let region of answer2.regions">
+                        <td>
+                            <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
+                        </td>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="markCanvas3Display==block">
+                    <ng-container *ngFor="let region of answer3.regions">
+                        <td>
+                            <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
+                        </td>
+                    </ng-container>
+                </ng-container>
+            </tr>
+        </table>
+        <table *ngIf="isMobile()">
+            <tr *ngFor="let region of answer.regions">
+                <td>
                     <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
                 </td>
             </tr>
-            <tr [ngStyle]="{'display': markCanvas2Display}">
-                <td *ngFor="let region of answer2.regions">
+            <tr [ngStyle]="{'display': markCanvas2Display}" *ngFor="let region of answer2.regions">
+                <td>
                     <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
                 </td>
             </tr>
-            <tr [ngStyle]="{'display': markCanvas3Display}">
-                <td *ngFor="let region of answer3.regions">
+            <tr [ngStyle]="{'display': markCanvas3Display}" *ngFor="let region of answer3.regions">
+                <td>
                     <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
                 </td>
             </tr>
         </table>
-        <table *ngIf="isMobile()">
-                <tr *ngFor="let region of answer.regions">
-                    <td>
-                        <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
-                    </td>
-                </tr>
-                <tr [ngStyle]="{'display': markCanvas2Display}" *ngFor="let region of answer2.regions">
-                    <td>
-                        <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
-                    </td>
-                </tr>
-                <tr [ngStyle]="{'display': markCanvas3Display}" *ngFor="let region of answer3.regions">
-                    <td>
-                        <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
-                    </td>
-                </tr>
-            </table>
     </div>
     <!-- 全屏阅卷 end -->
 
