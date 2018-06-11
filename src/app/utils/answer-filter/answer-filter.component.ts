@@ -35,7 +35,7 @@ export class AnswerFilterComponent implements OnChanges {
             for(let grade of this.selectedSchool.GradeDetails) {
               for (let sub in grade.subs) { // subs is a JSON Object
                 for(let propSub of this.props.subjects) {
-                  if (propSub.id != sub) {
+                  if (propSub.name != grade.subs[sub]) {
                     delete grade.subs[sub]; 
                   }
                 }
@@ -57,7 +57,7 @@ export class AnswerFilterComponent implements OnChanges {
             for(let grade of this.selectedSchool.GradeDetails) {
               for (let sub in grade.subs) {
                 for(let propSub of this.props.subjects) {
-                  if (propSub.id != sub) {
+                  if (propSub.name != grade.subs[sub]) {
                     delete grade.subs[sub]; 
                   }
                 }
