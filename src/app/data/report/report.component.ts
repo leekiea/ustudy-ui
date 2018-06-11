@@ -160,6 +160,12 @@ export class ReportComponent implements OnInit {
         if (dataExp.length>0){
           const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(dataExp);
           XLSX.utils.book_append_sheet(wb, ws, clsName);
+          let wscols = [{wch: 6}];
+          for(let i=0; i<100; i++) {
+            let col = {wch: 4};
+            wscols.push(col);
+          }
+          ws['!cols'] = wscols;
         }
         //head生成
         dataExp=this.creatDetailScoreHead(resultData);
@@ -177,6 +183,12 @@ export class ReportComponent implements OnInit {
     if (dataExp.length>0){
       const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(dataExp);
       XLSX.utils.book_append_sheet(wb, ws, clsName);
+      let wscols = [{wch: 6}];
+      for(let i=0; i<100; i++) {
+        let col = {wch: 4};
+        wscols.push(col);
+      }
+      ws['!cols'] = wscols;
     }
     /* save to file */
     XLSX.writeFile(wb,  this.fileNameFirst + '答题明细.xlsx');

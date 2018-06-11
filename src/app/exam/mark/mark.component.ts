@@ -319,6 +319,12 @@ export class MarkComponent implements OnInit {
 				this.answer.questionName = group.papers[0].questionName;
 				this.answer.isMarked = group.papers[0].isMarked;
 				let length = this.answer.regions.length;
+				if (this.markQuestions.length >= 2) {
+					length += group.papers[1].regions.length;
+				}
+				if (this.markQuestions.length == 3) {
+					length += group.papers[2].regions.length;
+				}
 				let t = this;
 				for (let region of this.answer.regions) {
 					let interval = setInterval(function() {
@@ -345,7 +351,6 @@ export class MarkComponent implements OnInit {
 					this.answer2.answerType = group.papers[1].answerType;
 					this.answer2.questionName = group.papers[1].questionName;
 					this.answer2.isMarked = group.papers[1].isMarked;
-					let length = this.answer2.regions.length;
 					for (let region of this.answer2.regions) {
 						let interval = setInterval(function() {
 							let w = 0;
@@ -366,7 +371,6 @@ export class MarkComponent implements OnInit {
 					this.answer3.answerType = group.papers[2].answerType;
 					this.answer3.questionName = group.papers[2].questionName;
 					this.answer3.isMarked = group.papers[2].isMarked;
-					let length = this.answer3.regions.length;
 					for (let region of this.answer3.regions) {
 						let interval = setInterval(function() {
 							let w = 0;
