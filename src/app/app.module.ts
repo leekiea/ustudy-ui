@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { AngularDraggableModule } from 'angular2-draggable';
+import { BusyModule } from 'angular2-busy';
 
 import { AppComponent } from './app.component';
 import { WelcomeComponent } from './welcome/welcome.component';
@@ -59,7 +60,8 @@ import { AnswerPaperModule } from './exam/answer-paper/answer-paper.module';
     DataModule,
     MarkModule,
     ProblemModule,
-    AngularDraggableModule
+    AngularDraggableModule,
+    BusyModule
   ],
   declarations: [
     AppComponent

@@ -173,6 +173,8 @@ export class MarkComponent implements OnInit {
 
 	isFullScreen = false;
 
+	busy: Promise<any>;
+
     constructor(private _sharedService: SharedService, private _markService: MarkService, private renderer: Renderer2, private route: ActivatedRoute, private router: Router) {
 
     }
@@ -945,7 +947,8 @@ export class MarkComponent implements OnInit {
 						//region.markImg = region.ansImg.slice(0, -4) + "_M_" + this.mark.teacherId + region.ansImg.slice(-4);
 					});
 				}
-				this._sharedService.makeRequest('POST', `/exam/marktask/paper/update/${this.egsId}`, JSON.stringify(group)).then((data: any) => {
+				this.busy = this._sharedService.makeRequest('POST', `/exam/marktask/paper/update/${this.egsId}`, JSON.stringify(group));
+				this.busy.then((data: any) => {
 					let message = "";
 					for (let group of this.mark.groups) {
 						if (group.paperSeq === this.curPage) {

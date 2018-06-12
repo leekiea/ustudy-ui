@@ -12,7 +12,7 @@
 
  <!-- 内容 start -->
 <div #rootContainer class="container container-fluid-online-marking">
-	<div class="row">
+	<div class="row" [ngBusy]="{busy:busy, message:'给分中，请稍候。。。'}">
 		<div class="col-sm-9">
 			<div class="panel panel-default online-marking">
 				<div class="panel-heading clearfix">
@@ -89,7 +89,7 @@
 			</div>
 
 		</div>
-		<div  class="col-sm-3"  style="z-index: 1040">
+		<div  class="col-sm-3"  style="z-index: 1001">
 			<form [ngDraggable]="isFullScreen === true" class="online-marking-sidebar" [ngStyle]="{transform: isFullScreen? '': 'translate(0px, 0px)'}">
                 <div #markBarHeader id="markBarHeader" class="panel panel-default">
                     <div id="hideFullScreenBtn" class="panel-heading clear-padding clearfix" [ngStyle]="{display: isFullScreen? '' : 'none'}" >
