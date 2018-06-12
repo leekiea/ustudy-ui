@@ -435,10 +435,12 @@ export class MarkComponent implements OnInit {
 						this.questionName = paper.questionName;
 						// console.log("after update full score: " + this.fullScore);
 						let qn = this.questionName;
-						let interval = setInterval(function() {
-	                        $('#id_' + qn).focus();
-	                        clearInterval(interval);
-	                    }, 1);
+						if(!this.isMobile()) {
+							let interval = setInterval(function() {
+								$('#id_' + qn).focus();
+								clearInterval(interval);
+							}, 1);
+						}
 						this.updateScoreBoard();
 						return;
 					}
@@ -450,10 +452,12 @@ export class MarkComponent implements OnInit {
 						this.questionName = paper.questionName;
 						// console.log("after update full score: " + this.fullScore);
 						let qn = this.questionName;
-						let interval = setInterval(function() {
-	                        $('#id_' + qn).focus();
-	                        clearInterval(interval);
-	                    }, 1);
+						if(!this.isMobile()) {
+							let interval = setInterval(function() {
+								$('#id_' + qn).focus();
+								clearInterval(interval);
+							}, 1);
+						}
 						this.updateScoreBoard();
 						return;
 					} else if (paper.steps.length > 0) {
@@ -463,10 +467,12 @@ export class MarkComponent implements OnInit {
 								this.questionName = paper.questionName;
 								this.stepName = step.name;
 								let qn = this.stepName;
-								let interval = setInterval(function() {
-			                        $('#id_' + qn).focus();
-			                        clearInterval(interval);
-			                    }, 1);
+								if(!this.isMobile()) {
+									let interval = setInterval(function() {
+										$('#id_' + qn).focus();
+										clearInterval(interval);
+									}, 1);
+								}
 			                    this.updateScoreBoard();
 								return;
 							} 
