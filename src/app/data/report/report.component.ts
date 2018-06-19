@@ -111,12 +111,14 @@ export class ReportComponent implements OnInit {
     dataExp[0][3]='班级';
     dataExp[0][4]='成绩';
     dataExp[0][5]='排名';
-    let childScores = resultData[0].childScores;
-    if (childScores != null && childScores.length >0) {
-      let index = 5;
-      for (let childScore of childScores) {
-        dataExp[0][++index]=childScore.subName;
-        dataExp[0][++index]='排名';
+    let colLen = 5;
+    for (let row of resultData) {
+      if (row.childScores != null && row.childScores.length > 0) {
+        for (let childScore of row.childScores) {
+          dataExp[0][++colLen]=childScore.subName;
+          dataExp[0][++colLen]='排名';
+        }
+        break;
       }
     }
     for (let i:number=0; i<resultData.length; i++){
@@ -132,8 +134,13 @@ export class ReportComponent implements OnInit {
           dataExp[i+1][++index]=childScore.score;
           dataExp[i+1][++index]=childScore.rank;
         }
-      }        
+      } else if (colLen > 5) {
+        for (let j:number=5; j<colLen; j++) {
+          dataExp[i+1][j+1]=0;
+        }
+      }
     }
+
 		/* generate worksheet */
 		const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(dataExp);
 
