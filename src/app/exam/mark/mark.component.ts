@@ -175,6 +175,8 @@ export class MarkComponent implements OnInit {
 
 	busy: Promise<any>;
 
+	submitting = false;
+
     constructor(private _sharedService: SharedService, private _markService: MarkService, private renderer: Renderer2, private route: ActivatedRoute, private router: Router) {
 
     }
@@ -849,7 +851,7 @@ export class MarkComponent implements OnInit {
 
 	validScore(value, max): boolean {
 		if ( Number(value) > Number(max) || Number(value) < 0) {
-			alert('给分不能小于零或者大于最大分值');
+			alert('本题分值为' + max + '分，给分不能超过' + max);
 			return false;
 		} 
 		return true;
@@ -914,6 +916,7 @@ export class MarkComponent implements OnInit {
 				this.showAlert(message, 2000);
 			}
 		}
+		this.submitting = true;
 		this.addScore();
 	}
 
@@ -973,6 +976,7 @@ export class MarkComponent implements OnInit {
 					this.setStatistics(data);
 					//alert("修改成功");
 					this.nextPage();
+					this.submitting = false;
 				}).catch((error: any) => {
 					this.focusQuestion.questionName = '';
 					this.focusQuestion.stepName = '';
@@ -983,7 +987,8 @@ export class MarkComponent implements OnInit {
 						this.router.navigate(['markList']);
 					} else {
 						alert("修改失败！");
-					}					
+					}
+					this.submitting = false;
 				});
 			}
 		}
