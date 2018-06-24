@@ -267,7 +267,9 @@ export class MarkComponent implements OnInit {
 			this.mark = data;
 			this.pageCount = this.mark.groups.length;
 			if (this.pageCount <= 0) {
-				$('#setCommentModal').style.display = '';
+				//$('#setCommentModal').style.display = '';
+				alert("没有可阅试卷");
+				this.router.navigate(['markList']);
 				return;
 			}
 			if (this.reqContent.startSeq === -1 && this.reqContent.endSeq === -1) {
@@ -310,6 +312,7 @@ export class MarkComponent implements OnInit {
 		}).catch((error: any) => {
 			console.dir(error);
 			alert("无法加载试卷");
+			this.router.navigate(['markList']);
 		});
 	}	
 
@@ -334,14 +337,15 @@ export class MarkComponent implements OnInit {
 					let interval = setInterval(function() {
 						let w = 0;
 						let h = 0;
-						if (length > 1) {
+						let rate = region.w/region.h - $(window).width()/$(window).height();
+						if (length > 1 || (length == 1 && rate > 0)) {
 							if(t.isMobile()) {
 								w = Math.floor($(window).width());
 							} else {
 								w = Math.floor($(window).width()/length);
 							}
 							h = Math.floor(region.h*w/region.w);
-						} else if (length == 1) {
+						} else {
 							h = Math.floor($(window).height());
 							w = Math.floor(region.w*h/region.h);
 						}
