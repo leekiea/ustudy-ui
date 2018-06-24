@@ -40,43 +40,7 @@ export class AddExamineeBatchComponent implements OnInit {
       /* save data */
       this.data = <AOA>(XLSX.utils.sheet_to_json(ws, {header: 1}));
 
-      let groups = [];
-      /* get subject groups*/
-      let t = this;
-      for(let row of this.data) {
-        if (row[0] == undefined || row[1] == undefined) {
-          return;
-        }
-        
-        if (row[0] == '姓名') {
-          t.data = t.data.slice(1);
-          break;
-        } else {
-          let group = {name: '', subNames: ''};
-          group.name = row[0];
-          group.subNames = row[1];
-          
-          if (group.subNames.indexOf(' ') != -1) {
-            group.subNames = group.subNames.replace(/ /g, '');
-          }
-  
-          if (group.subNames.indexOf('（') != -1) {
-            group.subNames = group.subNames.replace(/\（/g, '(');
-          }
-  
-          if (group.subNames.indexOf('）') != -1) {
-            group.subNames = group.subNames.replace(/\）/g, ')');
-          }
-  
-          if (group.subNames.indexOf('，') != -1) {
-            group.subNames = group.subNames.replace(/\，/g, ',');
-          }
-          groups.push(group);
-          t.data = t.data.slice(1);
-        }
-      }
-
-      _.forEach(this.data, (row) => {
+      _.forEach(this.data.slice(1), (row) => {
         console.log("row: " + row[0] + "_" + row[1] + "_" + row[2] + "_" + row[3] + "_" + row[4]);
         if(row[0] == undefined || row[2] == undefined || row[3] == undefined || row[4] == undefined) {
           return;
@@ -114,10 +78,22 @@ export class AddExamineeBatchComponent implements OnInit {
 
         let subNames = '';
 
-        for (let group of groups) {
-          if (group.name == row[4]) {
-            subNames = group.subNames;
-          }
+        if (row[4].indexOf(' ') != -1) {	
+            subNames = row[4].replace(/ /g, '');	
+        } else {	
+          subNames = row[4];	
+        }	
+        
+        if (row[4].indexOf('（') != -1) {	
+          subNames = subNames.replace(/\（/g, '(');	
+        }	
+        
+        if (row[4].indexOf('）') != -1) {	
+          subNames = subNames.replace(/\）/g, ')');	
+        }	
+              
+        if (row[4].indexOf('，') != -1) {
+          subNames = subNames.replace(/\，/g, ',');
         }
 
         examinee.subs = [];
