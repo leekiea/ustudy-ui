@@ -596,11 +596,14 @@ export class MarkComponent implements OnInit {
 	}
 
 	updateScoreBoard(): void {
-		if (this.composable === false) {
-			return;
-		}
+		// if (this.composable === false) {
+		// 	return;
+		// }
 		this.scoreList = [];
 		var score = Number(this.fullScore);
+		if (score >= 20) {
+			return;
+		}
 		var unit = parseFloat(this.scoreUnit);
 		for (var i=0; i<=score; i+=unit) {
 			this.scoreList.push(i);
@@ -617,7 +620,7 @@ export class MarkComponent implements OnInit {
 	}
 
 	setFullScore(): void {
-		if (this.composable === true) {
+		if (Number(this.fullScore) < 20) {
 			this.setScore(this.fullScore);
 		} else {
 			this.curScore = 0;
@@ -630,7 +633,7 @@ export class MarkComponent implements OnInit {
 	}
 
 	setZeroScore(): void {
-		if (this.composable === true) {
+		if (Number(this.fullScore) < 20) {
 			this.setScore("0");
 		} else {
 			this.curScore = 0;
