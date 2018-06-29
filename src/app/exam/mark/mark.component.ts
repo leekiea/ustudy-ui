@@ -865,9 +865,14 @@ export class MarkComponent implements OnInit {
 		let message = "";
 		for (let group of this.mark.groups) {
 			if (group.paperSeq === this.curPage) {
-				if (group.papers[0].score !== "") {
-					this.score = group.papers[0].score;
-					if (!this.validScore(this.score, group.papers[0].fullscore)) return;
+				if (group.papers[0].steps.length == 0) {
+					if (group.papers[0].score == "") {
+						alert("请完成打分再提交，谢谢！");
+						return;	
+					} else {
+						this.score = group.papers[0].score;
+						if (!this.validScore(this.score, group.papers[0].fullscore)) return;
+					}
 				} else if (group.papers[0].steps.length > 0) {
 					let scoreSum = 0;
 					for (let step of group.papers[0].steps) {
@@ -875,16 +880,18 @@ export class MarkComponent implements OnInit {
 						scoreSum += parseFloat(step.score);
 					}
 					this.score = String(scoreSum);
-				} else if (group.papers[0].problemPaper === false){
-					alert("请完成打分再提交，谢谢！");
-					return;
 				}
 				//message += group.papers[0].questionName + "题: " + this.score + ";";
 				message += this.score;
 				if (this.markQuestions.length >= 2) {
-					if (group.papers[1].score !== "") {
-						this.score2 = group.papers[1].score;
-						if (!this.validScore(this.score2, group.papers[1].fullscore)) return;
+					if (group.papers[1].steps.length == 0) {
+						if (group.papers[1].score == "") {
+							alert("请完成打分再提交，谢谢！");
+							return;	
+						} else {
+							this.score2 = group.papers[1].score;
+							if (!this.validScore(this.score2, group.papers[1].fullscore)) return;
+						}
 					} else if (group.papers[1].steps.length > 0) {
 						let scoreSum = 0;
 						for (let step of group.papers[1].steps) {
@@ -892,17 +899,19 @@ export class MarkComponent implements OnInit {
 							scoreSum += parseFloat(step.score);
 						}
 						this.score2 = String(scoreSum);
-					} else if (group.papers[1].problemPaper === false){
-						alert("请完成打分再提交，谢谢！");
-						return;
 					}
 					//message += group.papers[1].questionName + "题: " + this.score2 + ";";
 					message += "; " + this.score2;
 				}
 				if (this.markQuestions.length == 3) {
-					if (group.papers[2].score !== "") {
-						this.score3 = group.papers[2].score;
-						if (!this.validScore(this.score3, group.papers[2].fullscore)) return;
+					if (group.papers[2].steps.length == 0) {
+						if (group.papers[2].score == "") {
+							alert("请完成打分再提交，谢谢！");
+							return;	
+						} else {
+							this.score3 = group.papers[2].score;
+							if (!this.validScore(this.score3, group.papers[2].fullscore)) return;
+						}
 					} else if (group.papers[2].steps.length > 0) {
 						let scoreSum = 0;
 						for (let step of group.papers[2].steps) {
@@ -910,9 +919,6 @@ export class MarkComponent implements OnInit {
 							scoreSum += parseFloat(step.score);
 						}
 						this.score3 = String(scoreSum);
-					} else if (group.papers[2].problemPaper === false){
-						alert("请完成打分再提交，谢谢！");
-						return;
 					}
 					//message += group.papers[2].questionName + "题: " + this.score3 + ";";
 					message += "; " + this.score3;
