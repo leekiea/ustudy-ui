@@ -116,7 +116,7 @@
                         </div>
                     </div>
                     <div *ngIf="displayScoreBoard === true" class="panel-heading border clear-padding clear-margin-bottom clearfix">
-                        <div *ngIf="composable === true" class="padding bg-muted clearfix">
+                        <div *ngIf="20 > toNum(fullScore)" class="padding bg-muted clearfix">
                             <div *ngIf="toNum(fullScore) < 10" class="pull-left">
                                 <label class="radio-inline">
                                     <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="0.5" [(ngModel)]="scoreUnit" (click)="setScoreUnit('0.5')"> 0.5
