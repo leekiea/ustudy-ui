@@ -869,7 +869,7 @@ export class MarkComponent implements OnInit {
 		for (let group of this.mark.groups) {
 			if (group.paperSeq === this.curPage) {
 				if (group.papers[0].steps.length == 0) {
-					if (group.papers[0].score == "") {
+					if (group.papers[0].score === "") {
 						alert("请完成打分再提交，谢谢！");
 						return;	
 					} else {
@@ -888,7 +888,7 @@ export class MarkComponent implements OnInit {
 				message += this.score;
 				if (this.markQuestions.length >= 2) {
 					if (group.papers[1].steps.length == 0) {
-						if (group.papers[1].score == "") {
+						if (group.papers[1].score === "") {
 							alert("请完成打分再提交，谢谢！");
 							return;	
 						} else {
@@ -908,7 +908,7 @@ export class MarkComponent implements OnInit {
 				}
 				if (this.markQuestions.length == 3) {
 					if (group.papers[2].steps.length == 0) {
-						if (group.papers[2].score == "") {
+						if (group.papers[2].score === "") {
 							alert("请完成打分再提交，谢谢！");
 							return;	
 						} else {
