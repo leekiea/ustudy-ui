@@ -26,6 +26,9 @@
     <div class="panel panel-default">
       <div class="row">
         <answer-filter (selectResult)="selectResult($event)" [selectedExam]="selectedExam"></answer-filter>
+        <div class="input-group pull-right">
+          <a class="btn btn-default" title="导出" (click)="export()">导出</a>
+        </div>
         <ul class="pagination" *ngIf="tab!=='summary'">
           <li *ngFor="let page of pages" [ngClass]="{active: page==currentPage}"><a href="javascript:;" (click)="currentPage=page">{{page}}</a></li>
         </ul>

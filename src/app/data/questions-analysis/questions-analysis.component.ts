@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data.service';
 import * as _ from 'lodash';
+import * as XLSX from 'xlsx';
 import {ExamService} from '../../exam/exam.service';
 
 declare var jQuery: any;
+type AOA = Array<Array<any>>;
 
 @Component({
   selector: 'app-questions-analysis',
@@ -315,6 +317,119 @@ export class QuestionsAnalysisComponent implements OnInit {
 
   getOptionsScoreDetails(question: any) {
     return _.values(question.details)
+  }
+
+  export() {
+    if (this.tab === 'summary') {
+      this.downloadSum(this.result);
+    } else if (this.tab === 'objective') {
+      this.downloadObj(this.objectResult);
+    } else if (this.tab === 'subjective') {
+      this.downloadSub(this.subjectResult);
+    }
+  }
+
+  private downloadSum(data:any): void {
+    let dataExp:AOA=[];
+    dataExp[0]=new Array();
+    dataExp[1]=new Array();
+
+    /* 第一行 标题 */
+    dataExp[0][0]='考生总数';
+    dataExp[0][1]='最高分';
+    dataExp[0][2]='最低分';
+    dataExp[0][3]='平均分';
+    dataExp[0][4]='总分';
+    dataExp[0][5]='及格人数';
+    dataExp[1][0]=data.exCount;
+    dataExp[1][1]=data.maxScore;
+    dataExp[1][2]=data.minScore;
+    dataExp[1][3]=data.aveScore;
+    dataExp[1][4]=data.fscore;
+    dataExp[1][5]=data.passCount;
+
+		/* generate worksheet */
+		const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(dataExp);
+
+		/* generate workbook and add the worksheet */
+		const wb: XLSX.WorkBook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(wb, ws, '概要');
+
+		/* save to file */
+    XLSX.writeFile(wb, this.selectedExam.examName + '_' + this.filterResult.grade.gradeName 
+    + '_' + this.filterResult.class.name + '_试题分析概要.xlsx');
+  }
+
+  private downloadObj(data:any): void {
+
+    if (!data || data.length <= 0) {
+      return;
+    }
+
+    let dataExp:AOA=[];
+    dataExp[0]=new Array();
+
+    /* 第一行 标题 */
+    dataExp[0][0]='题号';
+    dataExp[0][1]='分值';
+    dataExp[0][2]='平均分';
+    dataExp[0][3]='标准答案';
+    dataExp[0][4]='选项分布';
+
+    for(let i=0; i<data.length; i++) {
+      dataExp[i+1]=new Array();
+      dataExp[i+1][0]=data[i].quesno;
+      dataExp[i+1][1]=data[i].score;
+      dataExp[i+1][2]=data[i].aveScore;
+      dataExp[i+1][3]=data[i].refa;
+      dataExp[i+1][4]=JSON.stringify(data[i].choices);
+    }
+
+		/* generate worksheet */
+		const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(dataExp);
+
+		/* generate workbook and add the worksheet */
+		const wb: XLSX.WorkBook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(wb, ws, '客观题');
+
+		/* save to file */
+    XLSX.writeFile(wb, this.selectedExam.examName + '_' + this.filterResult.grade.gradeName 
+    + '_' + this.filterResult.class.name + '_试题分析客观题.xlsx');
+  }
+
+  private downloadSub(data:any): void {
+
+    if (!data || data.length <= 0) {
+      return;
+    }
+
+    let dataExp:AOA=[];
+    dataExp[0]=new Array();
+
+    /* 第一行 标题 */
+    dataExp[0][0]='题号';
+    dataExp[0][1]='分值';
+    dataExp[0][2]='平均分';
+    dataExp[0][3]='得分明细';
+
+    for(let i=0; i<data.length; i++) {
+      dataExp[i+1]=new Array();
+      dataExp[i+1][0]=data[i].quesname;
+      dataExp[i+1][1]=data[i].score;
+      dataExp[i+1][2]=data[i].aveScore;
+      dataExp[i+1][3]=JSON.stringify(data[i].details);
+    }
+
+		/* generate worksheet */
+		const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(dataExp);
+
+		/* generate workbook and add the worksheet */
+		const wb: XLSX.WorkBook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(wb, ws, '主观题');
+
+		/* save to file */
+    XLSX.writeFile(wb, this.selectedExam.examName + '_' + this.filterResult.grade.gradeName 
+    + '_' + this.filterResult.class.name + '_试题分析主观题.xlsx');
   }
 }
 
