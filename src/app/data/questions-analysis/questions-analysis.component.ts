@@ -3,6 +3,7 @@ import { DataService } from '../data.service';
 import * as _ from 'lodash';
 import * as XLSX from 'xlsx';
 import {ExamService} from '../../exam/exam.service';
+import { SharedService } from '../../shared.service';
 
 declare var jQuery: any;
 type AOA = Array<Array<any>>;
@@ -229,7 +230,7 @@ export class QuestionsAnalysisComponent implements OnInit {
   pages = [];
   currentPage = 1;
 
-  constructor(private _dataService: DataService, private _examService: ExamService) { }
+  constructor(private _dataService: DataService, private _examService: ExamService, private _sharedService: SharedService) { }
 
   ngOnInit() {
     const params = Object.create({});
