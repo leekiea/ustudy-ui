@@ -230,7 +230,7 @@ export class QuestionsAnalysisComponent implements OnInit {
   pages = [];
   currentPage = 1;
 
-  constructor(private _dataService: DataService, private _examService: ExamService, private _sharedService: SharedService) { }
+  constructor(private _dataService: DataService, private _examService: ExamService, public _sharedService: SharedService) { }
 
   ngOnInit() {
     const params = Object.create({});
