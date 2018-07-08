@@ -104,4 +104,8 @@ export class UnfinishedExamDetailsComponent implements OnInit {
       row.missingExaminees = data
     })
   }
+
+  toNum(data){
+    return parseFloat(data);
+  }
 }
