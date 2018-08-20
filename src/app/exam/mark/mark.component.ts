@@ -1,7 +1,10 @@
-import { Component, OnInit, AfterViewInit, ViewChild, Renderer2}  from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, Renderer2, TemplateRef}  from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MarkService } from './mark.service';
 import { SharedService } from '../../shared.service';
+import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
+import { BsModalService } from 'ngx-bootstrap';
+import * as _ from 'lodash';
 
 declare var $: any;
 
@@ -177,7 +180,12 @@ export class MarkComponent implements OnInit {
 
 	submitting = false;
 
-    constructor(private _sharedService: SharedService, private _markService: MarkService, private renderer: Renderer2, private route: ActivatedRoute, private router: Router) {
+	modalRef: BsModalRef;
+
+	// image url list for the view whole paper feature
+	selectedImgUrls: Array<string>;
+
+    constructor(private _sharedService: SharedService, private _markService: MarkService, private renderer: Renderer2, private route: ActivatedRoute, private router: Router, private modalService: BsModalService) {
 
     }
 
@@ -1215,5 +1223,19 @@ export class MarkComponent implements OnInit {
 		} else {
 			return false;
 		}
+	}
+
+
+	viewPaper(template: TemplateRef<any>, papers) {
+		this.selectedImgUrls = this.getUrl(papers);
+		this.modalRef = this.modalService.show(template,  { class: 'gray modal-lg'});
+	}
+
+	getUrl(papers): any {
+		let urls = [];
+		papers.forEach((p) => {
+			 urls = _.concat(urls, _.map(p.regions, 'ansImg'));
+		})
+		return _.uniqBy(urls, (v)=> {return v;}).map((url) => this._sharedService.getImgUrl(url, ''))
 	}
 }
