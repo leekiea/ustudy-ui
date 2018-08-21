@@ -122,6 +122,11 @@ export class TaskAssignComponent implements OnInit {
     }).then((data) => {
       console.log(data);
       if (_.get(data, 'success')) {
+        //clear the data in the form
+        this.withTeachersIds = [];
+        this.withFinalTeachersIds = [];
+        this.markMode='单评';
+        
         this.selectedQuestion.created = true;
         const index = _.findIndex(this.questions, this.selectedQuestion);
         if (index + 1 < this.questions.length) {
