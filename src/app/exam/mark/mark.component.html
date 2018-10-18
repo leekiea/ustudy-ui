@@ -10,8 +10,8 @@
 </div>
 <!-- 路径导航 end -->
 
- <!-- 内容 start -->
-<div #rootContainer class="container container-fluid-online-marking">
+ <!-- 主页面 start -->
+<div #rootContainer class="container container-fluid-online-marking" >
 	<!--<div class="row" [ngBusy]="{busy:busy, message:'给分中，请稍候。。。'}">-->
     <div class="row">
 		<div class="col-sm-9">
@@ -91,7 +91,7 @@
 
 		</div>
 		<div  class="col-sm-3"  style="z-index: 1001">
-			<form [ngDraggable]="isFullScreen === true" class="online-marking-sidebar" [ngStyle]="{transform: isFullScreen? '': 'translate(0px, 0px)'}">
+            <form [ngDraggable]="isFullScreen === true" class="online-marking-sidebar" [ngStyle]="{transform: isFullScreen? '': 'translate(0px, 0px)'}">
                 <div #markBarHeader id="markBarHeader" class="panel panel-default">
                     <div id="hideFullScreenBtn" class="panel-heading clear-padding clearfix" [ngStyle]="{display: isFullScreen? '' : 'none'}" >
                         <div class="pull-right">
@@ -241,69 +241,68 @@
                         <!-- 翻页 end -->
                     </div>
                 </div>
-			</form>
+            </form>
 		</div>
 	</div>
-
-    <!-- 全屏阅卷 start -->
-    <div id="full_screen" tabindex="-1" [ngStyle]="{'display': (isFullScreen ? '':'none'), 'overflow': 'scroll', 'position': 'fixed', 'top': 0, 'right': 0, 'bottom': 0, 'left': 0, 'z-index': 1000, 'background-color': '#FFFFFF'}">
-        <table *ngIf="!isMobile()">
-            <tr>
-                <ng-container *ngFor="let region of answer.regions">
+</div>
+<!-- 主页面 end-->
+<!-- 全屏阅卷 start -->
+<div id="full_screen" tabindex="-1" [ngStyle]="{'display': (isFullScreen ? '':'none'), 'overflow': 'scroll', 'position': 'fixed', 'top': 0, 'right': 0, 'bottom': 0, 'left': 0, 'z-index': 1000, 'background-color': '#FFFFFF'}">
+    <table *ngIf="!isMobile()">
+        <tr>
+            <ng-container *ngFor="let region of answer.regions">
+                <td>
+                    <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
+                </td>
+            </ng-container>
+            <ng-container *ngIf="markCanvas2Display=='block'">
+                <ng-container *ngFor="let region of answer2.regions">
                     <td>
                         <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
                     </td>
                 </ng-container>
-                <ng-container *ngIf="markCanvas2Display=='block'">
-                    <ng-container *ngFor="let region of answer2.regions">
-                        <td>
-                            <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
-                        </td>
-                    </ng-container>
+            </ng-container>
+            <ng-container *ngIf="markCanvas3Display==block">
+                <ng-container *ngFor="let region of answer3.regions">
+                    <td>
+                        <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
+                    </td>
                 </ng-container>
-                <ng-container *ngIf="markCanvas3Display==block">
-                    <ng-container *ngFor="let region of answer3.regions">
-                        <td>
-                            <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
-                        </td>
-                    </ng-container>
-                </ng-container>
-            </tr>
-        </table>
-        <table *ngIf="isMobile()">
-            <tr *ngFor="let region of answer.regions">
-                <td>
-                    <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
-                </td>
-            </tr>
-            <tr [ngStyle]="{'display': markCanvas2Display}" *ngFor="let region of answer2.regions">
-                <td>
-                    <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
-                </td>
-            </tr>
-            <tr [ngStyle]="{'display': markCanvas3Display}" *ngFor="let region of answer3.regions">
-                <td>
-                    <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
-                </td>
-            </tr>
-        </table>
-    </div>
-    <!-- 全屏阅卷 end -->
+            </ng-container>
+        </tr>
+    </table>
+    <table *ngIf="isMobile()">
+        <tr *ngFor="let region of answer.regions">
+            <td>
+                <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
+            </td>
+        </tr>
+        <tr [ngStyle]="{'display': markCanvas2Display}" *ngFor="let region of answer2.regions">
+            <td>
+                <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
+            </td>
+        </tr>
+        <tr [ngStyle]="{'display': markCanvas3Display}" *ngFor="let region of answer3.regions">
+            <td>
+                <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
+            </td>
+        </tr>
+    </table>
+</div>
+<!-- 全屏阅卷 end -->
 
-    <!-- 阅卷提示 start -->
-    <div id="markTipModal" tabindex="-1" role="dialog" style="display: none;overflow: scroll;position: fixed;top: 0;right: 0;bottom: 0;left: 0;z-index: 1050;">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">您的本题阅卷任务已结束，是否切换到下一题？</h4>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" (click)="closeMarkTipModal(1)">是</button>
-                    <button type="button" class="btn btn-success" data-dismiss="modal" (click)="closeMarkTipModal(0)">否</button>
-                </div>
+<!-- 阅卷提示 start -->
+<div id="markTipModal" tabindex="-1" role="dialog" style="display: none;overflow: scroll;position: fixed;top: 0;right: 0;bottom: 0;left: 0;z-index: 1050;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">您的本题阅卷任务已结束，是否切换到下一题？</h4>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" (click)="closeMarkTipModal(1)">是</button>
+                <button type="button" class="btn btn-success" data-dismiss="modal" (click)="closeMarkTipModal(0)">否</button>
             </div>
         </div>
     </div>
-    <!-- 阅卷提示 end -->
 </div>
-<!-- 内容 end-->
+<!-- 阅卷提示 end -->

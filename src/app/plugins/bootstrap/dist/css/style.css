@@ -745,6 +745,9 @@ body {
   border-top: 1px solid #ddd;
 }
 @media (min-width: 568px) {
+  .container.container-fluid-online-marking {
+    height: 320px;
+  }
   .container.container-fluid-online-marking > .row {
     position: relative;
   }
@@ -763,6 +766,9 @@ body {
   }
 }
 @media (min-width: 992px) {
+  .container.container-fluid-online-marking {
+    height: 620px;
+  }
   .container.container-fluid-online-marking > .row {
     position: relative;
   }
@@ -783,9 +789,6 @@ body {
 html.full-screen .container.container-fluid-online-marking {
   padding: 15px;
   width: 100% !important;
-}
-.container.container-fluid-online-marking {
-  height: 620px;
 }
 
 .container.container-fluid-online-marking .row,
