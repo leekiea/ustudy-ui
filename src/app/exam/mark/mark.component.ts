@@ -357,8 +357,10 @@ export class MarkComponent implements OnInit {
 							h = Math.floor($(window).height());
 							w = Math.floor(region.w*h/region.h);
 						}
-						$('#id_' + region.id + '_' + region.x + '_' + region.y).width(w);
-						$('#id_' + region.id + '_' + region.x + '_' + region.y).height(h);
+						if(!t.isMobile()) {
+							$('#id_' + region.id + '_' + region.x + '_' + region.y).width(w);
+							$('#id_' + region.id + '_' + region.x + '_' + region.y).height(h);
+						}
                         clearInterval(interval);
                     }, 1);
 				}
@@ -376,8 +378,10 @@ export class MarkComponent implements OnInit {
 								w = Math.floor($(window).width()/length);
 							}	
 							let h = Math.floor(region.h*w/region.w);
-							$('#id_' + region.id + '_' + region.x + '_' + region.y).width(w);
-							$('#id_' + region.id + '_' + region.x + '_' + region.y).height(h);
+							if(!t.isMobile()) {
+								$('#id_' + region.id + '_' + region.x + '_' + region.y).width(w);
+								$('#id_' + region.id + '_' + region.x + '_' + region.y).height(h);
+							}
 	                        clearInterval(interval);
 	                    }, 1);
 					}
@@ -396,8 +400,10 @@ export class MarkComponent implements OnInit {
 								w = Math.floor($(window).width()/length);
 							}	
 							let h = Math.floor(region.h*w/region.w);
-							$('#id_' + region.id + '_' + region.x + '_' + region.y).width(w);
-							$('#id_' + region.id + '_' + region.x + '_' + region.y).height(h);
+							if(!t.isMobile()) {
+								$('#id_' + region.id + '_' + region.x + '_' + region.y).width(w);
+								$('#id_' + region.id + '_' + region.x + '_' + region.y).height(h);
+							}
 	                        clearInterval(interval);
 	                    }, 1);
 					}

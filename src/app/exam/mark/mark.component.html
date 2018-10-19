@@ -279,17 +279,17 @@
     <table *ngIf="isMobile()">
         <tr *ngFor="let region of answer.regions">
             <td>
-                <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
+                <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" style="width: auto; height: auto" />
             </td>
         </tr>
         <tr [ngStyle]="{'display': markCanvas2Display}" *ngFor="let region of answer2.regions">
             <td>
-                <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
+                <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" style="width: auto; height: auto" />
             </td>
         </tr>
         <tr [ngStyle]="{'display': markCanvas3Display}" *ngFor="let region of answer3.regions">
             <td>
-                <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" />
+                <img id="id_{{region.id}}_{{region.x}}_{{region.y}}" src="{{_sharedService.getImgUrl(region.ansImg, region)}}" style="width: auto; height: auto" />
             </td>
         </tr>
     </table>
