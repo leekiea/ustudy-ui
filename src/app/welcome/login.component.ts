@@ -45,22 +45,23 @@ export class LoginComponent {
 
     this._sharedService.makeRequest('POST', '/api/login', this.reqContent).then((data: any) => {
       // IP filtering
+      let t = this;
       $.getJSON('https://ipapi.co/json/', function(ipdata) {
         if (data.orgid == '3461000314' &&
            data.roles[0] != '清道夫' && 
            data.roles[0] != '校长' &&
            ipdata.ip != '219.145.102.230' &&
            ipdata.ip != '117.35.48.38' ) {
-            this._sharedService.makeRequest('GET', '/api/logout', '').then((data: any) => {
+            t._sharedService.makeRequest('GET', '/api/logout', '').then((data: any) => {
               alert("您的账号无法在校外登陆系统。IP地址:" + ipdata.ip);
-              this._sharedService.userName = '';
-              this._sharedService.userRole = '';
-              this.router.navigate(['welcome']);
+              t._sharedService.userName = '';
+              t._sharedService.userRole = '';
+              t.router.navigate(['welcome']);
             }).catch((error: any) => {
               alert("注意：请不要在校外登陆系统。 IP地址:" + ipdata.ip);
-              this._sharedService.userName = '';
-              this._sharedService.userRole = '';
-              this.router.navigate(['welcome']);
+              t._sharedService.userName = '';
+              t._sharedService.userRole = '';
+              t.router.navigate(['welcome']);
             });
         }
       });
